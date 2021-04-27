@@ -12,6 +12,4 @@
 ## Releasing
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
-| 986d4be | 2021-04-27 | Chris Schubert | Adding meta files |
-| a18fe5c | 2021-04-27 | Chris Schubert | Initializing organization repository for project. |
-| f581ce7 | 2021-04-27 | Chris Schubert | Added README.md |
+

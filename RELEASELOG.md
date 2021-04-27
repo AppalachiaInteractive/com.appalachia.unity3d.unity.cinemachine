@@ -9,7 +9,7 @@
 ```
 
 
-# 0.1.1
+# 0.1.2
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
 | 986d4be | 2021-04-27 | Chris Schubert | Adding meta files |
