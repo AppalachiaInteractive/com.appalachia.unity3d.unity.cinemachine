@@ -9,24 +9,11 @@ using UnityEditor;
 namespace Cinemachine.Editor
 {
     [InitializeOnLoad]
-    internal class CinemachineStoryboardMute
+    static class CinemachineStoryboardMute
     {
-        const string StoryboardGlobalMuteMenuName = "Cinemachine/Storyboard Global Mute";
-        [MenuItem(StoryboardGlobalMuteMenuName, false)]
-        public static void StoryboardGlobalMute()
-        {
-            bool enable = !CinemachineStoryboardMute.Enabled;
-            CinemachineStoryboardMute.Enabled = enable;
-        }
-
         static CinemachineStoryboardMute()
         {
             CinemachineStoryboard.s_StoryboardGlobalMute = Enabled;
-
-             /// Delaying until first editor tick so that the menu
-             /// will be populated before setting check state, and
-             /// re-apply correct action
-             EditorApplication.delayCall += () => { UnityEditor.Menu.SetChecked(StoryboardGlobalMuteMenuName, Enabled); };
         }
 
         public static string kEnabledKey = "StoryboardMute_Enabled";
@@ -39,8 +26,6 @@ namespace Cinemachine.Editor
                 {
                     EditorPrefs.SetBool(kEnabledKey, value);
                     CinemachineStoryboard.s_StoryboardGlobalMute = value;
-                    UnityEditor.Menu.SetChecked(StoryboardGlobalMuteMenuName, value);
-
                     InspectorUtility.RepaintGameView();
                 }
             }
@@ -58,6 +43,7 @@ namespace Cinemachine.Editor
 
         const float FastWaveformUpdateInterval = 0.1f;
         float mLastSplitScreenEventTime = 0;
+        static bool sAdvancedFoldout;
         
         public override void OnInspectorGUI()
         {
@@ -138,6 +124,28 @@ namespace Cinemachine.Editor
             rect.x += EditorGUIUtility.labelWidth;
             if (GUI.Button(rect, "Open"))
                 WaveformWindow.OpenWindow();
+
+            EditorGUILayout.Space();
+            sAdvancedFoldout = EditorGUILayout.Foldout(sAdvancedFoldout, "Advanced");
+            if (sAdvancedFoldout)
+            {
+                ++EditorGUI.indentLevel;
+                
+                EditorGUI.BeginChangeCheck();
+                var renderModeProperty = FindProperty(x => x.m_RenderMode);
+                EditorGUILayout.PropertyField(renderModeProperty);
+                EditorGUILayout.PropertyField(FindProperty(x => x.m_SortingOrder));
+                if (renderModeProperty.enumValueIndex == (int) RenderMode.ScreenSpaceCamera)
+                {
+                    EditorGUILayout.PropertyField(FindProperty(x => x.m_PlaneDistance));
+                }
+                if (EditorGUI.EndChangeCheck())
+                {
+                    serializedObject.ApplyModifiedProperties();
+                }
+                
+                --EditorGUI.indentLevel;
+            }
         }
     }
 }

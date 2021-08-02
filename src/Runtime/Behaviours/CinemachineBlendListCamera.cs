@@ -1,3 +1,7 @@
+#if !UNITY_2019_3_OR_NEWER
+#define CINEMACHINE_UNITY_IMGUI
+#endif
+
 using Cinemachine.Utility;
 using System;
 using System.Collections.Generic;
@@ -14,11 +18,7 @@ namespace Cinemachine
     /// </summary>
     [DocumentationSorting(DocumentationSortingAttribute.Level.UserRef)]
     [DisallowMultipleComponent]
-#if UNITY_2018_3_OR_NEWER
     [ExecuteAlways]
-#else
-    [ExecuteInEditMode]
-#endif
     [ExcludeFromPreset]
     [AddComponentMenu("Cinemachine/CinemachineBlendListCamera")]
     [HelpURL(Documentation.BaseURL + "manual/CinemachineBlendListCamera.html")]
@@ -30,7 +30,7 @@ namespace Cinemachine
             + "specified in a child camera.  May be empty if all of the children define targets of their own.")]
         [NoSaveDuringPlay]
         [VcamTargetProperty]
-        public Transform m_LookAt = null;
+        public Transform m_LookAt;
 
         /// <summary>Default object for the camera children wants to move with (the body target), 
         /// if not specified in a child rig.  May be empty</summary>
@@ -38,19 +38,19 @@ namespace Cinemachine
             + "if not specified in a child camera.  May be empty if all of the children define targets of their own.")]
         [NoSaveDuringPlay]
         [VcamTargetProperty]
-        public Transform m_Follow = null;
+        public Transform m_Follow;
 
         /// <summary>When enabled, the current camera and blend will be indicated in the game window, for debugging</summary>
         [Tooltip("When enabled, the current child camera and blend will be indicated in the game window, for debugging")]
-        public bool m_ShowDebugText = false;
+        public bool m_ShowDebugText;
 
         /// <summary>When enabled, the child vcams will cycle indefinitely instead of just stopping at the last one</summary>
         [Tooltip("When enabled, the child vcams will cycle indefinitely instead of just stopping at the last one")]
-        public bool m_Loop = false;
+        public bool m_Loop;
 
         /// <summary>Internal API for the editor.  Do not use this field</summary>
         [SerializeField][HideInInspector][NoSaveDuringPlay]
-        internal CinemachineVirtualCameraBase[] m_ChildCameras = null;
+        internal CinemachineVirtualCameraBase[] m_ChildCameras;
 
         /// <summary>This represents a single entry in the instrunction list of the BlendListCamera.</summary>
         [Serializable]
@@ -93,6 +93,16 @@ namespace Cinemachine
             }
         }
 
+        void Reset()
+        {
+            m_LookAt = null;
+            m_Follow = null;
+            m_ShowDebugText = false;
+            m_Loop = false;
+            m_Instructions = null;
+            m_ChildCameras = null;
+        }
+        
         /// <summary>Get the current "best" child virtual camera, that would be chosen
         /// if the State Driven Camera were active.</summary>
         public ICinemachineCamera LiveChild { set; get; }
@@ -278,6 +288,7 @@ namespace Cinemachine
         /// Will only be called if Unity Editor - never in build
         private void OnGuiHandler()
         {
+#if CINEMACHINE_UNITY_IMGUI
             if (!m_ShowDebugText)
                 CinemachineDebug.ReleaseScreenPos(this);
             else
@@ -289,6 +300,7 @@ namespace Cinemachine
                 GUI.Label(r, text, GUI.skin.box);
                 CinemachineDebug.ReturnToPool(sb);
             }
+#endif
         }
 
         CameraState m_State = CameraState.Default;

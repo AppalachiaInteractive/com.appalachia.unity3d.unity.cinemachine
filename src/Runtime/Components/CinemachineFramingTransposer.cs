@@ -364,6 +364,7 @@ namespace Cinemachine
         {
             base.ForceCameraPosition(pos, rot);
             m_PreviousCameraPosition = pos;
+            m_prevRotation = rot;
         }
         
         /// <summary>
@@ -386,9 +387,11 @@ namespace Cinemachine
             ICinemachineCamera fromCam, Vector3 worldUp, float deltaTime,
             ref CinemachineVirtualCameraBase.TransitionParams transitionParams)
         {
-            if (fromCam != null && transitionParams.m_InheritPosition)
+            if (fromCam != null && transitionParams.m_InheritPosition
+                 && !CinemachineCore.Instance.IsLiveInBlend(VirtualCamera))
             {
-                transform.rotation = fromCam.State.RawOrientation;
+                m_PreviousCameraPosition = fromCam.State.RawPosition;
+                m_prevRotation = fromCam.State.RawOrientation;
                 InheritingPosition = true;
                 return true;
             }
@@ -440,9 +443,10 @@ namespace Cinemachine
             LensSettings lens = curState.Lens;
             Vector3 followTargetPosition = FollowTargetPosition + (FollowTargetRotation * m_TrackedObjectOffset);
             bool previousStateIsValid = deltaTime >= 0 && VirtualCamera.PreviousStateIsValid;
+            if (!previousStateIsValid || VirtualCamera.FollowTargetChanged)
+                m_Predictor.Reset();
             if (!previousStateIsValid)
             {
-                m_Predictor.Reset();
                 m_PreviousCameraPosition = curState.RawPosition;
                 m_prevFOV = lens.Orthographic ? lens.OrthographicSize : lens.FieldOfView;
                 m_prevRotation = curState.RawOrientation;
@@ -458,9 +462,11 @@ namespace Cinemachine
                 return;
             }
 
+            var verticalFOV = lens.FieldOfView;
+
             // Compute group bounds and adjust follow target for group framing
             ICinemachineTargetGroup group = AbstractFollowTargetGroup;
-            bool isGroupFraming = group != null && m_GroupFramingMode != FramingMode.None;
+            bool isGroupFraming = group != null && m_GroupFramingMode != FramingMode.None && !group.IsEmpty;
             if (isGroupFraming)
                 followTargetPosition = ComputeGroupBounds(group, ref curState);
 
@@ -502,7 +508,7 @@ namespace Cinemachine
                 {
                     // What distance from near edge would be needed to get the adjusted
                     // target height, at the current FOV
-                    targetDistance = targetHeight / (2f * Mathf.Tan(lens.FieldOfView * Mathf.Deg2Rad / 2f));
+                    targetDistance = targetHeight / (2f * Mathf.Tan(verticalFOV * Mathf.Deg2Rad / 2f));
 
                     // Clamp to respect min/max distance settings to the near surface of the bounds
                     targetDistance = Mathf.Clamp(targetDistance, m_MinimumDistance, m_MaximumDistance);
@@ -543,7 +549,7 @@ namespace Cinemachine
             // Move along the XY plane
             float screenSize = lens.Orthographic 
                 ? lens.OrthographicSize 
-                : Mathf.Tan(0.5f * lens.FieldOfView * Mathf.Deg2Rad) * (targetZ - cameraOffset.z);
+                : Mathf.Tan(0.5f * verticalFOV * Mathf.Deg2Rad) * (targetZ - cameraOffset.z);
             Rect softGuideOrtho = ScreenToOrtho(SoftGuideRect, screenSize, lens.Aspect);
             if (!previousStateIsValid)
             {

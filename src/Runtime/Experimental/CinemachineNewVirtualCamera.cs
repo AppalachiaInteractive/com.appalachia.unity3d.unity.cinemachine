@@ -1,6 +1,7 @@
 #if CINEMACHINE_EXPERIMENTAL_VCAM
 using UnityEngine;
 using System;
+using System.Linq;
 
 namespace Cinemachine
 {
@@ -13,11 +14,7 @@ namespace Cinemachine
     /// </summary>
     [DocumentationSorting(DocumentationSortingAttribute.Level.UserRef)]
     [DisallowMultipleComponent]
-#if UNITY_2018_3_OR_NEWER
     [ExecuteAlways]
-#else
-    [ExecuteInEditMode]
-#endif
     [AddComponentMenu("Cinemachine/CinemachineNewVirtualCamera")]
     public class CinemachineNewVirtualCamera : CinemachineVirtualCameraBase
     {
@@ -37,7 +34,6 @@ namespace Cinemachine
         /// These settings will be transferred to the Unity camera when the vcam is live.</summary>
         [Tooltip("Specifies the lens properties of this Virtual Camera.  This generally mirrors the "
             + "Unity Camera's lens settings, and will be used to drive the Unity camera when the vcam is active.")]
-        [LensSettingsProperty]
         public LensSettings m_Lens = LensSettings.Default;
 
         /// <summary> Collection of parameters that influence how this virtual camera transitions from
@@ -154,12 +150,10 @@ namespace Cinemachine
             base.OnTransitionFromCamera(fromCam, worldUp, deltaTime);
             InvokeOnTransitionInExtensions(fromCam, worldUp, deltaTime);
             bool forceUpdate = false;
-            if (m_Transitions.m_InheritPosition && fromCam != null)
+            if (m_Transitions.m_InheritPosition && fromCam != null  
+                && !CinemachineCore.Instance.IsLiveInBlend(this))
             {
-                transform.position = fromCam.State.RawPosition;
-                //transform.rotation = fromCam.State.RawOrientation;
-                PreviousStateIsValid = false;
-                forceUpdate = true;
+                ForceCameraPosition(fromCam.State.FinalPosition, fromCam.State.FinalOrientation);
             }
             UpdateComponentCache();
             for (int i = 0; i < m_Components.Length; ++i)
@@ -187,6 +181,8 @@ namespace Cinemachine
         /// <param name="deltaTime">Delta time for time-based effects (ignore if less than 0)</param>
         override public void InternalUpdateCameraState(Vector3 worldUp, float deltaTime)
         {
+            UpdateTargetCache();
+
             FollowTargetAttachment = 1;
             LookAtTargetAttachment = 1;
 
@@ -210,6 +206,15 @@ namespace Cinemachine
             // Signal that it's all done
             InvokePostPipelineStageCallback(this, CinemachineCore.Stage.Finalize, ref m_State, deltaTime);
             PreviousStateIsValid = true;
+        }
+        
+        /// <summary>
+        /// Returns true, when the vcam has extensions or components that require input.
+        /// </summary>
+        internal override bool RequiresUserInput()
+        {
+            return base.RequiresUserInput() ||
+                m_Components != null && m_Components.Any(t => t != null && t.RequiresUserInput);
         }
 
         private Transform mCachedLookAtTarget;

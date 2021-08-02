@@ -308,7 +308,8 @@ namespace Cinemachine
             m_RecenterToTargetHeading.CancelRecentering();
             if (fromCam != null //&& fromCam.Follow == FollowTarget
                 && m_BindingMode != CinemachineTransposer.BindingMode.SimpleFollowWithWorldUp
-                && transitionParams.m_InheritPosition)
+                && transitionParams.m_InheritPosition
+                && !CinemachineCore.Instance.IsLiveInBlend(VirtualCamera))
             {
                 m_XAxis.Value = GetAxisClosestValue(fromCam.State.RawPosition, worldUp);
                 return true;
@@ -421,14 +422,8 @@ namespace Cinemachine
             return pos;
         }
 
-        static string GetFullName(GameObject current)
-        {
-            if (current == null)
-                return "";
-            if (current.transform.parent == null)
-                return "/" + current.name;
-            return GetFullName(current.transform.parent.gameObject) + "/" + current.name;
-        }
+        /// <summary>OrbitalTransposer is controlled by input.</summary>
+        public override bool RequiresUserInput => true;
 
         // Make sure this is calld only once per frame
         private float GetTargetHeading(float currentHeading, Quaternion targetOrientation)

@@ -1,3 +1,7 @@
+#if !UNITY_2019_3_OR_NEWER
+#define CINEMACHINE_UNITY_IMGUI
+#endif
+
 using Cinemachine.Utility;
 using System;
 using System.Collections;
@@ -7,11 +11,11 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
-#if CINEMACHINE_HDRP || CINEMACHINE_LWRP_7_0_0
-    #if CINEMACHINE_HDRP_7_0_0
+#if CINEMACHINE_HDRP || CINEMACHINE_LWRP_7_3_1
+    #if CINEMACHINE_HDRP_7_3_1
     using UnityEngine.Rendering.HighDefinition;
     #else
-        #if CINEMACHINE_LWRP_7_0_0
+        #if CINEMACHINE_LWRP_7_3_1
         using UnityEngine.Rendering.Universal;
         #else
         using UnityEngine.Experimental.Rendering.HDPipeline;
@@ -37,11 +41,7 @@ namespace Cinemachine
     [DocumentationSorting(DocumentationSortingAttribute.Level.UserRef)]
 //    [RequireComponent(typeof(Camera))] // strange but true: we can live without it
     [DisallowMultipleComponent]
-#if UNITY_2018_3_OR_NEWER
     [ExecuteAlways]
-#else
-    [ExecuteInEditMode]
-#endif
     [AddComponentMenu("Cinemachine/CinemachineBrain")]
     [SaveDuringPlay]
     [HelpURL(Documentation.BaseURL + "manual/CinemachineBrainProperties.html")]
@@ -232,8 +232,8 @@ namespace Cinemachine
             StopCoroutine(mPhysicsCoroutine);
         }
 
-        void OnSceneLoaded(Scene scene, LoadSceneMode mode) { ManualUpdate(); }
-        void OnSceneUnloaded(Scene scene) { ManualUpdate(); }
+        void OnSceneLoaded(Scene scene, LoadSceneMode mode) { if (mFrameStack.Count > 0) ManualUpdate(); }
+        void OnSceneUnloaded(Scene scene) { if (mFrameStack.Count > 0) ManualUpdate(); }
 
         private void Start()
         {
@@ -242,6 +242,7 @@ namespace Cinemachine
 
         private void OnGuiHandler()
         {
+#if CINEMACHINE_UNITY_IMGUI
             if (!m_ShowDebugText)
                 CinemachineDebug.ReleaseScreenPos(this);
             else
@@ -279,6 +280,7 @@ namespace Cinemachine
                 GUI.color = color;
                 CinemachineDebug.ReturnToPool(sb);
             }
+#endif
         }
 
 #if UNITY_EDITOR
@@ -458,6 +460,26 @@ namespace Cinemachine
         }
 
         /// <summary>
+        /// Checks if the vcam is live as part of an outgoing blend.  
+        /// Does not check whether the vcam is also the current active vcam.
+        /// </summary>
+        /// <param name="vcam">The virtual camera to check</param>
+        /// <returns>True if the virtual camera is part of a live outgoing blend, false otherwise</returns>
+        public bool IsLiveInBlend(ICinemachineCamera vcam)
+        {
+            // Ignore mCurrentLiveCameras.CamB
+            if (vcam == mCurrentLiveCameras.CamA)
+                return true;
+            var b = mCurrentLiveCameras.CamA as BlendSourceVirtualCamera;
+            if (b != null && b.Blend.Uses(vcam))
+                return true;
+            ICinemachineCamera parent = vcam.ParentCamera;
+            if (parent != null && parent.IsLiveChild(vcam, false))
+                return IsLiveInBlend(parent);
+            return false;
+        }
+
+        /// <summary>
         /// Is there a blend in progress?
         /// </summary>
         public bool IsBlending { get { return ActiveBlend != null; } }
@@ -499,7 +521,7 @@ namespace Cinemachine
         private int GetBrainFrame(int withId)
         {
             int count = mFrameStack.Count;
-            for (int i = mFrameStack.Count - 1; i > 0; --i)
+            for (int i = count - 1; i > 0; --i)
                 if (mFrameStack[i].id == withId)
                     return i;
             // Not found - add it
@@ -579,12 +601,27 @@ namespace Cinemachine
         }
 
         ICinemachineCamera mActiveCameraPreviousFrame;
+        GameObject mActiveCameraPreviousFrameGameObject;
+
         private void ProcessActiveCamera(float deltaTime)
         {
             var activeCamera = ActiveVirtualCamera;
-            if (activeCamera != null)
+            if (activeCamera == null)
+            {
+                // No active virtal camera.  We create a state representing its position
+                // and call the callback, but we don't actively set the transform or lens
+                var state = CameraState.Default;
+                state.RawPosition = transform.position;
+                state.RawOrientation = transform.rotation;
+                state.Lens = LensSettings.FromCamera(m_OutputCamera);
+                state.BlendHint |= CameraState.BlendHintValue.NoTransform | CameraState.BlendHintValue.NoLens;
+                PushStateToUnityCamera(SoloCamera != null ? SoloCamera.State : state);
+            }
+            else
             {
                 // Has the current camera changed this frame?
+                if (mActiveCameraPreviousFrameGameObject == null)
+                    mActiveCameraPreviousFrame = null; // object was deleted
                 if (activeCamera != mActiveCameraPreviousFrame)
                 {
                     // Notify incoming camera of transition
@@ -610,10 +647,16 @@ namespace Cinemachine
                     SoloCamera != null ? SoloCamera.State : mCurrentLiveCameras.State);
             }
             mActiveCameraPreviousFrame = activeCamera;
+            mActiveCameraPreviousFrameGameObject 
+                = activeCamera == null ? null : activeCamera.VirtualCameraGameObject;
         }
 
         private void UpdateFrame0(float deltaTime)
         {
+            // Make sure there is a first stack frame
+            if (mFrameStack.Count == 0)
+                mFrameStack.Add(new BrainFrame());
+
             // Update the in-game frame (frame 0)
             BrainFrame frame = mFrameStack[0];
 
@@ -635,12 +678,13 @@ namespace Cinemachine
                         else
                         {
                             // Special case: if backing out of a blend-in-progress
-                            // with the same blend in reverse, adjust the belnd time
+                            // with the same blend in reverse, adjust the blend time
                             if (frame.blend.CamA == activeCamera
                                 && frame.blend.CamB == outGoingCamera
                                 && frame.blend.Duration <= blendDef.BlendTime)
                             {
-                                blendDef.m_Time = frame.blend.TimeInBlend;
+                                blendDef.m_Time = 
+                                    (frame.blend.TimeInBlend / frame.blend.Duration) * blendDef.BlendTime;
                             }
 
                             // Chain to existing blend
@@ -685,6 +729,10 @@ namespace Cinemachine
         public void ComputeCurrentBlend(
             ref CinemachineBlend outputBlend, int numTopLayersToExclude)
         {
+            // Make sure there is a first stack frame
+            if (mFrameStack.Count == 0)
+                mFrameStack.Add(new BrainFrame());
+
             // Resolve the current working frame states in the stack
             int lastActive = 0;
             int topLayer = Mathf.Max(1, mFrameStack.Count - numTopLayersToExclude);
@@ -737,7 +785,7 @@ namespace Cinemachine
         /// or part of a current blend, either directly or indirectly because its parents are live.
         /// </summary>
         /// <param name="vcam">The camera to test whether it is live</param>
-        /// <param name="dominantChildOnly">If truw, will only return true if this vcam is the dominat live child</param>
+        /// <param name="dominantChildOnly">If true, will only return true if this vcam is the dominat live child</param>
         /// <returns>True if the camera is live (directly or indirectly)
         /// or part of a blend in progress.</returns>
         public bool IsLive(ICinemachineCamera vcam, bool dominantChildOnly = false)
@@ -806,7 +854,7 @@ namespace Cinemachine
         }
 
         /// <summary> Apply a cref="CameraState"/> to the game object</summary>
-        private void PushStateToUnityCamera(CameraState state)
+        private void PushStateToUnityCamera(in CameraState state)
         {
             CurrentCameraState = state;
             if ((state.BlendHint & CameraState.BlendHintValue.NoPosition) == 0)
@@ -820,36 +868,36 @@ namespace Cinemachine
                 {
                     cam.nearClipPlane = state.Lens.NearClipPlane;
                     cam.farClipPlane = state.Lens.FarClipPlane;
+                    cam.orthographicSize = state.Lens.OrthographicSize;
                     cam.fieldOfView = state.Lens.FieldOfView;
-                    if (cam.orthographic)
-                        cam.orthographicSize = state.Lens.OrthographicSize;
-#if UNITY_2018_2_OR_NEWER
-                    else
+                    cam.lensShift = state.Lens.LensShift;
+                    cam.orthographic = state.Lens.Orthographic;
+                    cam.usePhysicalProperties = state.Lens.IsPhysicalCamera;
+                    if (state.Lens.IsPhysicalCamera && state.Lens.ModeOverride == LensSettings.OverrideModes.Physical)
                     {
-                        cam.usePhysicalProperties = state.Lens.IsPhysicalCamera;
-                        cam.lensShift = state.Lens.LensShift;
-                    }
-    #if CINEMACHINE_HDRP
-                    if (state.Lens.IsPhysicalCamera)
-                    {
-#if UNITY_2019_2_OR_NEWER
-                        cam.TryGetComponent<HDAdditionalCameraData>(out var hda);
-#else
-                        var hda = cam.GetComponent<HDAdditionalCameraData>();
-#endif
-                        if (hda != null)
+                        cam.sensorSize = state.Lens.SensorSize;
+                        cam.gateFit = state.Lens.GateFit;
+#if CINEMACHINE_HDRP
+                        if (state.Lens.IsPhysicalCamera)
                         {
-                            hda.physicalParameters.iso = state.Lens.Iso;
-                            hda.physicalParameters.shutterSpeed = state.Lens.ShutterSpeed;
-                            hda.physicalParameters.aperture = state.Lens.Aperture;
-                            hda.physicalParameters.bladeCount = state.Lens.BladeCount;
-                            hda.physicalParameters.curvature = state.Lens.Curvature;
-                            hda.physicalParameters.barrelClipping = state.Lens.BarrelClipping;
-                            hda.physicalParameters.anamorphism = state.Lens.Anamorphism;
-                        }
-                    }
+    #if UNITY_2019_2_OR_NEWER
+                            cam.TryGetComponent<HDAdditionalCameraData>(out var hda);
+    #else
+                            var hda = cam.GetComponent<HDAdditionalCameraData>();
     #endif
+                            if (hda != null)
+                            {
+                                hda.physicalParameters.iso = state.Lens.Iso;
+                                hda.physicalParameters.shutterSpeed = state.Lens.ShutterSpeed;
+                                hda.physicalParameters.aperture = state.Lens.Aperture;
+                                hda.physicalParameters.bladeCount = state.Lens.BladeCount;
+                                hda.physicalParameters.curvature = state.Lens.Curvature;
+                                hda.physicalParameters.barrelClipping = state.Lens.BarrelClipping;
+                                hda.physicalParameters.anamorphism = state.Lens.Anamorphism;
+                            }
+                        }
 #endif
+                    }
                 }
             }
             if (CinemachineCore.CameraUpdatedEvent != null)

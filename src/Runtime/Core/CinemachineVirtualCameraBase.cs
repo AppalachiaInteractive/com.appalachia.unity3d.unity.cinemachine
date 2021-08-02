@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cinemachine.Utility;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -56,6 +57,10 @@ namespace Cinemachine
         [Tooltip("The priority will determine which camera becomes active based on the state of "
             + "other cameras and this camera.  Higher numbers have greater priority.")]
         public int m_Priority = 10;
+
+        /// <summary>A sequence number that represents object activation order of vcams.  
+        /// Used for priority sorting.</summary>
+        internal int m_ActivationId;
 
         /// <summary>
         /// This must be set every frame at the start of the pipeline to relax the virtual camera's
@@ -238,8 +243,8 @@ namespace Cinemachine
                 mExtensions.Remove(extension);
         }
 
-        /// <summary> Tee extensions connected to this vcam</summary>
-        List<CinemachineExtension> mExtensions;
+        /// <summary> The extensions connected to this vcam</summary>
+        internal List<CinemachineExtension> mExtensions { get; private set; }
 
         /// <summary>
         /// Invokes the PostPipelineStageDelegate for this camera, and up the hierarchy for all
@@ -362,7 +367,9 @@ namespace Cinemachine
             ScreenSpaceAimWhenTargetsDiffer
         }
 
-        /// <summary>Applies a position blend hint to the camera state</summary>
+        /// <summary>Applies a position blend hint to a camera state</summary>
+        /// <param name="state">The state to apply the hint to</param>
+        /// <param name="hint">The hint to apply</param>
         protected void ApplyPositionBlendMethod(ref CameraState state, BlendHint hint)
         {
             switch (hint)
@@ -503,6 +510,14 @@ namespace Cinemachine
         {
             m_WasStarted = true;
         }
+        
+        /// <summary>
+        /// Returns true, when the vcam has an extension that requires user input.
+        /// </summary>
+        internal virtual bool RequiresUserInput()
+        {
+            return mExtensions != null && mExtensions.Any(extension => extension != null && extension.RequiresUserInput); 
+        }
 
         /// <summary>
         /// Called on inactive object when being artificially activated by timeline.
@@ -528,7 +543,6 @@ namespace Cinemachine
             var components = GetComponentsInChildren<MonoBehaviour>();
             for (int i = 0; i < components.Length; ++i)
             {
-                // ReSharper disable once SuspiciousTypeConversion.Global
                 var provider = components[i] as AxisState.IInputAxisProvider;
                 if (provider != null)
                     return provider;
@@ -579,7 +593,9 @@ namespace Cinemachine
         protected virtual void Update()
         {
             if (m_Priority != m_QueuePriority)
-                UpdateVcamPoolStatus();
+            {
+                UpdateVcamPoolStatus(); // Force a re-sort
+            }
         }
 
         private bool mSlaveStatusUpdated = false;
@@ -604,7 +620,7 @@ namespace Cinemachine
         /// the parent vcam's LookAt target.</summary>
         /// <param name="localLookAt">This vcam's LookAt value.</param>
         /// <returns>The same value, or the parent's if null and a parent exists.</returns>
-        protected Transform ResolveLookAt(Transform localLookAt)
+        public Transform ResolveLookAt(Transform localLookAt)
         {
             Transform lookAt = localLookAt;
             if (lookAt == null && ParentCamera != null)
@@ -616,7 +632,7 @@ namespace Cinemachine
         /// the parent vcam's Follow target.</summary>
         /// <param name="localFollow">This vcam's Follow value.</param>
         /// <returns>The same value, or the parent's if null and a parent exists.</returns>
-        protected Transform ResolveFollow(Transform localFollow)
+        public Transform ResolveFollow(Transform localFollow)
         {
             Transform follow = localFollow;
             if (follow == null && ParentCamera != null)
@@ -643,7 +659,7 @@ namespace Cinemachine
         /// If it and its peers share the highest priority, then this vcam will become Live.</summary>
         public void MoveToTopOfPrioritySubqueue()
         {
-            UpdateVcamPoolStatus();
+            UpdateVcamPoolStatus(); // Force a re-sort
         }
 
         /// <summary>This is called to notify the component that a target got warped,
@@ -677,7 +693,13 @@ namespace Cinemachine
         }
         
         /// <summary>Create a blend between 2 virtual cameras, taking into account
-        /// any existing active blend.</summary>
+        /// any existing active blend, with special case handling if the new blend is 
+        /// effectively an undo of the current blend</summary>
+        /// <param name="camA">Outgoing virtual camera</param>
+        /// <param name="camB">Incoming virtual camera</param>
+        /// <param name="blendDef">Definition of the blend to create</param>
+        /// <param name="activeBlend">The current active blend</param>
+        /// <returns>The new blend</returns>
         protected CinemachineBlend CreateBlend(
             ICinemachineCamera camA, ICinemachineCamera camB,
             CinemachineBlendDefinition blendDef,
@@ -723,5 +745,70 @@ namespace Cinemachine
             state.Lens = lens;
             return state;
         }
+
+        private Transform m_CachedFollowTarget;
+        private CinemachineVirtualCameraBase m_CachedFollowTargetVcam;
+        private ICinemachineTargetGroup m_CachedFollowTargetGroup;
+
+        private Transform m_CachedLookAtTarget;
+        private CinemachineVirtualCameraBase m_CachedLookAtTargetVcam;
+        private ICinemachineTargetGroup m_CachedLookAtTargetGroup;
+
+
+        /// <summary>
+        /// This property is true if the Follow target was changed this frame.
+        /// </summary>
+        public bool FollowTargetChanged { get; private set; }
+
+        /// <summary>
+        /// This property is true if the LookAttarget was changed this frame.
+        /// </summary>
+        public bool LookAtTargetChanged { get; private set; }
+
+        /// <summary>
+        /// Call this from InternalUpdateCameraState() to check for changed 
+        /// targets and update the target cache.  This is needed for tracking
+        /// when a target object changes.
+        /// </summary>
+        protected void UpdateTargetCache()
+        {
+            var target = ResolveFollow(Follow);
+            FollowTargetChanged = target != m_CachedFollowTarget;
+            m_CachedFollowTarget = target;
+            m_CachedFollowTargetVcam = null;
+            m_CachedFollowTargetGroup = null;
+            if (m_CachedFollowTarget != null)
+            {
+                m_CachedFollowTargetVcam = target.GetComponent<CinemachineVirtualCameraBase>();
+                m_CachedFollowTargetGroup = target.GetComponent<ICinemachineTargetGroup>();
+            }
+
+            target = ResolveLookAt(LookAt);
+            LookAtTargetChanged = target != m_CachedLookAtTarget;
+            m_CachedLookAtTarget = target;
+            m_CachedLookAtTargetVcam = null;
+            m_CachedLookAtTargetGroup = null;
+            if (target != null)
+            {
+                m_CachedLookAtTargetVcam = target.GetComponent<CinemachineVirtualCameraBase>();
+                m_CachedLookAtTargetGroup = target.GetComponent<ICinemachineTargetGroup>();
+            }
+        }
+
+        /// <summary>Get Follow target as ICinemachineTargetGroup, 
+        /// or null if target is not a ICinemachineTargetGroup</summary>
+        public ICinemachineTargetGroup AbstractFollowTargetGroup => m_CachedFollowTargetGroup;
+
+        /// <summary>Get Follow target as CinemachineVirtualCameraBase, 
+        /// or null if target is not a CinemachineVirtualCameraBase</summary>
+        public CinemachineVirtualCameraBase FollowTargetAsVcam => m_CachedFollowTargetVcam;
+
+        /// <summary>Get LookAt target as ICinemachineTargetGroup, 
+        /// or null if target is not a ICinemachineTargetGroup</summary>
+        public ICinemachineTargetGroup AbstractLookAtTargetGroup => m_CachedLookAtTargetGroup;
+
+        /// <summary>Get LookAt target as CinemachineVirtualCameraBase, 
+        /// or null if target is not a CinemachineVirtualCameraBase</summary>
+        public CinemachineVirtualCameraBase LookAtTargetAsVcam => m_CachedLookAtTargetVcam;
     }
 }

@@ -4,13 +4,13 @@ Use Cinemachine Target Group to treat multiple GameObjects as a single Look At t
 
 To create a Virtual Camera with a Target Group:
 
-1. In the Unity menu, choose __Cinemachine > Create Target Group Camera__. <br/>Unity adds a new Virtual Camera and Target Group to the Scene. The __Follow__ and __Look At__ targets in the Virtual Camera refer to the new Target Group.
+1. In the Unity menu, choose __GameObject > Cinemachine > Target Group Camera__. <br/>Unity adds a new Virtual Camera and Target Group to the Scene. The __Follow__ and __Look At__ targets in the Virtual Camera refer to the new Target Group.
 
 2. In the [Hierarchy](https://docs.unity3d.com/Manual/Hierarchy.html), select the new Target Group object.
 
 3. In the [Inspector](https://docs.unity3d.com/Manual/UsingTheInspector.html), click the + sign to add a new item to the group.
 
-4. In the new item, assign a GameObject, and edit the __Weight__ and __Radius__ properties.
+4. In the new item, assign a GameObject (you can drag and drop from the Hierarchy), and edit the __Weight__ and __Radius__ properties.
 
 5. To add more GameObjects to the Target Group, repeat steps 3-4.
 

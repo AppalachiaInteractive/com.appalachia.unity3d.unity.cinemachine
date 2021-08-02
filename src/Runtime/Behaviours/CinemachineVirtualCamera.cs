@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -51,11 +52,7 @@ namespace Cinemachine
     /// <seealso cref="CinemachineBasicMultiChannelPerlin"/>
     [DocumentationSorting(DocumentationSortingAttribute.Level.UserRef)]
     [DisallowMultipleComponent]
-#if UNITY_2018_3_OR_NEWER
     [ExecuteAlways]
-#else
-    [ExecuteInEditMode]
-#endif
     [ExcludeFromPreset]
     [AddComponentMenu("Cinemachine/CinemachineVirtualCamera")]
     [HelpURL(Documentation.BaseURL + "manual/CinemachineVirtualCamera.html")]
@@ -86,9 +83,9 @@ namespace Cinemachine
         /// <summary>Specifies the LensSettings of this Virtual Camera.
         /// These settings will be transferred to the Unity camera when the vcam is live.</summary>
         [FormerlySerializedAs("m_LensAttributes")]
-        [Tooltip("Specifies the lens properties of this Virtual Camera.  This generally mirrors the "
-            + "Unity Camera's lens settings, and will be used to drive the Unity camera when the vcam is active.")]
-        [LensSettingsProperty]
+        [Tooltip("Specifies the lens properties of this Virtual Camera.  This generally "
+            + "mirrors the Unity Camera's lens settings, and will be used to drive the "
+            + "Unity camera when the vcam is active.")]
         public LensSettings m_Lens = LensSettings.Default;
 
         /// <summary> Collection of parameters that influence how this virtual camera transitions from
@@ -152,6 +149,8 @@ namespace Cinemachine
         /// <param name="deltaTime">Effective deltaTime</param>
         override public void InternalUpdateCameraState(Vector3 worldUp, float deltaTime)
         {
+            UpdateTargetCache();
+
             // Update the state by invoking the component pipeline
             m_State = CalculateNewState(worldUp, deltaTime);
             ApplyPositionBlendMethod(ref m_State, m_Transitions.m_BlendHint);
@@ -597,13 +596,10 @@ namespace Cinemachine
             InvokeOnTransitionInExtensions(fromCam, worldUp, deltaTime);
             bool forceUpdate = false;
 
-            if (m_Transitions.m_InheritPosition && fromCam != null)
-            {
-                transform.position = fromCam.State.FinalPosition;
-                //transform.rotation = fromCam.State.RawOrientation;
-                PreviousStateIsValid = false;
-                forceUpdate = true;
-            }
+            if (m_Transitions.m_InheritPosition && fromCam != null
+                 && !CinemachineCore.Instance.IsLiveInBlend(this))
+                ForceCameraPosition(fromCam.State.FinalPosition, fromCam.State.FinalOrientation);
+
             UpdateComponentPipeline(); // avoid GetComponentPipeline() here because of GC
             if (m_ComponentPipeline != null)
             {
@@ -621,6 +617,16 @@ namespace Cinemachine
                 UpdateCameraState(worldUp, deltaTime);
             if (m_Transitions.m_OnCameraLive != null)
                 m_Transitions.m_OnCameraLive.Invoke(this, fromCam);
+        }
+        
+        /// <summary>
+        /// Returns true, when the vcam has an extension or components that require input.
+        /// </summary>
+        internal override bool RequiresUserInput()
+        {
+            if (base.RequiresUserInput())
+                return true;
+            return m_ComponentPipeline != null && m_ComponentPipeline.Any(c => c != null && c.RequiresUserInput);
         }
     }
 }
