@@ -1,5 +1,4 @@
 ```
-/c/Users/Chris/com.appalachia/appa/cmd/print/Changes.sh
  ________   ___  ___   ________   ________    ________   _______    ________      
 |\   ____\ |\  \|\  \ |\   __  \ |\   ___  \ |\   ____\ |\  ___ \  |\   ____\     
 \ \  \___| \ \  \\\  \\ \  \|\  \\ \  \\ \  \\ \  \___| \ \   __/| \ \  \___|_    
@@ -9,7 +8,16 @@
     \|_______| \|__|\|__| \|__|\|__| \|__| \|__| \|_______| \|_______||\_________\
                                                                       \|_________|
 ```
+
 ## Releasing
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| 31a2f357f9aca005b5a91542d940953171fdab9a | 2021-08-02 | Chris Schubert | Packaging and publishing updates |
 
+
+ ## Tag: `v0.1.2, 0.1.1`
+| Hash | Date | Author | Changes |
+|------|------|--------|---------|
+| 986d4be46da986d05f8f70230dc9459defb1bbec | 2021-04-27 | Chris Schubert | Adding meta files |
+| a18fe5c49aef75fa65972941fdda510f18e45e83 | 2021-04-27 | Chris Schubert | Initializing organization repository for project. |
+| f581ce7cb811256076824914133e8be2fe2ebafa | 2021-04-27 | Chris Schubert | Added README.md |
