@@ -1,11 +1,8 @@
 {
-    "name": "com.unity.cinemachine.EditorTests",
+    "name": "Cinemachine.Tests.Runtime",
+    "rootNamespace": "",
     "references": [
-        "Cinemachine",
-        "com.unity.cinemachine.editor"
-    ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
+        "GUID:4307f53044263cf4b835bd812fc161a4"
     ],
     "includePlatforms": [
         "Editor"
@@ -15,5 +12,7 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

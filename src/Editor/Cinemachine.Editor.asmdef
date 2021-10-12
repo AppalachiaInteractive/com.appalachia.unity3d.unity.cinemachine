@@ -1,0 +1,85 @@
+{
+  "name": "Cinemachine.Editor",
+  "rootNamespace": "",
+  "references": [
+    "GUID:4307f53044263cf4b835bd812fc161a4",
+    "GUID:75469ad4d38634e559750d17036d5f7c",
+    "GUID:a35efad8797223d499f8c68b1f545dbc",
+    "GUID:d60799ab2a985554ea1a39cd38695018",
+    "GUID:f06555f75b070af458a003d92f9efb00",
+    "GUID:02f771204943f4a40949438e873e3eff"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [
+    {
+      "name": "com.unity.postprocessing",
+      "expression": "2.1.0",
+      "define": "CINEMACHINE_POST_PROCESSING_V2"
+    },
+    {
+      "name": "com.unity.timeline",
+      "expression": "0.0.0-builtin",
+      "define": "CINEMACHINE_TIMELINE"
+    },
+    {
+      "name": "com.unity.render-pipelines.high-definition",
+      "expression": "5.3.1",
+      "define": "CINEMACHINE_HDRP"
+    },
+    {
+      "name": "com.unity.render-pipelines.high-definition",
+      "expression": "7.3.1",
+      "define": "CINEMACHINE_HDRP_7_3_1"
+    },
+    {
+      "name": "com.unity.modules.physics2d",
+      "expression": "1.0.0",
+      "define": "CINEMACHINE_PHYSICS_2D"
+    },
+    {
+      "name": "com.unity.modules.physics",
+      "expression": "1.0.0",
+      "define": "CINEMACHINE_PHYSICS"
+    },
+    {
+      "name": "com.unity.ugui",
+      "expression": "1.0.0",
+      "define": "CINEMACHINE_UGUI"
+    },
+    {
+      "name": "com.unity.render-pipelines.universal",
+      "expression": "7.3.1",
+      "define": "CINEMACHINE_LWRP_7_3_1"
+    },
+    {
+      "name": "com.unity.timeline",
+      "expression": "1.5.0-preview.5",
+      "define": "CINEMACHINE_TIMELINE_1_5_0"
+    },
+    {
+      "name": "com.unity.modules.animation",
+      "expression": "1.0.0",
+      "define": "CINEMACHINE_UNITY_ANIMATION"
+    },
+    {
+      "name": "com.unity.modules.imgui",
+      "expression": "1.0.0",
+      "define": "CINEMACHINE_UNITY_IMGUI"
+    },
+    {
+      "name": "com.unity.inputsystem",
+      "expression": "1.0.0",
+      "define": "CINEMACHINE_UNITY_INPUTSYSTEM"
+    }
+  ],
+  "noEngineReferences": false,
+  "optionalUnityReferences": []
+}

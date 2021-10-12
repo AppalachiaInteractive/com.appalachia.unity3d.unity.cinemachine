@@ -5,6 +5,7 @@
 using UnityEngine;
 using UnityEditor;
 using System;
+using System.Linq;
 
 namespace Cinemachine.Editor
 {
@@ -227,8 +228,7 @@ namespace Cinemachine.Editor
             {
                 if (sCinemachineLogoTexture == null)
                     sCinemachineLogoTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(
-                        ScriptableObjectUtility.CinemachineRealativeInstallPath
-                            + "/Editor/EditorResources/cm_logo_sm.png");
+                        AssetDatabase.FindAssets("cm_logo_sm.png").FirstOrDefault());
                 if (sCinemachineLogoTexture != null)
                     sCinemachineLogoTexture.hideFlags = HideFlags.DontSaveInEditor;
                 return sCinemachineLogoTexture;
@@ -264,6 +264,7 @@ namespace Cinemachine.Editor
             if (CinemachineLogoTexture == null) 
             {
                 // After adding the CM to a project, we need to wait for one update cycle for the assets to load
+                EditorApplication.update -= OnPackageLoadedInEditor;
                 EditorApplication.update += OnPackageLoadedInEditor; 
             }
             else
