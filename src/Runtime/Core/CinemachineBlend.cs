@@ -31,21 +31,21 @@ namespace Cinemachine
         {
             get
             {
-                if (BlendCurve == null || BlendCurve.length < 2 || IsComplete)
+                if ((BlendCurve == null) || (BlendCurve.length < 2) || IsComplete)
                     return 1;
                 return Mathf.Clamp01(BlendCurve.Evaluate(TimeInBlend / Duration));
             }
         }
 
         /// <summary>Validity test for the blend.  True if either camera is defined.</summary>
-        public bool IsValid { get { return ((CamA != null && CamA.IsValid) || (CamB != null && CamB.IsValid)); } }
+        public bool IsValid { get { return (((CamA != null) && CamA.IsValid) || ((CamB != null) && CamB.IsValid)); } }
 
         /// <summary>Duration in seconds of the blend.</summary>
         public float Duration { get; set; }
 
         /// <summary>True if the time relative to the start of the blend is greater
         /// than or equal to the blend duration</summary>
-        public bool IsComplete { get { return TimeInBlend >= Duration || !IsValid; } }
+        public bool IsComplete { get { return (TimeInBlend >= Duration) || !IsValid; } }
 
         /// <summary>Text description of the blend, for debugging</summary>
         public string Description
@@ -53,7 +53,7 @@ namespace Cinemachine
             get
             {
                 var sb = CinemachineDebug.SBFromPool();
-                if (CamB == null || !CamB.IsValid)
+                if ((CamB == null) || !CamB.IsValid)
                     sb.Append("(none)");
                 else
                 {
@@ -64,7 +64,7 @@ namespace Cinemachine
                 sb.Append(" ");
                 sb.Append((int)(BlendWeight * 100f));
                 sb.Append("% from ");
-                if (CamA == null || !CamA.IsValid)
+                if ((CamA == null) || !CamA.IsValid)
                     sb.Append("(none)");
                 else
                 {
@@ -83,13 +83,13 @@ namespace Cinemachine
         /// <returns>True if the camera is involved in the blend</returns>
         public bool Uses(ICinemachineCamera cam)
         {
-            if (cam == CamA || cam == CamB)
+            if ((cam == CamA) || (cam == CamB))
                 return true;
             BlendSourceVirtualCamera b = CamA as BlendSourceVirtualCamera;
-            if (b != null && b.Blend.Uses(cam))
+            if ((b != null) && b.Blend.Uses(cam))
                 return true;
             b = CamB as BlendSourceVirtualCamera;
-            if (b != null && b.Blend.Uses(cam))
+            if ((b != null) && b.Blend.Uses(cam))
                 return true;
             return false;
         }
@@ -118,9 +118,9 @@ namespace Cinemachine
             // Make sure both cameras have been updated (they are not necessarily
             // enabled, and only enabled cameras get updated automatically
             // every frame)
-            if (CamA != null && CamA.IsValid)
+            if ((CamA != null) && CamA.IsValid)
                 CamA.UpdateCameraState(worldUp, deltaTime);
-            if (CamB != null && CamB.IsValid)
+            if ((CamB != null) && CamB.IsValid)
                 CamB.UpdateCameraState(worldUp, deltaTime);
         }
 
@@ -129,13 +129,13 @@ namespace Cinemachine
         {
             get
             {
-                if (CamA == null || !CamA.IsValid)
+                if ((CamA == null) || !CamA.IsValid)
                 {
-                    if (CamB == null || !CamB.IsValid)
+                    if ((CamB == null) || !CamB.IsValid)
                         return CameraState.Default;
                     return CamB.State;
                 }
-                if (CamB == null || !CamB.IsValid)
+                if ((CamB == null) || !CamB.IsValid)
                     return CamA.State;
                 return CameraState.Lerp(CamA.State, CamB.State, BlendWeight);
             }
@@ -168,7 +168,7 @@ namespace Cinemachine
             Linear,
             /// <summary>Custom blend curve.</summary>
             Custom
-        };
+        }
 
         /// <summary>The shape of the blend curve.</summary>
         [Tooltip("Shape of the blend curve")]
@@ -299,10 +299,10 @@ namespace Cinemachine
         public Transform Follow { get; set; }
         public CameraState State { get; private set; }
         public GameObject VirtualCameraGameObject { get { return null; } }
-        public bool IsValid { get { return Blend != null && Blend.IsValid; } }
+        public bool IsValid { get { return (Blend != null) && Blend.IsValid; } }
         public ICinemachineCamera ParentCamera { get { return null; } }
         public bool IsLiveChild(ICinemachineCamera vcam, bool dominantChildOnly = false)
-            { return Blend != null && (vcam == Blend.CamA || vcam == Blend.CamB); }
+            { return (Blend != null) && ((vcam == Blend.CamA) || (vcam == Blend.CamB)); }
         public CameraState CalculateNewState(float deltaTime) { return State; }
         public void UpdateCameraState(Vector3 worldUp, float deltaTime)
         {

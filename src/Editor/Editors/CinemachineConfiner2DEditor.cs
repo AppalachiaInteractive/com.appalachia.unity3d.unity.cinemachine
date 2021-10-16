@@ -3,7 +3,6 @@
 #endif
 
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEditor;
 
@@ -102,7 +101,7 @@ namespace Cinemachine.Editor
                 var progress = Target.BakeProgress();
                 EditorGUI.ProgressBar(EditorGUILayout.GetControlRect(), progress, 
                     timedOut ? "Timed out" : progress == 0 ? "" : progress < 1f ? "Baking" : "Baked");
-                if (progress > 0 && progress < 1 && Event.current.type == EventType.Repaint)
+                if ((progress > 0) && (progress < 1) && (Event.current.type == EventType.Repaint))
                     EditorUtility.SetDirty(target);
             }
             

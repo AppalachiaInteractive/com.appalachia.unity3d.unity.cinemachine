@@ -64,7 +64,7 @@ namespace Cinemachine.Editor
 
         static List<ScriptableObject> sNoisePresets;
         static GUIContent[] sNoisePresetNames;
-        static float sLastPresetRebuildTime = 0;
+        static float sLastPresetRebuildTime;
 
         public static void InvalidateProfileList()
         {
@@ -74,9 +74,9 @@ namespace Cinemachine.Editor
 
         static void RebuildProfileList()
         {
-            if (sLastPresetRebuildTime < Time.realtimeSinceStartup - 5)
+            if (sLastPresetRebuildTime < (Time.realtimeSinceStartup - 5))
                 InvalidateProfileList();
-            if (sNoisePresets != null && sNoisePresetNames != null)
+            if ((sNoisePresets != null) && (sNoisePresetNames != null))
                 return;
 
             sNoisePresets = FindAssetsByType<NoiseSettings>();

@@ -33,15 +33,15 @@ namespace Cinemachine.Editor
         {
             BeginInspector();
             bool needWarning = false;
-            for (int i = 0; !needWarning && i < targets.Length; ++i)
+            for (int i = 0; !needWarning && (i < targets.Length); ++i)
                 needWarning = (targets[i] as CinemachineTrackedDolly).m_Path == null;
             if (needWarning)
                 EditorGUILayout.HelpBox("A Path is required", MessageType.Warning);
 
             needWarning = false;
-            for (int i = 0; !needWarning && i < targets.Length; ++i)
+            for (int i = 0; !needWarning && (i < targets.Length); ++i)
                 needWarning = (targets[i] as CinemachineTrackedDolly).m_AutoDolly.m_Enabled 
-                    && (targets[i] as CinemachineTrackedDolly).FollowTarget == null;
+                    && ((targets[i] as CinemachineTrackedDolly).FollowTarget == null);
             if (needWarning)
                 EditorGUILayout.HelpBox("AutoDolly requires a Follow Target", MessageType.Warning);
 

@@ -44,8 +44,8 @@ namespace Cinemachine
             get { return m_OnValidateCalled ? m_ValidatingStreamVersion : CinemachineCore.kStreamingVersion; }
             private set { m_ValidatingStreamVersion = value; }
         }
-        private int m_ValidatingStreamVersion = 0;
-        private bool m_OnValidateCalled = false;
+        private int m_ValidatingStreamVersion;
+        private bool m_OnValidateCalled;
 
         [HideInInspector, SerializeField, NoSaveDuringPlay]
         private int m_StreamingVersion;
@@ -92,7 +92,7 @@ namespace Cinemachine
             /// <summary>Update the virtual camera occasionally, the exact frequency depends
             /// on how many other virtual cameras are in Standby</summary>
             RoundRobin
-        };
+        }
 
         /// <summary>When the virtual camera is not live, this is how often the virtual camera will
         /// be updated.  Set this to tune for performance. Most of the time Never is fine, unless
@@ -516,7 +516,7 @@ namespace Cinemachine
         /// </summary>
         internal virtual bool RequiresUserInput()
         {
-            return mExtensions != null && mExtensions.Any(extension => extension != null && extension.RequiresUserInput); 
+            return (mExtensions != null) && mExtensions.Any(extension => (extension != null) && extension.RequiresUserInput); 
         }
 
         /// <summary>
@@ -572,7 +572,7 @@ namespace Cinemachine
             var vcamComponents = GetComponents<CinemachineVirtualCameraBase>();
             for (int i = 0; i < vcamComponents.Length; ++i)
             {
-                if (vcamComponents[i].enabled && vcamComponents[i] != this)
+                if (vcamComponents[i].enabled && (vcamComponents[i] != this))
                 {
                     Debug.LogError(Name
                         + " has multiple CinemachineVirtualCameraBase-derived components.  Disabling "
@@ -598,8 +598,8 @@ namespace Cinemachine
             }
         }
 
-        private bool mSlaveStatusUpdated = false;
-        private CinemachineVirtualCameraBase m_parentVcam = null;
+        private bool mSlaveStatusUpdated;
+        private CinemachineVirtualCameraBase m_parentVcam;
 
         private void UpdateSlaveStatus()
         {
@@ -623,7 +623,7 @@ namespace Cinemachine
         public Transform ResolveLookAt(Transform localLookAt)
         {
             Transform lookAt = localLookAt;
-            if (lookAt == null && ParentCamera != null)
+            if ((lookAt == null) && (ParentCamera != null))
                 lookAt = ParentCamera.LookAt; // Parent provides default
             return lookAt;
         }
@@ -635,7 +635,7 @@ namespace Cinemachine
         public Transform ResolveFollow(Transform localFollow)
         {
             Transform follow = localFollow;
-            if (follow == null && ParentCamera != null)
+            if ((follow == null) && (ParentCamera != null))
                 follow = ParentCamera.Follow; // Parent provides default
             return follow;
         }
@@ -644,7 +644,7 @@ namespace Cinemachine
         private void UpdateVcamPoolStatus()
         {
             CinemachineCore.Instance.RemoveActiveCamera(this);
-            if (m_parentVcam == null && isActiveAndEnabled)
+            if ((m_parentVcam == null) && isActiveAndEnabled)
                 CinemachineCore.Instance.AddActiveCamera(this);
             m_QueuePriority = m_Priority;
         }
@@ -705,15 +705,15 @@ namespace Cinemachine
             CinemachineBlendDefinition blendDef,
             CinemachineBlend activeBlend)
         {
-            if (blendDef.BlendCurve == null || blendDef.BlendTime <= 0 || (camA == null && camB == null))
+            if ((blendDef.BlendCurve == null) || (blendDef.BlendTime <= 0) || ((camA == null) && (camB == null)))
                 return null;
             if (activeBlend != null)
             {
                 // Special case: if backing out of a blend-in-progress
                 // with the same blend in reverse, adjust the belnd time
-                if (activeBlend.CamA == camB
-                    && activeBlend.CamB == camA
-                    && activeBlend.Duration <= blendDef.BlendTime)
+                if ((activeBlend.CamA == camB)
+                    && (activeBlend.CamB == camA)
+                    && (activeBlend.Duration <= blendDef.BlendTime))
                 {
                     blendDef.m_Time = activeBlend.TimeInBlend;
                 }

@@ -45,7 +45,7 @@ public class CinemachineCameraOffset : CinemachineExtension
         if (stage == m_ApplyAfter)
         {
             bool preserveAim = m_PreserveComposition
-                && state.HasLookAt && stage > CinemachineCore.Stage.Body;
+                && state.HasLookAt && (stage > CinemachineCore.Stage.Body);
 
             Vector3 screenOffset = Vector2.zero;
             if (preserveAim)

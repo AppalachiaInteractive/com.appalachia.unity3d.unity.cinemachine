@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using Cinemachine.Utility;
-using UnityEditor;
 using UnityEngine;
 
 namespace Cinemachine
@@ -137,7 +136,7 @@ namespace Cinemachine
                 // Make sure we have a solution for our current frustum size
                 var extra = GetExtraState<VcamExtraState>(vcam);
                 extra.m_vcam = vcam;
-                if (confinerStateChanged || extra.m_BakedSolution == null 
+                if (confinerStateChanged || (extra.m_BakedSolution == null) 
                     || !extra.m_BakedSolution.IsValid(bakedSpaceFrustumHeight))
                 {
                     extra.m_BakedSolution = m_shapeCache.m_confinerOven.GetBakedSolution(bakedSpaceFrustumHeight);
@@ -155,13 +154,13 @@ namespace Cinemachine
                 var displacement = newCameraPos - oldCameraPos;
                 extra.m_PreviousDisplacement = displacement;
 
-                if (!VirtualCamera.PreviousStateIsValid || deltaTime < 0 || m_Damping <= 0)
+                if (!VirtualCamera.PreviousStateIsValid || (deltaTime < 0) || (m_Damping <= 0))
                     extra.m_DampedDisplacement = Vector3.zero;
                 else
                 {
                     // If a big change from previous frame's desired displacement is detected, 
                     // assume we are going around a corner and extract that difference for damping
-                    if (prev.sqrMagnitude > 0.01f && Vector2.Angle(prev, displacement) > k_cornerAngleTreshold)
+                    if ((prev.sqrMagnitude > 0.01f) && (Vector2.Angle(prev, displacement) > k_cornerAngleTreshold))
                         extra.m_DampedDisplacement += displacement - prev;
 
                     extra.m_DampedDisplacement -= Damper.Damp(extra.m_DampedDisplacement, m_Damping, deltaTime);
@@ -201,7 +200,7 @@ namespace Cinemachine
             public Vector3 m_DampedDisplacement;
             public ConfinerOven.BakedSolution m_BakedSolution;
             public CinemachineVirtualCameraBase m_vcam;
-        };
+        }
         
         private ShapeCache m_shapeCache; 
 
@@ -328,12 +327,12 @@ namespace Cinemachine
             
             private bool IsValid(in Collider2D boundingShape2D, in float aspectRatio, in float maxOrthoSize)
             {
-                return boundingShape2D != null && m_boundingShape2D != null && 
-                       m_boundingShape2D == boundingShape2D && // same boundingShape?
-                       m_OriginalPath != null && // first time?
-                       m_confinerOven != null && // cache not empty? 
-                       Mathf.Abs(m_aspectRatio - aspectRatio) < UnityVectorExtensions.Epsilon && // aspect changed?
-                       Mathf.Abs(m_maxWindowSize - maxOrthoSize) < UnityVectorExtensions.Epsilon; // max ortho changed?
+                return (boundingShape2D != null) && (m_boundingShape2D != null) && 
+                       (m_boundingShape2D == boundingShape2D) && // same boundingShape?
+                       (m_OriginalPath != null) && // first time?
+                       (m_confinerOven != null) && // cache not empty? 
+                       (Mathf.Abs(m_aspectRatio - aspectRatio) < UnityVectorExtensions.Epsilon) && // aspect changed?
+                       (Mathf.Abs(m_maxWindowSize - maxOrthoSize) < UnityVectorExtensions.Epsilon); // max ortho changed?
             }
 
             private void CalculateDeltaTransformationMatrix()
@@ -361,7 +360,7 @@ namespace Cinemachine
             for (int i = 0; i < allExtraStates.Count; ++i)
             {
                 var e = allExtraStates[i];
-                if (e.m_BakedSolution != null && CinemachineCore.Instance.IsLive(e.m_vcam))
+                if ((e.m_BakedSolution != null) && CinemachineCore.Instance.IsLive(e.m_vcam))
                 {
                     currentPath.AddRange(e.m_BakedSolution.GetBakedPath());
                 }
@@ -378,8 +377,8 @@ namespace Cinemachine
 
         internal bool ConfinerOvenTimedOut()
         {
-            return m_shapeCache.m_confinerOven != null 
-                && m_shapeCache.m_confinerOven.State == ConfinerOven.BakingState.TIMEOUT;
+            return (m_shapeCache.m_confinerOven != null) 
+                && (m_shapeCache.m_confinerOven.State == ConfinerOven.BakingState.TIMEOUT);
         }
     #endif
 

@@ -1,4 +1,3 @@
-using Cinemachine.Utility;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -18,12 +17,12 @@ namespace Cinemachine
         /// </summary>
         [Tooltip("How much time it takes for the aim to catch up to the target's rotation")]
         [FormerlySerializedAs("m_AngularDamping")]
-        public float m_Damping = 0;
+        public float m_Damping;
 
         Quaternion m_PreviousReferenceOrientation = Quaternion.identity;
 
         /// <summary>True if component is enabled and has a Follow target defined</summary>
-        public override bool IsValid { get { return enabled && FollowTarget != null; } }
+        public override bool IsValid { get { return enabled && (FollowTarget != null); } }
 
         /// <summary>Get the Cinemachine Pipeline stage that this component implements.
         /// Always returns the Aim stage</summary>

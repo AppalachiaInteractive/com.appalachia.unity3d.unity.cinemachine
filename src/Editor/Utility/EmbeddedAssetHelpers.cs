@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.VersionControl;
-using System;
 
 namespace Cinemachine.Editor
 {
@@ -49,8 +48,8 @@ namespace Cinemachine.Editor
         public GUIContent m_CreateButtonGUIContent;
 
         private string m_PropertyName;
-        private UnityEditor.Editor m_Editor = null;
-        private UnityEditor.Editor m_Owner = null;
+        private UnityEditor.Editor m_Editor;
+        private UnityEditor.Editor m_Owner;
 
         const int kIndentOffset = 3;
 
@@ -159,7 +158,7 @@ namespace Cinemachine.Editor
         public void UpdateEditor(SerializedProperty property)
         {
             var target = property.objectReferenceValue;
-            if (m_Editor != null && m_Editor.target != target)
+            if ((m_Editor != null) && (m_Editor.target != target))
                 DestroyEditor();
             if (target != null)
             {

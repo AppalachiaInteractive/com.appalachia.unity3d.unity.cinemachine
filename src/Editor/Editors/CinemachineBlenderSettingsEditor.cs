@@ -63,7 +63,7 @@ namespace Cinemachine.Editor
             vcams.Add(kNoneLabel);
             vcams.Add(CinemachineBlenderSettings.kBlendFromAnyCameraLabel);
             foreach (CinemachineVirtualCameraBase c in candidates)
-                if (c != null && !vcams.Contains(c.Name))
+                if ((c != null) && !vcams.Contains(c.Name))
                     vcams.Add(c.Name);
 
             mCameraCandidates = vcams.ToArray();
@@ -73,7 +73,7 @@ namespace Cinemachine.Editor
 
         private int GetCameraIndex(string name)
         {
-            if (name == null || mCameraIndexLookup == null)
+            if ((name == null) || (mCameraIndexLookup == null))
                 return 0;
             if (!mCameraIndexLookup.ContainsKey(name))
                 return 0;
@@ -111,7 +111,7 @@ namespace Cinemachine.Editor
             float floatFieldWidth = EditorGUIUtility.singleLineHeight * 2.5f;
             mBlendList.drawHeaderCallback = (Rect rect) =>
                 {
-                    rect.width -= (EditorGUIUtility.singleLineHeight + 2 * hSpace);
+                    rect.width -= (EditorGUIUtility.singleLineHeight + (2 * hSpace));
                     rect.width /= 3;
                     rect.x += EditorGUIUtility.singleLineHeight;
                     EditorGUI.LabelField(rect, "From");

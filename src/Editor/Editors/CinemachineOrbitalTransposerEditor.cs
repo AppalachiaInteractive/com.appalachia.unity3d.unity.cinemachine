@@ -79,7 +79,7 @@ namespace Cinemachine.Editor
         {
             BeginInspector();
             bool needWarning = false;
-            for (int i = 0; !needWarning && i < targets.Length; ++i)
+            for (int i = 0; !needWarning && (i < targets.Length); ++i)
                 needWarning = (targets[i] as CinemachineOrbitalTransposer).FollowTarget == null;
             if (needWarning)
                 EditorGUILayout.HelpBox(
@@ -122,7 +122,7 @@ namespace Cinemachine.Editor
                 Quaternion orient = target.GetReferenceOrientation(up);
                 up = orient * Vector3.up;
                 DrawCircleAtPointWithRadius
-                    (pos + up * target.m_FollowOffset.y, orient, target.m_FollowOffset.z);
+                    (pos + (up * target.m_FollowOffset.y), orient, target.m_FollowOffset.z);
 
                 Gizmos.color = originalGizmoColour;
             }
@@ -136,7 +136,7 @@ namespace Cinemachine.Editor
             const int kNumPoints = 25;
             Vector3 currPoint = Vector3.forward;
             Quaternion rot = Quaternion.AngleAxis(360f / (float)kNumPoints, Vector3.up);
-            for (int i = 0; i < kNumPoints + 1; ++i)
+            for (int i = 0; i < (kNumPoints + 1); ++i)
             {
                 Vector3 nextPoint = rot * currPoint;
                 Gizmos.DrawLine(currPoint, nextPoint);

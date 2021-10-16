@@ -48,8 +48,8 @@ namespace Cinemachine.Editor
             var mode = property.FindPropertyRelative(() => def.m_Definition);
             var value = (CinemachineOrbitalTransposer.Heading.HeadingDefinition)
                 (System.Enum.GetValues(typeof(CinemachineOrbitalTransposer.Heading.HeadingDefinition))).GetValue(mode.enumValueIndex);
-            return value == CinemachineOrbitalTransposer.Heading.HeadingDefinition.Velocity
-                || value == CinemachineOrbitalTransposer.Heading.HeadingDefinition.PositionDelta;
+            return (value == CinemachineOrbitalTransposer.Heading.HeadingDefinition.Velocity)
+                || (value == CinemachineOrbitalTransposer.Heading.HeadingDefinition.PositionDelta);
         }
     }
 }

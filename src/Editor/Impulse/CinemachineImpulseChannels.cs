@@ -12,8 +12,8 @@ namespace Cinemachine.Editor
     [Serializable]
     public class CinemachineImpulseChannels : ScriptableObject 
     {
-        static CinemachineImpulseChannels sInstance = null;
-        private static bool alreadySearched = false;
+        static CinemachineImpulseChannels sInstance;
+        private static bool alreadySearched;
 
         /// <summary>Get the singleton instance of this object, or null if it doesn't exist</summary>
         public static CinemachineImpulseChannels InstanceIfExists
@@ -24,7 +24,7 @@ namespace Cinemachine.Editor
                 {
                     alreadySearched = true;
                     var guids = AssetDatabase.FindAssets("t:CinemachineImpulseChannels");
-                    for (int i = 0; i < guids.Length && sInstance == null; ++i)
+                    for (int i = 0; (i < guids.Length) && (sInstance == null); ++i)
                         sInstance = AssetDatabase.LoadAssetAtPath<CinemachineImpulseChannels>(
                             AssetDatabase.GUIDToAssetPath(guids[i]));
                 }
@@ -64,7 +64,7 @@ namespace Cinemachine.Editor
         // Make sure it has at least one layer in it
         void EnsureDefaultLayer()
         {
-            if (ImpulseChannels == null || ImpulseChannels.Length == 0)
+            if ((ImpulseChannels == null) || (ImpulseChannels.Length == 0))
                 ImpulseChannels = new string[] { "default" };
         }
 

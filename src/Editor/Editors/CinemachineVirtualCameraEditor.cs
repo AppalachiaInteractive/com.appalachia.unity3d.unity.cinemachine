@@ -70,7 +70,7 @@ namespace Cinemachine.Editor
                         if (owner == null)
                             continue; // maybe it's a prefab
                         var c = vcam.GetCinemachineComponent(stage);
-                        if (c != null && c.GetType() == type)
+                        if ((c != null) && (c.GetType() == type))
                             continue;
                         if (c != null)
                         {
@@ -86,7 +86,7 @@ namespace Cinemachine.Editor
                 });
 
             // We only look at the first target here, on purpose
-            if (Target != null && Target.m_LockStageInInspector != null)
+            if ((Target != null) && (Target.m_LockStageInInspector != null))
                foreach (var s in Target.m_LockStageInInspector)
                     m_PipelineSet.SetStageIsLocked(s);
         }
@@ -102,8 +102,8 @@ namespace Cinemachine.Editor
         {
             if (!Target.UserIsDragging)
                 m_PreviousPosition = Target.transform.position;
-            if (Selection.Contains(Target.gameObject) && Tools.current == Tool.Move
-                && Event.current.type == EventType.MouseDrag)
+            if (Selection.Contains(Target.gameObject) && (Tools.current == Tool.Move)
+                && (Event.current.type == EventType.MouseDrag))
             {
                 // User might be dragging our position handle
                 Target.UserIsDragging = true;
@@ -114,7 +114,7 @@ namespace Cinemachine.Editor
                     m_PreviousPosition = Target.transform.position;
                 }
             }
-            else if (GUIUtility.hotControl == 0 && Target.UserIsDragging)
+            else if ((GUIUtility.hotControl == 0) && Target.UserIsDragging)
             {
                 // We're not dragging anything now, but we were
                 InspectorUtility.RepaintGameView();

@@ -18,7 +18,7 @@ namespace Cinemachine
             {
                 if (m_vcamOwner == null)
                     m_vcamOwner = GetComponent<CinemachineVirtualCameraBase>();
-                if (m_vcamOwner == null && transform.parent != null)
+                if ((m_vcamOwner == null) && (transform.parent != null))
                     m_vcamOwner = transform.parent.GetComponent<CinemachineVirtualCameraBase>();
                 return m_vcamOwner;
             }

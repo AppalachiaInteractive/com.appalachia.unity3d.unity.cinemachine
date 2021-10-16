@@ -30,7 +30,7 @@ namespace Cinemachine
             /// The Max Speed setting will be interpreted as a direct multiplier on the input value
             /// </summary>
             InputValueGain
-        };
+        }
 
         /// <summary>How to interpret the Max Speed setting.</summary>
         [Tooltip("How to interpret the Max Speed setting: in units/second, or as a "
@@ -227,12 +227,12 @@ namespace Cinemachine
 
                 // Decelerate to the end points of the range if not wrapping
                 float range = m_MaxValue - m_MinValue;
-                if (!m_Wrap && m_DecelTime > Epsilon && range > Epsilon)
+                if (!m_Wrap && (m_DecelTime > Epsilon) && (range > Epsilon))
                 {
                     float v0 = ClampValue(Value);
-                    float v = ClampValue(v0 + speed * deltaTime);
+                    float v = ClampValue(v0 + (speed * deltaTime));
                     float d = (speed > 0) ? m_MaxValue - v : v - m_MinValue;
-                    if (d < (0.1f * range) && Mathf.Abs(speed) > Epsilon)
+                    if ((d < (0.1f * range)) && (Mathf.Abs(speed) > Epsilon))
                         speed = Damper.Damp(v - v0, m_DecelTime, deltaTime) / deltaTime;
                 }
                 input = speed * deltaTime;
@@ -244,7 +244,7 @@ namespace Cinemachine
         float ClampValue(float v)
         {
             float r = m_MaxValue - m_MinValue;
-            if (m_Wrap && r > Epsilon)
+            if (m_Wrap && (r > Epsilon))
             {
                 v = (v - m_MinValue) % r;
                 v += m_MinValue + ((v < 0) ? r : 0);
@@ -257,9 +257,9 @@ namespace Cinemachine
             if (m_MaxSpeed > Epsilon)
             {
                 float targetSpeed = input * m_MaxSpeed;
-                if (Mathf.Abs(targetSpeed) < Epsilon
-                    || (Mathf.Sign(mCurrentSpeed) == Mathf.Sign(targetSpeed)
-                        && Mathf.Abs(targetSpeed) <  Mathf.Abs(mCurrentSpeed)))
+                if ((Mathf.Abs(targetSpeed) < Epsilon)
+                    || ((Mathf.Sign(mCurrentSpeed) == Mathf.Sign(targetSpeed))
+                        && (Mathf.Abs(targetSpeed) <  Mathf.Abs(mCurrentSpeed))))
                 {
                     // Need to decelerate
                     float a = Mathf.Abs(targetSpeed - mCurrentSpeed) / Mathf.Max(Epsilon, m_DecelTime);
@@ -271,8 +271,8 @@ namespace Cinemachine
                     // Accelerate to the target speed
                     float a = Mathf.Abs(targetSpeed - mCurrentSpeed) / Mathf.Max(Epsilon, m_AccelTime);
                     mCurrentSpeed += Mathf.Sign(targetSpeed) * a * deltaTime;
-                    if (Mathf.Sign(mCurrentSpeed) == Mathf.Sign(targetSpeed)
-                        && Mathf.Abs(mCurrentSpeed) > Mathf.Abs(targetSpeed))
+                    if ((Mathf.Sign(mCurrentSpeed) == Mathf.Sign(targetSpeed))
+                        && (Mathf.Abs(mCurrentSpeed) > Mathf.Abs(targetSpeed)))
                     {
                         mCurrentSpeed = targetSpeed;
                     }
@@ -308,15 +308,15 @@ namespace Cinemachine
         private float GetMaxSpeed()
         {
             float range = m_MaxValue - m_MinValue;
-            if (!m_Wrap && range > 0)
+            if (!m_Wrap && (range > 0))
             {
                 float threshold = range / 10f;
-                if (mCurrentSpeed > 0 && (m_MaxValue - Value) < threshold)
+                if ((mCurrentSpeed > 0) && ((m_MaxValue - Value) < threshold))
                 {
                     float t = (m_MaxValue - Value) / threshold;
                     return Mathf.Lerp(0, m_MaxSpeed, t);
                 }
-                else if (mCurrentSpeed < 0 && (Value - m_MinValue) < threshold)
+                else if ((mCurrentSpeed < 0) && ((Value - m_MinValue) < threshold))
                 {
                     float t = (Value - m_MinValue) / threshold;
                     return Mathf.Lerp(0, m_MaxSpeed, t);
@@ -406,7 +406,7 @@ namespace Cinemachine
             /// <param name="recenterTarget">The value that is considered to be centered</param>
             public void DoRecentering(ref AxisState axis, float deltaTime, float recenterTarget)
             {
-                if (!m_enabled && deltaTime >= 0)
+                if (!m_enabled && (deltaTime >= 0))
                     return;
 
                 recenterTarget = axis.ClampValue(recenterTarget);
@@ -428,7 +428,7 @@ namespace Cinemachine
 
                 // Determine the direction
                 float r = axis.m_MaxValue - axis.m_MinValue;
-                if (axis.m_Wrap && Mathf.Abs(delta) > r * 0.5f)
+                if (axis.m_Wrap && (Mathf.Abs(delta) > (r * 0.5f)))
                     v += Mathf.Sign(recenterTarget - v) * r;
 
                 // Damp our way there
@@ -446,7 +446,7 @@ namespace Cinemachine
             [SerializeField] [HideInInspector] [FormerlySerializedAs("m_VelocityFilterStrength")] private int m_LegacyVelocityFilterStrength;
             internal bool LegacyUpgrade(ref int heading, ref int velocityFilter)
             {
-                if (m_LegacyHeadingDefinition != -1 && m_LegacyVelocityFilterStrength != -1)
+                if ((m_LegacyHeadingDefinition != -1) && (m_LegacyVelocityFilterStrength != -1))
                 {
                     heading = m_LegacyHeadingDefinition;
                     velocityFilter = m_LegacyVelocityFilterStrength;

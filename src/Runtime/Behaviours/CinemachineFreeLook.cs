@@ -25,13 +25,13 @@ namespace Cinemachine
         [Tooltip("Object for the camera children to look at (the aim target).")]
         [NoSaveDuringPlay]
         [VcamTargetProperty]
-        public Transform m_LookAt = null;
+        public Transform m_LookAt;
 
         /// <summary>Object for the camera children wants to move with (the body target)</summary>
         [Tooltip("Object for the camera children wants to move with (the body target).")]
         [NoSaveDuringPlay]
         [VcamTargetProperty]
-        public Transform m_Follow = null;
+        public Transform m_Follow;
 
         /// <summary>If enabled, this lens setting will apply to all three child rigs, 
         /// otherwise the child rig lens settings will be used</summary>
@@ -128,7 +128,7 @@ namespace Cinemachine
         // Legacy support
         [SerializeField] [HideInInspector] [FormerlySerializedAs("m_HeadingBias")]
         private float m_LegacyHeadingBias = float.MaxValue;
-        bool mUseLegacyRigDefinitions = false;
+        bool mUseLegacyRigDefinitions;
 
         /// <summary>Enforce bounds for fields, when changed in inspector.</summary>
         protected override void OnValidate()
@@ -165,13 +165,13 @@ namespace Cinemachine
         public CinemachineVirtualCamera GetRig(int i)
         {
             UpdateRigCache();
-            return (i < 0 || i > 2) ? null : m_Rigs[i];
+            return ((i < 0) || (i > 2)) ? null : m_Rigs[i];
         }
 
         /// <summary>Names of the 3 child rigs</summary>
         public static string[] RigNames { get { return new string[] { "TopRig", "MiddleRig", "BottomRig" }; } }
 
-        bool mIsDestroyed = false;
+        bool mIsDestroyed;
 
         /// <summary>Updates the child rig cache</summary>
         protected override void OnEnable()
@@ -204,7 +204,7 @@ namespace Cinemachine
             // Make the rigs visible instead of destroying - this is to keep Undo happy
             if (m_Rigs != null)
                 foreach (var rig in m_Rigs)
-                    if (rig != null && rig.gameObject != null)
+                    if ((rig != null) && (rig.gameObject != null))
                         rig.gameObject.hideFlags
                             &= ~(HideFlags.HideInHierarchy | HideFlags.HideInInspector);
 
@@ -238,7 +238,7 @@ namespace Cinemachine
             set
             {
                 if (value == false)
-                    for (int i = 0; m_Rigs != null && i < m_Rigs.Length; ++i)
+                    for (int i = 0; (m_Rigs != null) && (i < m_Rigs.Length); ++i)
                         if (m_Rigs[i] != null)
                             m_Rigs[i].PreviousStateIsValid = value;
                 base.PreviousStateIsValid = value;
@@ -246,11 +246,11 @@ namespace Cinemachine
         }
 
         /// <summary>The cacmera state, which will be a blend of the child rig states</summary>
-        override public CameraState State { get { return m_State; } }
+        public override CameraState State { get { return m_State; } }
 
         /// <summary>Get the current LookAt target.  Returns parent's LookAt if parent
         /// is non-null and no specific LookAt defined for this camera</summary>
-        override public Transform LookAt
+        public override Transform LookAt
         {
             get { return ResolveLookAt(m_LookAt); }
             set { m_LookAt = value; }
@@ -258,7 +258,7 @@ namespace Cinemachine
 
         /// <summary>Get the current Follow target.  Returns parent's Follow if parent
         /// is non-null and no specific Follow defined for this camera</summary>
-        override public Transform Follow
+        public override Transform Follow
         {
             get { return ResolveFollow(m_Follow); }
             set { m_Follow = value; }
@@ -272,7 +272,7 @@ namespace Cinemachine
         public override bool IsLiveChild(ICinemachineCamera vcam, bool dominantChildOnly = false)
         {
             // Do not update the rig cache here or there will be infinite loop at creation time
-            if (m_Rigs == null || m_Rigs.Length != 3)
+            if ((m_Rigs == null) || (m_Rigs.Length != 3))
                 return false;
             var y = GetYAxisValue();
             if (dominantChildOnly)
@@ -282,7 +282,7 @@ namespace Cinemachine
                 if (vcam == (ICinemachineCamera)m_Rigs[2])
                     return y < 0.333;
                 if (vcam == (ICinemachineCamera)m_Rigs[1])
-                    return y >= 0.333f && y <= 0.666f;
+                    return (y >= 0.333f) && (y <= 0.666f);
                 return false;
             }
             if (vcam == (ICinemachineCamera)m_Rigs[1])
@@ -341,7 +341,7 @@ namespace Cinemachine
         /// and a blend calculated, depending on the value of the Y axis.</summary>
         /// <param name="worldUp">Default world Up, set by the CinemachineBrain</param>
         /// <param name="deltaTime">Delta time for time-based effects (ignore if less than 0)</param>
-        override public void InternalUpdateCameraState(Vector3 worldUp, float deltaTime)
+        public override void InternalUpdateCameraState(Vector3 worldUp, float deltaTime)
         {
             UpdateTargetCache();
             UpdateRigCache();
@@ -367,7 +367,7 @@ namespace Cinemachine
 
             // Set up for next frame
             bool activeCam = PreviousStateIsValid && CinemachineCore.Instance.IsLive(this);
-            if (activeCam && deltaTime >= 0)
+            if (activeCam && (deltaTime >= 0))
             {
                 if (m_YAxis.Update(deltaTime))
                     m_YAxisRecentering.CancelRecentering();
@@ -391,8 +391,8 @@ namespace Cinemachine
 //              m_YAxis.m_Recentering.DoRecentering(ref m_YAxis, -1, 0.5f);
 //            m_RecenterToTargetHeading.CancelRecentering();
 //            m_YAxis.m_Recentering.CancelRecentering();
-            if (fromCam != null && m_Transitions.m_InheritPosition 
-                && !CinemachineCore.Instance.IsLiveInBlend(this))
+            if ((fromCam != null) && m_Transitions.m_InheritPosition 
+                                  && !CinemachineCore.Instance.IsLiveInBlend(this))
             {
                 var cameraPos = fromCam.State.RawPosition;
 
@@ -483,7 +483,7 @@ namespace Cinemachine
             = new CinemachineVirtualCamera[3];
 
         void InvalidateRigCache() { mOrbitals = null; }
-        CinemachineOrbitalTransposer[] mOrbitals = null;
+        CinemachineOrbitalTransposer[] mOrbitals;
         CinemachineBlend mBlendA;
         CinemachineBlend mBlendB;
 
@@ -546,7 +546,7 @@ namespace Cinemachine
             for (int i = 0; i < RigNames.Length; ++i)
             {
                 CinemachineVirtualCamera src = null;
-                if (copyFrom != null && copyFrom.Length > i)
+                if ((copyFrom != null) && (copyFrom.Length > i))
                     src = copyFrom[i];
 
                 if (CreateRigOverride != null)
@@ -596,8 +596,8 @@ namespace Cinemachine
 
 #if UNITY_EDITOR
             // Special condition: Did we just get copy/pasted?
-            if (m_Rigs != null && m_Rigs.Length == 3
-                && m_Rigs[0] != null && m_Rigs[0].transform.parent != transform)
+            if ((m_Rigs != null) && (m_Rigs.Length == 3)
+                                 && (m_Rigs[0] != null) && (m_Rigs[0].transform.parent != transform))
             {
                 if (!isPrefab) // can't paste to a prefab
                 {
@@ -606,17 +606,17 @@ namespace Cinemachine
                     m_Rigs = CreateRigs(copyFrom);
                 }
             }
-            for (int i = 0; m_Rigs != null && i < 3 && i < m_Rigs.Length; ++i)
+            for (int i = 0; (m_Rigs != null) && (i < 3) && (i < m_Rigs.Length); ++i)
                 if (m_Rigs[i] != null)
                     CinemachineVirtualCamera.SetFlagsForHiddenChild(m_Rigs[i].gameObject);
 #endif
 
             // Early out if we're up to date
-            if (mOrbitals != null && mOrbitals.Length == 3)
+            if ((mOrbitals != null) && (mOrbitals.Length == 3))
                 return;
 
             // Locate existing rigs, and recreate them if any are missing
-            if (LocateExistingRigs(RigNames, false) != 3 && !isPrefab)
+            if ((LocateExistingRigs(RigNames, false) != 3) && !isPrefab)
             {
                 DestroyRigs();
                 m_Rigs = CreateRigs(null);
@@ -655,11 +655,11 @@ namespace Cinemachine
                     GameObject go = child.gameObject;
                     for (int i = 0; i < rigNames.Length; ++i)
                     {
-                        if (mOrbitals[i] == null && go.name == rigNames[i])
+                        if ((mOrbitals[i] == null) && (go.name == rigNames[i]))
                         {
                             // Must have an orbital transposer or it's no good
                             mOrbitals[i] = vcam.GetCinemachineComponent<CinemachineOrbitalTransposer>();
-                            if (mOrbitals[i] == null && forceOrbital)
+                            if ((mOrbitals[i] == null) && forceOrbital)
                                 mOrbitals[i] = vcam.AddCinemachineComponent<CinemachineOrbitalTransposer>();
                             if (mOrbitals[i] != null)
                             {
@@ -684,7 +684,7 @@ namespace Cinemachine
         {
             if (this == null)   
                 return 0; // deleted
-            if (mOrbitals != null && mOrbitals[1] == orbital)
+            if ((mOrbitals != null) && (mOrbitals[1] == orbital))
             {
                 var oldValue = m_XAxis.Value;
                 CachedXAxisHeading = orbital.UpdateHeading(
@@ -809,11 +809,11 @@ namespace Cinemachine
         Vector4[] m_CachedCtrl2;
         void UpdateCachedSpline()
         {
-            bool cacheIsValid = (m_CachedOrbits != null && m_CachedOrbits.Length == 3 
-                && m_CachedTension == m_SplineCurvature);
-            for (int i = 0; i < 3 && cacheIsValid; ++i)
-                cacheIsValid = (m_CachedOrbits[i].m_Height == m_Orbits[i].m_Height
-                    && m_CachedOrbits[i].m_Radius == m_Orbits[i].m_Radius);
+            bool cacheIsValid = ((m_CachedOrbits != null) && (m_CachedOrbits.Length == 3) 
+                                                          && (m_CachedTension == m_SplineCurvature));
+            for (int i = 0; (i < 3) && cacheIsValid; ++i)
+                cacheIsValid = ((m_CachedOrbits[i].m_Height == m_Orbits[i].m_Height)
+                    && (m_CachedOrbits[i].m_Radius == m_Orbits[i].m_Radius));
             if (!cacheIsValid)
             {
                 float t = m_SplineCurvature;

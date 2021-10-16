@@ -132,10 +132,10 @@ namespace Cinemachine
         public override CameraState State { get { return m_State; } }
 
         /// <summary>Not used</summary>
-        override public Transform LookAt { get; set; }
+        public override Transform LookAt { get; set; }
 
         /// <summary>Not used</summary>
-        override public Transform Follow { get; set; }
+        public override Transform Follow { get; set; }
 
         /// <summary>This is called to notify the vcam that a target got warped,
         /// so that the vcam can update its internal state to make the camera
@@ -191,9 +191,9 @@ namespace Cinemachine
         public override bool IsLiveChild(ICinemachineCamera vcam, bool dominantChildOnly = false)
         {
             CinemachineVirtualCameraBase[] children = ChildCameras;
-            for (int i = 0; i < MaxCameras && i < children.Length; ++i)
+            for (int i = 0; (i < MaxCameras) && (i < children.Length); ++i)
                 if ((ICinemachineCamera)children[i] == vcam)
-                    return GetWeight(i) > UnityVectorExtensions.Epsilon && children[i].isActiveAndEnabled;
+                    return (GetWeight(i) > UnityVectorExtensions.Epsilon) && children[i].isActiveAndEnabled;
             return false;
         }
 
@@ -250,10 +250,10 @@ namespace Cinemachine
             base.OnTransitionFromCamera(fromCam, worldUp, deltaTime);
             InvokeOnTransitionInExtensions(fromCam, worldUp, deltaTime);
             CinemachineVirtualCameraBase[] children = ChildCameras;
-            for (int i = 0; i < MaxCameras && i < children.Length; ++i)
+            for (int i = 0; (i < MaxCameras) && (i < children.Length); ++i)
             {
                 CinemachineVirtualCameraBase vcam = children[i];
-                if (vcam.isActiveAndEnabled && GetWeight(i) > UnityVectorExtensions.Epsilon)
+                if (vcam.isActiveAndEnabled && (GetWeight(i) > UnityVectorExtensions.Epsilon))
                     vcam.OnTransitionFromCamera(fromCam, worldUp, deltaTime);
             }
             InternalUpdateCameraState(worldUp, deltaTime);
@@ -271,7 +271,7 @@ namespace Cinemachine
             LiveChild = null;
             float highestWeight = 0;
             float totalWeight = 0;
-            for (int i = 0; i < MaxCameras && i < children.Length; ++i)
+            for (int i = 0; (i < MaxCameras) && (i < children.Length); ++i)
             {
                 CinemachineVirtualCameraBase vcam = children[i];
                 if (vcam.isActiveAndEnabled)

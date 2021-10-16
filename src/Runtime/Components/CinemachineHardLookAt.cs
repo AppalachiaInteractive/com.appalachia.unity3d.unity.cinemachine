@@ -12,7 +12,7 @@ namespace Cinemachine
     public class CinemachineHardLookAt : CinemachineComponentBase
     {
         /// <summary>True if component is enabled and has a LookAt defined</summary>
-        public override bool IsValid { get { return enabled && LookAtTarget != null; } }
+        public override bool IsValid { get { return enabled && (LookAtTarget != null); } }
 
         /// <summary>Get the Cinemachine Pipeline stage that this component implements.
         /// Always returns the Aim stage</summary>

@@ -25,7 +25,7 @@ namespace Cinemachine.Editor
                 excluded.Add(FieldPath(x => x.m_BiasY));
             }
             ICinemachineTargetGroup group = Target.AbstractFollowTargetGroup;
-            if (group == null || Target.m_GroupFramingMode == CinemachineFramingTransposer.FramingMode.None)
+            if ((@group == null) || (Target.m_GroupFramingMode == CinemachineFramingTransposer.FramingMode.None))
             {
                 excluded.Add(FieldPath(x => x.m_GroupFramingSize));
                 excluded.Add(FieldPath(x => x.m_AdjustmentMode));
@@ -107,7 +107,7 @@ namespace Cinemachine.Editor
         {
             BeginInspector();
             bool needWarning = false;
-            for (int i = 0; !needWarning && i < targets.Length; ++i)
+            for (int i = 0; !needWarning && (i < targets.Length); ++i)
                 needWarning = (targets[i] as CinemachineFramingTransposer).FollowTarget == null;
             if (needWarning)
                 EditorGUILayout.HelpBox(
@@ -144,7 +144,7 @@ namespace Cinemachine.Editor
         protected virtual void OnGUI()
         {
             // Draw the camera guides
-            if (Target == null || !CinemachineSettings.CinemachineCoreSettings.ShowInGameGuides)
+            if ((Target == null) || !CinemachineSettings.CinemachineCoreSettings.ShowInGameGuides)
                 return;
 
             // If inspector is collapsed in the vcam editor, don't draw the guides
@@ -152,16 +152,16 @@ namespace Cinemachine.Editor
                 return;
 
             CinemachineBrain brain = CinemachineCore.Instance.FindPotentialTargetBrain(Target.VirtualCamera);
-            if (brain == null || (brain.OutputCamera.activeTexture != null && CinemachineCore.Instance.BrainCount > 1))
+            if ((brain == null) || ((brain.OutputCamera.activeTexture != null) && (CinemachineCore.Instance.BrainCount > 1)))
                 return;
 
-            bool isLive = targets.Length <= 1 && brain.IsLive(Target.VirtualCamera, true);
+            bool isLive = (targets.Length <= 1) && brain.IsLive(Target.VirtualCamera, true);
 
             // Screen guides
             m_ScreenGuideEditor.OnGUI_DrawGuides(isLive, brain.OutputCamera, Target.VcamState.Lens, !Target.m_UnlimitedSoftZone);
 
             // Draw an on-screen gizmo for the target
-            if (Target.FollowTarget != null && isLive)
+            if ((Target.FollowTarget != null) && isLive)
             {
                 Vector3 targetScreenPosition = brain.OutputCamera.WorldToScreenPoint(Target.TrackedPoint);
                 if (targetScreenPosition.z > 0)
@@ -189,8 +189,8 @@ namespace Cinemachine.Editor
         private static void DrawGroupComposerGizmos(CinemachineFramingTransposer target, GizmoType selectionType)
         {
             // Show the group bounding box, as viewed from the camera position
-            if (target.AbstractFollowTargetGroup != null
-                && target.m_GroupFramingMode != CinemachineFramingTransposer.FramingMode.None)
+            if ((target.AbstractFollowTargetGroup != null)
+                && (target.m_GroupFramingMode != CinemachineFramingTransposer.FramingMode.None))
             {
                 Matrix4x4 m = Gizmos.matrix;
                 Bounds b = target.LastBounds;

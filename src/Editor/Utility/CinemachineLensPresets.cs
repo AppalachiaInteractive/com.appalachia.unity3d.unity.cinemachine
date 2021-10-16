@@ -24,8 +24,8 @@ namespace Cinemachine.Editor
     [Serializable]
     public sealed class CinemachineLensPresets : ScriptableObject
     {
-        private static CinemachineLensPresets sInstance = null;
-        private static bool alreadySearched = false;
+        private static CinemachineLensPresets sInstance;
+        private static bool alreadySearched;
 
         /// <summary>Get the singleton instance of this object, or null if it doesn't exist</summary>
         public static CinemachineLensPresets InstanceIfExists
@@ -36,7 +36,7 @@ namespace Cinemachine.Editor
                 {
                     alreadySearched = true;
                     var guids = AssetDatabase.FindAssets("t:CinemachineLensPresets");
-                    for (int i = 0; i < guids.Length && sInstance == null; ++i)
+                    for (int i = 0; (i < guids.Length) && (sInstance == null); ++i)
                         sInstance = AssetDatabase.LoadAssetAtPath<CinemachineLensPresets>(
                             AssetDatabase.GUIDToAssetPath(guids[i]));
                 }

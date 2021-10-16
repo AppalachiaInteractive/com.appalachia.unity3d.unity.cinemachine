@@ -18,9 +18,9 @@ namespace Cinemachine.Editor
 
         private static float mPreviewTime = 2;
         private static float mPreviewHeight = 5;
-        private float mNoiseOffsetBase = 0;
-        private float mNoiseOffset = 0;
-        private bool mAnimatedPreview = false;
+        private float mNoiseOffsetBase;
+        private float mNoiseOffset;
+        private bool mAnimatedPreview;
         GUIContent mAnimatedLabel = new GUIContent("Animated", "Animate the noise signal preview");
 
 
@@ -123,7 +123,7 @@ namespace Cinemachine.Editor
             serializedObject.ApplyModifiedProperties();
 
             // Make it live!
-            if (mAnimatedPreview && Event.current.type == EventType.Repaint)
+            if (mAnimatedPreview && (Event.current.type == EventType.Repaint))
             {
                 mNoiseOffset += Time.realtimeSinceStartup - mNoiseOffsetBase;
                 Repaint();
@@ -157,7 +157,7 @@ namespace Cinemachine.Editor
                 mSampleNoise.Clear(); 
                 for (int i = 0; i < numSamples; ++i)
                 {
-                    float t = (float)i / (numSamples - 1) * mPreviewTime + noiseOffset;
+                    float t = (((float)i / (numSamples - 1)) * mPreviewTime) + noiseOffset;
                     Vector3 p = NoiseSettings.GetCombinedFilterResults(signal, t, Vector3.zero);
                     mSampleNoise.Add(p);
                 }
@@ -170,9 +170,9 @@ namespace Cinemachine.Editor
                 {
                     float t = (float)i / (numSamples - 1);
                     Vector3 p = mSampleNoise[i];
-                    mSampleCurveX.Add(new Vector3(areaSize.x * t, halfHeight * Mathf.Clamp(-p.x / maxVal, -1, 1) + yOffset, 0));
-                    mSampleCurveY.Add(new Vector3(areaSize.x * t, halfHeight * Mathf.Clamp(-p.y / maxVal, -1, 1) + yOffset, 0));
-                    mSampleCurveZ.Add(new Vector3(areaSize.x * t, halfHeight * Mathf.Clamp(-p.z / maxVal, -1, 1) + yOffset, 0));
+                    mSampleCurveX.Add(new Vector3(areaSize.x * t, (halfHeight * Mathf.Clamp(-p.x / maxVal, -1, 1)) + yOffset, 0));
+                    mSampleCurveY.Add(new Vector3(areaSize.x * t, (halfHeight * Mathf.Clamp(-p.y / maxVal, -1, 1)) + yOffset, 0));
+                    mSampleCurveZ.Add(new Vector3(areaSize.x * t, (halfHeight * Mathf.Clamp(-p.z / maxVal, -1, 1)) + yOffset, 0));
                 }
             }
 
@@ -227,7 +227,7 @@ namespace Cinemachine.Editor
 
                     Rect r = rect;
                     EditorGUI.LabelField(r, list.mTitle);
-                    r.x = rect.x + rect.width - steadyLabelWidth; r.width = steadyLabelWidth;
+                    r.x = (rect.x + rect.width) - steadyLabelWidth; r.width = steadyLabelWidth;
                     EditorGUI.LabelField(r, steadyLabel);
                 };
 
@@ -259,9 +259,9 @@ namespace Cinemachine.Editor
                     // Can't just delete because the component arrays are connected
                     SerializedProperty p = l.serializedProperty.GetArrayElementAtIndex(l.index);
                     bool IsClear 
-                        =  (list.mChannel == 0 || IsClearComponent(p.FindPropertyRelative(() => tpDef.X)))
-                        && (list.mChannel == 1 || IsClearComponent(p.FindPropertyRelative(() => tpDef.Y)))
-                        && (list.mChannel == 2 || IsClearComponent(p.FindPropertyRelative(() => tpDef.Z)));
+                        =  ((list.mChannel == 0) || IsClearComponent(p.FindPropertyRelative(() => tpDef.X)))
+                        && ((list.mChannel == 1) || IsClearComponent(p.FindPropertyRelative(() => tpDef.Y)))
+                        && ((list.mChannel == 2) || IsClearComponent(p.FindPropertyRelative(() => tpDef.Z)));
                     if (IsClear)
                         l.serializedProperty.DeleteArrayElementAtIndex(l.index);
                     else switch (list.mChannel)
@@ -355,8 +355,8 @@ namespace Cinemachine.Editor
         // SerializedProperty is a NoiseSettings.NoiseParam
         bool IsClearComponent(SerializedProperty p)
         {
-            return p.FindPropertyRelative(() => npDef.Amplitude).floatValue == 0
-                && p.FindPropertyRelative(() => npDef.Frequency).floatValue == 0;
+            return (p.FindPropertyRelative(() => npDef.Amplitude).floatValue == 0)
+                && (p.FindPropertyRelative(() => npDef.Frequency).floatValue == 0);
         }
     }
 }

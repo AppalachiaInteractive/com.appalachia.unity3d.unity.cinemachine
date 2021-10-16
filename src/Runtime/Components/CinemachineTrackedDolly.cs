@@ -56,7 +56,7 @@ namespace Cinemachine
             + "the camera to keep the target's x-axis offset.  Larger numbers give a more heavy "
             + "slowly responding camera. Using different settings per axis can yield a wide range "
             + "of camera behaviors.")]
-        public float m_XDamping = 0f;
+        public float m_XDamping;
 
         /// <summary>How aggressively the camera tries to maintain the offset in the path-local up direction.
         /// Small numbers are more responsive, rapidly translating the camera to keep the target's
@@ -67,7 +67,7 @@ namespace Cinemachine
             + "Small numbers are more responsive, rapidly translating the camera to keep the target's "
             + "y-axis offset.  Larger numbers give a more heavy slowly responding camera. Using different "
             + "settings per axis can yield a wide range of camera behaviors.")]
-        public float m_YDamping = 0f;
+        public float m_YDamping;
 
         /// <summary>How aggressively the camera tries to maintain the offset parallel to the path.
         /// Small numbers are more responsive, rapidly translating the camera to keep the
@@ -94,7 +94,7 @@ namespace Cinemachine
             FollowTarget,
             /// <summary>Take the up vector from the Follow target's up vector, but with the roll zeroed out</summary>
             FollowTargetNoRoll,
-        };
+        }
 
         /// <summary>How to set the virtual camera's Up vector.  This will affect the screen composition.</summary>
         [Tooltip("How to set the virtual camera's Up vector.  This will affect the screen composition, because "
@@ -106,21 +106,21 @@ namespace Cinemachine
         [Range(0f, 20f)]
         [Tooltip("How aggressively the camera tries to track the target rotation's X angle.  Small numbers are "
             + "more responsive.  Larger numbers give a more heavy slowly responding camera.")]
-        public float m_PitchDamping = 0;
+        public float m_PitchDamping;
 
         /// <summary>How aggressively the camera tries to track the target rotation's Y angle.
         /// Small numbers are more responsive.  Larger numbers give a more heavy slowly responding camera.</summary>
         [Range(0f, 20f)]
         [Tooltip("How aggressively the camera tries to track the target rotation's Y angle.  Small numbers are "
             + "more responsive.  Larger numbers give a more heavy slowly responding camera.")]
-        public float m_YawDamping = 0;
+        public float m_YawDamping;
 
         /// <summary>How aggressively the camera tries to track the target rotation's Z angle.
         /// Small numbers are more responsive.  Larger numbers give a more heavy slowly responding camera.</summary>
         [Range(0f, 20f)]
         [Tooltip("How aggressively the camera tries to track the target rotation's Z angle.  Small numbers "
             + "are more responsive.  Larger numbers give a more heavy slowly responding camera.")]
-        public float m_RollDamping = 0f;
+        public float m_RollDamping;
 
         /// <summary>Controls how automatic dollying occurs</summary>
         [DocumentationSorting(DocumentationSortingAttribute.Level.UserRef)]
@@ -162,14 +162,14 @@ namespace Cinemachine
                 m_SearchRadius = searchRadius;
                 m_SearchResolution = stepsPerSegment;
             }
-        };
+        }
 
         /// <summary>Controls how automatic dollying occurs</summary>
         [Tooltip("Controls how automatic dollying occurs.  A Follow target is necessary to use this feature.")]
         public AutoDolly m_AutoDolly = new AutoDolly(false, 0, 2, 5);
 
         /// <summary>True if component is enabled and has a path</summary>
-        public override bool IsValid { get { return enabled && m_Path != null; } }
+        public override bool IsValid { get { return enabled && (m_Path != null); } }
 
         /// <summary>Get the Cinemachine Pipeline stage that this component implements.
         /// Always returns the Body stage</summary>
@@ -193,7 +193,7 @@ namespace Cinemachine
         public override void MutateCameraState(ref CameraState curState, float deltaTime)
         {
             // Init previous frame state info
-            if (deltaTime < 0 || !VirtualCamera.PreviousStateIsValid)
+            if ((deltaTime < 0) || !VirtualCamera.PreviousStateIsValid)
             {
                 m_PreviousPathPosition = m_PathPosition;
                 m_PreviousCameraPosition = curState.RawPosition;
@@ -204,14 +204,14 @@ namespace Cinemachine
                 return;
 
             // Get the new ideal path base position
-            if (m_AutoDolly.m_Enabled && FollowTarget != null)
+            if (m_AutoDolly.m_Enabled && (FollowTarget != null))
             {
                 float prevPos = m_Path.ToNativePathUnits(m_PreviousPathPosition, m_PositionUnits);
                 // This works in path units
                 m_PathPosition = m_Path.FindClosestPoint(
                     FollowTargetPosition,
                     Mathf.FloorToInt(prevPos),
-                    (deltaTime < 0 || m_AutoDolly.m_SearchRadius <= 0)
+                    ((deltaTime < 0) || (m_AutoDolly.m_SearchRadius <= 0))
                         ? -1 : m_AutoDolly.m_SearchRadius,
                     m_AutoDolly.m_SearchResolution);
                 m_PathPosition = m_Path.FromPathNativeUnits(m_PathPosition, m_PositionUnits);
@@ -221,7 +221,7 @@ namespace Cinemachine
             }
             float newPathPosition = m_PathPosition;
 
-            if (deltaTime >= 0 && VirtualCamera.PreviousStateIsValid)
+            if ((deltaTime >= 0) && VirtualCamera.PreviousStateIsValid)
             {
                 // Normalize previous position to find the shortest path
                 float maxUnit = m_Path.MaxUnit(m_PositionUnits);
@@ -229,7 +229,7 @@ namespace Cinemachine
                 {
                     float prev = m_Path.StandardizeUnit(m_PreviousPathPosition, m_PositionUnits);
                     float next = m_Path.StandardizeUnit(newPathPosition, m_PositionUnits);
-                    if (m_Path.Looped && Mathf.Abs(next - prev) > maxUnit / 2)
+                    if (m_Path.Looped && (Mathf.Abs(next - prev) > (maxUnit / 2)))
                     {
                         if (next > prev)
                             prev += maxUnit;
@@ -258,7 +258,7 @@ namespace Cinemachine
             newCameraPos += m_PathOffset.z * offsetZ;
 
             // Apply damping to the remaining directions
-            if (deltaTime >= 0 && VirtualCamera.PreviousStateIsValid)
+            if ((deltaTime >= 0) && VirtualCamera.PreviousStateIsValid)
             {
                 Vector3 currentCameraPos = m_PreviousCameraPosition;
                 Vector3 delta = (currentCameraPos - newCameraPos);
@@ -273,7 +273,7 @@ namespace Cinemachine
             // Set the orientation and up
             Quaternion newOrientation
                 = GetCameraOrientationAtPathPoint(newPathOrientation, curState.ReferenceUp);
-            if (deltaTime >= 0 && VirtualCamera.PreviousStateIsValid)
+            if ((deltaTime >= 0) && VirtualCamera.PreviousStateIsValid)
             {
                 Vector3 relative = (Quaternion.Inverse(m_PreviousOrientation)
                     * newOrientation).eulerAngles;
@@ -328,7 +328,7 @@ namespace Cinemachine
             }
         }
 
-        private float m_PreviousPathPosition = 0;
+        private float m_PreviousPathPosition;
         Quaternion m_PreviousOrientation = Quaternion.identity;
         private Vector3 m_PreviousCameraPosition = Vector3.zero;
     }

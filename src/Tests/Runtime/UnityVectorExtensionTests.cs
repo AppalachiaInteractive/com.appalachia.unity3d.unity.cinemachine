@@ -164,7 +164,7 @@ public class UnityVectorExtensionTests
 
     static bool AreApproximatelyEqual(Vector2 v1, Vector2 v2)
     {
-        return Mathf.Abs(v2.x - v1.x) < 1e-5f && Mathf.Abs(v2.y - v1.y) < 1e-5f;
+        return (Mathf.Abs(v2.x - v1.x) < 1e-5f) && (Mathf.Abs(v2.y - v1.y) < 1e-5f);
     }
 
     [Test]

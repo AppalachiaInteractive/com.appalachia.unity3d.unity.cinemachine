@@ -58,7 +58,7 @@ namespace Cinemachine.Editor
 
         public override void OnInspectorGUI()
         {
-            if (MyTarget.IsValid && MyTarget.AbstractLookAtTargetGroup == null)
+            if (MyTarget.IsValid && (MyTarget.AbstractLookAtTargetGroup == null))
                 EditorGUILayout.HelpBox(
                     "The Framing settings will be ignored because the LookAt target is not a kind of ICinemachineTargetGroup",
                     MessageType.Info);

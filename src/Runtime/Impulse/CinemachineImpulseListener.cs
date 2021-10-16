@@ -116,11 +116,11 @@ namespace Cinemachine
                 pos = Vector3.zero;
                 rot = Quaternion.identity;
                 var sqrMag = impulsePos.sqrMagnitude;
-                if (m_SecondaryNoise == null || (sqrMag < 0.001f && m_CurrentAmount < 0.0001f))
+                if ((m_SecondaryNoise == null) || ((sqrMag < 0.001f) && (m_CurrentAmount < 0.0001f)))
                     return false;
 
                 // Advance the current reaction time
-                if (TargetPositionCache.CacheMode == TargetPositionCache.Mode.Playback
+                if ((TargetPositionCache.CacheMode == TargetPositionCache.Mode.Playback)
                         && TargetPositionCache.HasCurrentTime)
                     m_CurrentTime = TargetPositionCache.CurrentTime * m_FrequencyGain;
                 else
@@ -169,7 +169,7 @@ namespace Cinemachine
             CinemachineVirtualCameraBase vcam,
             CinemachineCore.Stage stage, ref CameraState state, float deltaTime)
         {
-            if (stage == m_ApplyAfter && deltaTime >= 0)
+            if ((stage == m_ApplyAfter) && (deltaTime >= 0))
             {
                 bool haveImpulse = CinemachineImpulseManager.Instance.GetImpulseAt(
                     state.FinalPosition, m_Use2DDistance, m_ChannelMask, 

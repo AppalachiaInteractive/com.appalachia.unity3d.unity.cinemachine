@@ -71,7 +71,7 @@ namespace Cinemachine.Utility
         /// <returns>The component of the vector that lies in the plane</returns>
         public static Vector3 ProjectOntoPlane(this Vector3 vector, Vector3 planeNormal)
         {
-            return (vector - Vector3.Dot(vector, planeNormal) * planeNormal);
+            return (vector - (Vector3.Dot(vector, planeNormal) * planeNormal));
         }
         
         /// <summary>
@@ -120,13 +120,13 @@ namespace Cinemachine.Utility
                     // The lines are colinear.  Do the segments touch?
                     var dotPQ = Vector2.Dot(q, p);
 
-                    if (dotPQ > 0 && (p1 - q2).sqrMagnitude < 0.001f)
+                    if ((dotPQ > 0) && ((p1 - q2).sqrMagnitude < 0.001f))
                     {
                         // q points to start of p
                         intersection = q2;
                         return 4;
                     }
-                    if (dotPQ < 0 && (p2 - q2).sqrMagnitude < 0.001f)
+                    if ((dotPQ < 0) && ((p2 - q2).sqrMagnitude < 0.001f))
                     {
                         // p and q point at the same point
                         intersection = p2;
@@ -134,21 +134,21 @@ namespace Cinemachine.Utility
                     }
 
                     var dot = Vector2.Dot(pq, p);
-                    if (0 <= dot && dot <= Vector2.Dot(p, p))
+                    if ((0 <= dot) && (dot <= Vector2.Dot(p, p)))
                     {
                         if (dot < 0.0001f)
                         {
-                            if (dotPQ <= 0 && (p1 - q1).sqrMagnitude < 0.001f)
+                            if ((dotPQ <= 0) && ((p1 - q1).sqrMagnitude < 0.001f))
                                 intersection = p1; // p and q start at the same point and point away
                         }
-                        else if (dotPQ > 0 && (p2 - q1).sqrMagnitude < 0.001f)
+                        else if ((dotPQ > 0) && ((p2 - q1).sqrMagnitude < 0.001f))
                             intersection = p2; // p points at start of q
 
                         return 4;   // colinear segments touch
                     }
 
                     dot = Vector2.Dot(p1 - q1, q);
-                    if (0 <= dot && dot <= Vector2.Dot(q, q))
+                    if ((0 <= dot) && (dot <= Vector2.Dot(q, q)))
                         return 4;   // colinear segments overlap
 
                     return 3;   // colinear segments don't touch
@@ -157,10 +157,10 @@ namespace Cinemachine.Utility
             }
 
             var t = pq.Cross(q) / pXq;
-            intersection = p1 + t * p;
+            intersection = p1 + (t * p);
 
             var u = pq.Cross(p) / pXq;
-            if (0 <= t && t <= 1 && 0 <= u && u <= 1)
+            if ((0 <= t) && (t <= 1) && (0 <= u) && (u <= 1))
                 return 2;   // segments touch
 
             return 1;   // segments don't touch but lines intersect
@@ -205,7 +205,7 @@ namespace Cinemachine.Utility
         /// <returns>True, if the vector elements are the same. False, otherwise.</returns>
         public static bool IsUniform(this Vector3 v)
         {
-            return Math.Abs(v.x - v.y) < Epsilon && Math.Abs(v.x - v.z) < Epsilon;
+            return (Math.Abs(v.x - v.y) < Epsilon) && (Math.Abs(v.x - v.z) < Epsilon);
         }
 
         /// <summary>Is the vector within Epsilon of zero length?</summary>
@@ -273,7 +273,7 @@ namespace Cinemachine.Utility
         {
             float dA = vA.magnitude;
             float dB = vB.magnitude;
-            if (dA < Epsilon || dB < Epsilon)
+            if ((dA < Epsilon) || (dB < Epsilon))
                 return Vector3.Lerp(vA, vB, t);
 
             Vector3 dirA = vA / dA;
@@ -404,7 +404,7 @@ namespace Cinemachine.Utility
         {
             return new Rect(
                 r.xMin - delta.x, r.yMin - delta.y,
-                r.width + delta.x * 2, r.height + delta.y * 2);
+                r.width + (delta.x * 2), r.height + (delta.y * 2));
         }
     }
 }

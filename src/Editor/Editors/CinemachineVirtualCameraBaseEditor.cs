@@ -160,15 +160,15 @@ namespace Cinemachine.Editor
             + "if it does not have one, enabling the vcam to read input from Input Actions. "
             + "By default, a simple mouse XY input action is added.");
 
-        static InputActionReference s_InputActionReference = null;
+        static InputActionReference s_InputActionReference;
 
         void DrawInputProviderButtonInInspector()
         {
             bool needsButton = false;
-            for (int i = 0; !needsButton && i < targets.Length; ++i)
+            for (int i = 0; !needsButton && (i < targets.Length); ++i)
             {
                 var vcam = targets[i] as CinemachineVirtualCameraBase;
-                if (vcam.RequiresUserInput() && vcam.GetComponent<AxisState.IInputAxisProvider>() == null)
+                if (vcam.RequiresUserInput() && (vcam.GetComponent<AxisState.IInputAxisProvider>() == null))
                     needsButton = true;
             }
             if (!needsButton)
@@ -214,7 +214,7 @@ namespace Cinemachine.Editor
             EditorGUI.BeginChangeCheck();
             if (!IsPropertyExcluded(followTarget.name))
             {
-                if (Target.ParentCamera == null || Target.ParentCamera.Follow == null)
+                if ((Target.ParentCamera == null) || (Target.ParentCamera.Follow == null))
                     EditorGUILayout.PropertyField(followTarget);
                 else
                     EditorGUILayout.PropertyField(followTarget,
@@ -223,7 +223,7 @@ namespace Cinemachine.Editor
             }
             if (!IsPropertyExcluded(lookAtTarget.name))
             {
-                if (Target.ParentCamera == null || Target.ParentCamera.LookAt == null)
+                if ((Target.ParentCamera == null) || (Target.ParentCamera.LookAt == null))
                     EditorGUILayout.PropertyField(lookAtTarget);
                 else
                     EditorGUILayout.PropertyField(lookAtTarget,
@@ -253,7 +253,7 @@ namespace Cinemachine.Editor
                     for (int i = 0; i < targets.Length; i++)
                     {
                         var targetGO = (targets[i] as CinemachineVirtualCameraBase).gameObject;
-                        if (targetGO != null && targetGO.GetComponent(extType) == null)
+                        if ((targetGO != null) && (targetGO.GetComponent(extType) == null))
                             Undo.AddComponent(targetGO, extType);
                     }
                 }
@@ -419,13 +419,13 @@ namespace Cinemachine.Editor
 
             var options = new List<GUIContent>();
             CinemachineLensPresets presets = CinemachineLensPresets.InstanceIfExists;
-            for (int i = 0; presets != null && i < presets.m_Presets.Length; ++i)
+            for (int i = 0; (presets != null) && (i < presets.m_Presets.Length); ++i)
                 options.Add(new GUIContent(presets.m_Presets[i].m_Name));
             options.Add(EditPresetsLabel);
             m_PresetOptions = options.ToArray();
 
             options.Clear();
-            for (int i = 0; presets != null && i < presets.m_PhysicalPresets.Length; ++i)
+            for (int i = 0; (presets != null) && (i < presets.m_PhysicalPresets.Length); ++i)
                 options.Add(new GUIContent(presets.m_PhysicalPresets[i].m_Name));
             options.Add(EditPresetsLabel);
             m_PhysicalPresetOptions = options.ToArray();
@@ -448,7 +448,7 @@ namespace Cinemachine.Editor
 #if UNITY_2019_1_OR_NEWER
                 // This should really be a global setting, but for now there is no better way than this!
                 var p = new SerializedObject(camera).FindProperty("m_FOVAxisMode");
-                if (p != null && p.intValue == (int)Camera.FieldOfViewAxis.Horizontal)
+                if ((p != null) && (p.intValue == (int)Camera.FieldOfViewAxis.Horizontal))
                     UseHorizontalFOV = true;
 #endif
                 // It's possible that the lens isn't synched with its camera - fix that here
@@ -625,9 +625,9 @@ namespace Cinemachine.Editor
             int preset = (presets == null) ? -1 : presets.GetMatchingPreset(FOVProperty.floatValue);
             rect.x -= ExtraSpaceHackWTF(); rect.width += ExtraSpaceHackWTF();
             int selection = EditorGUI.Popup(rect, GUIContent.none, preset, m_PresetOptions);
-            if (selection == m_PresetOptions.Length-1 && CinemachineLensPresets.Instance != null)
+            if ((selection == (m_PresetOptions.Length-1)) && (CinemachineLensPresets.Instance != null))
                 Selection.activeObject = presets = CinemachineLensPresets.Instance;
-            else if (selection >= 0 && selection < m_PresetOptions.Length-1)
+            else if ((selection >= 0) && (selection < (m_PresetOptions.Length-1)))
             {
                 var vfov = presets.m_Presets[selection].m_FieldOfView;
                 FOVProperty.floatValue = vfov;
@@ -695,9 +695,9 @@ namespace Cinemachine.Editor
                 CameraExtensions.FieldOfViewToFocalLength(FOVProperty.floatValue, SensorSize.y));
             rect.x -= ExtraSpaceHackWTF(); rect.width += ExtraSpaceHackWTF();
             int selection = EditorGUI.Popup(rect, GUIContent.none, preset, m_PhysicalPresetOptions);
-            if (selection == m_PhysicalPresetOptions.Length-1 && CinemachineLensPresets.Instance != null)
+            if ((selection == (m_PhysicalPresetOptions.Length-1)) && (CinemachineLensPresets.Instance != null))
                 Selection.activeObject = presets = CinemachineLensPresets.Instance;
-            else if (selection >= 0 && selection < m_PhysicalPresetOptions.Length-1)
+            else if ((selection >= 0) && (selection < (m_PhysicalPresetOptions.Length-1)))
             {
                 FOVProperty.floatValue = CameraExtensions.FocalLengthToFieldOfView(
                     presets.m_PhysicalPresets[selection].m_FocalLength, SensorSize.y);

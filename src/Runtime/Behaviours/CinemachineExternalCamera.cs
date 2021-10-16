@@ -21,7 +21,7 @@ namespace Cinemachine
             + "quality of the blends to and from this camera")]
         [NoSaveDuringPlay]
         [VcamTargetProperty]
-        public Transform m_LookAt = null;
+        public Transform m_LookAt;
 
         private Camera m_Camera;
         private CameraState m_State = CameraState.Default;
@@ -30,14 +30,14 @@ namespace Cinemachine
         public override CameraState State { get { return m_State; } }
 
         /// <summary>The object that the camera is looking at</summary>
-        override public Transform LookAt 
+        public override Transform LookAt 
         {
             get { return m_LookAt; }
             set { m_LookAt = value; }
         }
 
         /// <summary>This vcam defines no targets</summary>
-        override public Transform Follow { get; set; }
+        public override Transform Follow { get; set; }
 
         /// <summary>Hint for blending positions to and from this virtual camera</summary>
         [Tooltip("Hint for blending positions to and from this virtual camera")]

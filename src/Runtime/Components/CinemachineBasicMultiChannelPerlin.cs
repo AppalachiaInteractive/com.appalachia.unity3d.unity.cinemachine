@@ -48,7 +48,7 @@ namespace Cinemachine
         public float m_FrequencyGain = 1f;
 
         /// <summary>True if the component is valid, i.e. it has a noise definition and is enabled.</summary>
-        public override bool IsValid { get { return enabled && m_NoiseProfile != null; } }
+        public override bool IsValid { get { return enabled && (m_NoiseProfile != null); } }
 
         /// <summary>Get the Cinemachine Pipeline stage that this component implements.
         /// Always returns the Noise stage</summary>
@@ -61,7 +61,7 @@ namespace Cinemachine
         /// Noise is only applied if this value is greater than or equal to 0</param>
         public override void MutateCameraState(ref CameraState curState, float deltaTime)
         {
-            if (!IsValid || deltaTime < 0)
+            if (!IsValid || (deltaTime < 0))
             {
                 mInitialized = false;
                 return;
@@ -70,7 +70,7 @@ namespace Cinemachine
             if (!mInitialized)
                 Initialize();
 
-            if (TargetPositionCache.CacheMode == TargetPositionCache.Mode.Playback
+            if ((TargetPositionCache.CacheMode == TargetPositionCache.Mode.Playback)
                     && TargetPositionCache.HasCurrentTime)
                 mNoiseTime = TargetPositionCache.CurrentTime * m_FrequencyGain;
             else
@@ -89,8 +89,8 @@ namespace Cinemachine
             curState.OrientationCorrection = curState.OrientationCorrection * rotNoise;
         }
 
-        private bool mInitialized = false;
-        private float mNoiseTime = 0;
+        private bool mInitialized;
+        private float mNoiseTime;
 
         [SerializeField][HideInInspector]
         private Vector3 mNoiseOffsets = Vector3.zero;

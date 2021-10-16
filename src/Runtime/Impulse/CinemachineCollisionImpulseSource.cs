@@ -40,15 +40,15 @@ namespace Cinemachine
         /// <summary>If checked, signal direction will be affected by the direction of impact</summary>
         [Header("How To Generate The Impulse")]
         [Tooltip("If checked, signal direction will be affected by the direction of impact")]
-        public bool m_UseImpactDirection = false;
+        public bool m_UseImpactDirection;
 
         /// <summary>If checked, signal amplitude will be multiplied by the mass of the impacting object</summary>
         [Tooltip("If checked, signal amplitude will be multiplied by the mass of the impacting object")]
-        public bool m_ScaleImpactWithMass = false;
+        public bool m_ScaleImpactWithMass;
 
         /// <summary>If checked, signal amplitude will be multiplied by the speed of the impacting object</summary>
         [Tooltip("If checked, signal amplitude will be multiplied by the speed of the impacting object")]
-        public bool m_ScaleImpactWithSpeed = false;
+        public bool m_ScaleImpactWithSpeed;
 
 #if CINEMACHINE_PHYSICS
         Rigidbody mRigidBody;
@@ -116,7 +116,7 @@ namespace Cinemachine
                 int layer = other.gameObject.layer;
                 if (((1 << layer) & m_LayerMask) == 0)
                     return;
-                if (m_IgnoreTag.Length != 0 && other.CompareTag(m_IgnoreTag))
+                if ((m_IgnoreTag.Length != 0) && other.CompareTag(m_IgnoreTag))
                     return;
             }
 
@@ -184,7 +184,7 @@ namespace Cinemachine
                 int layer = other2d.gameObject.layer;
                 if (((1 << layer) & m_LayerMask) == 0)
                     return;
-                if (m_IgnoreTag.Length != 0 && other2d.CompareTag(m_IgnoreTag))
+                if ((m_IgnoreTag.Length != 0) && other2d.CompareTag(m_IgnoreTag))
                     return;
             }
 

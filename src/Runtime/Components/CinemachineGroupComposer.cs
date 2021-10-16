@@ -32,7 +32,7 @@ namespace Cinemachine
             Vertical,
             /// <summary>The larger of the horizontal and vertical dimensions will dominate, to get the best fit.</summary>
             HorizontalAndVertical
-        };
+        }
 
         /// <summary>What screen dimensions to consider when framing</summary>
         [Tooltip("What screen dimensions to consider when framing.  Can be Horizontal, Vertical, or both")]
@@ -54,7 +54,7 @@ namespace Cinemachine
             /// <summary>Move the camera as much as permitted by the ranges, then
             /// adjust the FOV if necessary to make the shot.</summary>
             DollyThenZoom
-        };
+        }
 
         /// <summary>How to adjust the camera to get the desired framing</summary>
         [Tooltip("How to adjust the camera to get the desired framing.  You can zoom, dolly in/out, or do both.")]
@@ -148,7 +148,7 @@ namespace Cinemachine
             }
 
             bool isOrthographic = curState.Lens.Orthographic;
-            bool canMoveCamera = !isOrthographic && m_AdjustmentMode != AdjustmentMode.ZoomOnly;
+            bool canMoveCamera = !isOrthographic && (m_AdjustmentMode != AdjustmentMode.ZoomOnly);
 
             // Get the bounding box from camera's POV in view space
             Vector3 up = curState.ReferenceUp;
@@ -181,7 +181,7 @@ namespace Cinemachine
                 b = GetScreenSpaceGroupBoundingBox(group, LastBoundsMatrix, out fwd);
                 LastBoundsMatrix = Matrix4x4.TRS(cameraPos, Quaternion.LookRotation(fwd, up), Vector3.one);
                 LastBounds = b;
-                groupCenter = cameraPos + fwd * b.center.z;
+                groupCenter = cameraPos + (fwd * b.center.z);
                 fwd = (groupCenter - cameraPos).normalized;
             }
 
@@ -194,7 +194,7 @@ namespace Cinemachine
                 targetHeight = Mathf.Clamp(targetHeight / 2, m_MinimumOrthoSize, m_MaximumOrthoSize);
 
                 // ApplyDamping
-                if (deltaTime >= 0 && VirtualCamera.PreviousStateIsValid)
+                if ((deltaTime >= 0) && VirtualCamera.PreviousStateIsValid)
                     targetHeight = m_prevFOV + VirtualCamera.DetachedLookAtTargetDamp(
                         targetHeight - m_prevFOV, m_FrameDamping, deltaTime);
                 m_prevFOV = targetHeight;
@@ -216,7 +216,7 @@ namespace Cinemachine
                     // What distance from near edge would be needed to get the adjusted
                     // target height, at the current FOV
                     float targetDistance = boundsDepth
-                        + targetHeight / (2f * Mathf.Tan(curState.Lens.FieldOfView * Mathf.Deg2Rad / 2f));
+                        + (targetHeight / (2f * Mathf.Tan((curState.Lens.FieldOfView * Mathf.Deg2Rad) / 2f)));
 
                     // Clamp to respect min/max distance settings to the near surface of the bounds
                     targetDistance = Mathf.Clamp(
@@ -227,7 +227,7 @@ namespace Cinemachine
                     targetDelta = Mathf.Clamp(targetDelta, -m_MaxDollyIn, m_MaxDollyOut);
 
                     // ApplyDamping
-                    if (deltaTime >= 0 && VirtualCamera.PreviousStateIsValid)
+                    if ((deltaTime >= 0) && VirtualCamera.PreviousStateIsValid)
                     {
                         float delta = targetDelta - m_prevFramingDistance;
                         delta = VirtualCamera.DetachedLookAtTargetDamp(delta, m_FrameDamping, deltaTime);
@@ -248,7 +248,7 @@ namespace Cinemachine
                     targetFOV = Mathf.Clamp(targetFOV, m_MinimumFOV, m_MaximumFOV);
 
                     // ApplyDamping
-                    if (deltaTime >= 0 && m_prevFOV != 0 && VirtualCamera.PreviousStateIsValid)
+                    if ((deltaTime >= 0) && (m_prevFOV != 0) && VirtualCamera.PreviousStateIsValid)
                         targetFOV = m_prevFOV + VirtualCamera.DetachedLookAtTargetDamp(
                             targetFOV - m_prevFOV, m_FrameDamping, deltaTime);
                     m_prevFOV = targetFOV;

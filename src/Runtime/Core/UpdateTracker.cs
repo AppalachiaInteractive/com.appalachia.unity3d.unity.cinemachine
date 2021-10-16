@@ -53,14 +53,14 @@ namespace Cinemachine
                 lastPos = pos;
 
                 UpdateClock choice;
-                if (numWindowFixedUpdateMoves > 3 && numWindowLateUpdateMoves < numWindowFixedUpdateMoves / 3)
+                if ((numWindowFixedUpdateMoves > 3) && (numWindowLateUpdateMoves < (numWindowFixedUpdateMoves / 3)))
                     choice = UpdateClock.Fixed;
                 else
                     choice =  UpdateClock.Late;
                 if (numWindows == 0)
                     PreferredUpdate = choice;
  
-                if (windowStart + kWindowSize <= currentFrame)
+                if ((windowStart + kWindowSize) <= currentFrame)
                 {
 #if DEBUG_LOG_NAME
                     Debug.Log(name + ": Window " + numWindows + ": Late=" + numWindowLateUpdateMoves + ", Fixed=" + numWindowFixedUpdateMoves);
@@ -100,7 +100,7 @@ namespace Cinemachine
 
         public static UpdateClock GetPreferredUpdate(Transform target)
         {
-            if (Application.isPlaying && target != null)
+            if (Application.isPlaying && (target != null))
             {
                 UpdateStatus status;
                 if (mUpdateStatus.TryGetValue(target, out status))

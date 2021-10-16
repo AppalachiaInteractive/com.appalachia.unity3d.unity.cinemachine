@@ -45,9 +45,9 @@ namespace Cinemachine
             /// <summary>Post-correction stage.  This is invoked on all virtual camera
             /// types, after the pipeline is complete</summary>
             Finalize
-        };
+        }
 
-        private static CinemachineCore sInstance = null;
+        private static CinemachineCore sInstance;
 
         /// <summary>Get the singleton instance</summary>
         public static CinemachineCore Instance
@@ -173,7 +173,7 @@ namespace Cinemachine
         /// <returns>The virtual camera at the specified index</returns>
         public CinemachineVirtualCameraBase GetVirtualCamera(int index)
         {
-            if (!m_ActiveCamerasAreSorted && mActiveCameras.Count > 1)
+            if (!m_ActiveCamerasAreSorted && (mActiveCameras.Count > 1))
             {
                 mActiveCameras.Sort((x, y) => 
                     x.Priority == y.Priority ? y.m_ActivationId - x.m_ActivationId : y.Priority - x.Priority);
@@ -203,7 +203,7 @@ namespace Cinemachine
         {
             if (mActiveCameras.Contains(vcam))
                 mActiveCameras.Remove(vcam);
-            if (mUpdateStatus != null && mUpdateStatus.ContainsKey(vcam))
+            if ((mUpdateStatus != null) && mUpdateStatus.ContainsKey(vcam))
                 mUpdateStatus.Remove(vcam);
         }
 
@@ -231,7 +231,7 @@ namespace Cinemachine
                 mRoundRobinVcamLastFrame = null;
         }
 
-        CinemachineVirtualCameraBase mRoundRobinVcamLastFrame = null;
+        CinemachineVirtualCameraBase mRoundRobinVcamLastFrame;
 
         static float mLastUpdateTime;
         static int FixedFrameCount { get; set; } // Current fixed frame count
@@ -260,24 +260,24 @@ namespace Cinemachine
                 for (int j = sublist.Count - 1; j >= 0; --j)
                 {
                     var vcam = sublist[j];
-                    if (canUpdateStandby && vcam == mRoundRobinVcamLastFrame)
+                    if (canUpdateStandby && (vcam == mRoundRobinVcamLastFrame))
                         currentRoundRobin = null; // update the next roundrobin candidate
                     if (vcam == null)
                     {
                         sublist.RemoveAt(j);
                         continue; // deleted
                     }
-                    if (vcam.m_StandbyUpdate == CinemachineVirtualCameraBase.StandbyUpdateMode.Always
+                    if ((vcam.m_StandbyUpdate == CinemachineVirtualCameraBase.StandbyUpdateMode.Always)
                         || IsLive(vcam))
                     {
                         // Skip this vcam if it's not on the layer mask
                         if (((1 << vcam.gameObject.layer) & layerMask) != 0)
                             UpdateVirtualCamera(vcam, worldUp, deltaTime);
                     }
-                    else if (currentRoundRobin == null
-                        && mRoundRobinVcamLastFrame != vcam
+                    else if ((currentRoundRobin == null)
+                        && (mRoundRobinVcamLastFrame != vcam)
                         && canUpdateStandby
-                        && vcam.m_StandbyUpdate != CinemachineVirtualCameraBase.StandbyUpdateMode.Never
+                        && (vcam.m_StandbyUpdate != CinemachineVirtualCameraBase.StandbyUpdateMode.Never)
                         && vcam.isActiveAndEnabled)
                     {
                         // Do the round-robin update
@@ -344,8 +344,8 @@ namespace Cinemachine
                 : FixedFrameCount - status.lastUpdateFixedFrame;
             if (deltaTime >= 0)
             {
-                if (frameDelta == 0 && status.lastUpdateMode == updateClock
-                        && status.lastUpdateDeltaTime == deltaTime)
+                if ((frameDelta == 0) && (status.lastUpdateMode == updateClock)
+                                      && (status.lastUpdateDeltaTime == deltaTime))
                     return; // already updated
                 if (frameDelta > 0)
                     deltaTime *= frameDelta; // try to catch up if multiple frames
@@ -387,7 +387,7 @@ namespace Cinemachine
 
         private static Transform GetUpdateTarget(CinemachineVirtualCameraBase vcam)
         {
-            if (vcam == null || vcam.gameObject == null)
+            if ((vcam == null) || (vcam.gameObject == null))
                 return null;
             Transform target = vcam.LookAt;
             if (target != null)
@@ -403,7 +403,7 @@ namespace Cinemachine
         internal UpdateTracker.UpdateClock GetVcamUpdateStatus(CinemachineVirtualCameraBase vcam)
         {
             UpdateStatus status;
-            if (mUpdateStatus == null || !mUpdateStatus.TryGetValue(vcam, out status))
+            if ((mUpdateStatus == null) || !mUpdateStatus.TryGetValue(vcam, out status))
                 return UpdateTracker.UpdateClock.Late;
             return status.lastUpdateMode;
         }
@@ -420,7 +420,7 @@ namespace Cinemachine
                 for (int i = 0; i < BrainCount; ++i)
                 {
                     CinemachineBrain b = GetActiveBrain(i);
-                    if (b != null && b.IsLive(vcam))
+                    if ((b != null) && b.IsLive(vcam))
                         return true;
                 }
             }
@@ -440,7 +440,7 @@ namespace Cinemachine
                 for (int i = 0; i < BrainCount; ++i)
                 {
                     CinemachineBrain b = GetActiveBrain(i);
-                    if (b != null && b.IsLiveInBlend(vcam))
+                    if ((b != null) && b.IsLiveInBlend(vcam))
                         return true;
                 }
             }
@@ -461,7 +461,7 @@ namespace Cinemachine
                 for (int i = 0; i < BrainCount; ++i)
                 {
                     CinemachineBrain b = GetActiveBrain(i);
-                    if (b != null && b.IsLive(vcam))
+                    if ((b != null) && b.IsLive(vcam))
                         b.m_CameraActivatedEvent.Invoke(vcam, vcamFrom);
                 }
             }
@@ -479,7 +479,7 @@ namespace Cinemachine
                 for (int i = 0; i < BrainCount; ++i)
                 {
                     CinemachineBrain b = GetActiveBrain(i);
-                    if (b != null && b.IsLive(vcam))
+                    if ((b != null) && b.IsLive(vcam))
                     {
                         if (b.m_CameraCutEvent != null)
                             b.m_CameraCutEvent.Invoke(b);
@@ -510,14 +510,14 @@ namespace Cinemachine
                 for (int i = 0; i < numBrains; ++i)
                 {
                     CinemachineBrain b = GetActiveBrain(i);
-                    if (b != null && b.OutputCamera != null && b.IsLive(vcam))
+                    if ((b != null) && (b.OutputCamera != null) && b.IsLive(vcam))
                         return b;
                 }
                 int layer = 1 << vcam.gameObject.layer;
                 for (int i = 0; i < numBrains; ++i)
                 {
                     CinemachineBrain b = GetActiveBrain(i);
-                    if (b != null && b.OutputCamera != null && (b.OutputCamera.cullingMask & layer) != 0)
+                    if ((b != null) && (b.OutputCamera != null) && ((b.OutputCamera.cullingMask & layer) != 0))
                         return b;
                 }
             }

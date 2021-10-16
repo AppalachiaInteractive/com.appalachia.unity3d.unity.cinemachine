@@ -15,7 +15,7 @@ using System.Collections.Generic;
     {
         public delegate PlayableDirector MasterDirectorDelegate();
 
-        static public MasterDirectorDelegate GetMasterPlayableDirector;
+        public static MasterDirectorDelegate GetMasterPlayableDirector;
 
         // The brain that this track controls
         private CinemachineBrain mBrain;
@@ -51,7 +51,7 @@ using System.Collections.Generic;
 
                     var clip = (ScriptPlayable<CinemachineShotPlayable>)playable.GetInput(i);
                     CinemachineShotPlayable shot = clip.GetBehaviour();
-                    if (shot != null && shot.IsValid)
+                    if ((shot != null) && shot.IsValid)
                     {
                         var mainVcam = shot.VirtualCamera;
                         cs.Cameras.Add(new List<CinemachineVirtualCameraBase>());
@@ -65,7 +65,7 @@ using System.Collections.Generic;
 
                             int nestLevel = 0;
                             for (ICinemachineCamera p = vcam.ParentCamera; 
-                                    p != null && p != (ICinemachineCamera)mainVcam; p = p.ParentCamera)
+                                    (p != null) && (p != (ICinemachineCamera)mainVcam); p = p.ParentCamera)
                             {
                                 ++nestLevel;
                             }
@@ -112,10 +112,10 @@ using System.Collections.Generic;
                 var numSteps = Mathf.FloorToInt((endTime - startTime) / stepSize);
                 for (int step = numSteps; step >= 0; --step)
                 {
-                    var t = Mathf.Max(startTime, endTime - step * stepSize);
+                    var t = Mathf.Max(startTime, endTime - (step * stepSize));
                     TargetPositionCache.CurrentTime = t;
                     var deltaTime = (step == numSteps) ? -1 
-                        : (t - startTime < stepSize ? t - startTime : stepSize);
+                        : ((t - startTime) < stepSize ? t - startTime : stepSize);
 
                     // Update all relevant vcams, leaf-most first
                     for (int i = cs.Cameras.Count - 1; i >= 0; --i)
@@ -165,7 +165,7 @@ using System.Collections.Generic;
                 if (GetMasterPlayableDirector != null)
                 {
                     var d = GetMasterPlayableDirector();
-                    if (d != null && d.playableGraph.IsValid())
+                    if ((d != null) && d.playableGraph.IsValid())
                         mPreviewPlay = GetMasterPlayableDirector().playableGraph.IsPlaying();
                 }
                 if (TargetPositionCache.UseCache)
@@ -209,9 +209,9 @@ using System.Collections.Generic;
                 float weight = playable.GetInputWeight(i);
                 var clip = (ScriptPlayable<CinemachineShotPlayable>)playable.GetInput(i);
                 CinemachineShotPlayable shot = clip.GetBehaviour();
-                if (shot != null && shot.IsValid
-                    && playable.GetPlayState() == PlayState.Playing
-                    && weight > 0)
+                if ((shot != null) && shot.IsValid
+                                   && (playable.GetPlayState() == PlayState.Playing)
+                                   && (weight > 0))
                 {
                     clipIndexA = clipIndexB;
                     clipIndexB = i;
@@ -231,8 +231,8 @@ using System.Collections.Generic;
             }
 
             // Special case: check for only one clip that's fading out - it must be outgoing
-            if (activeInputs == 1 && weightB < 1 
-                    && playable.GetInput(clipIndexB).GetTime() > playable.GetInput(clipIndexB).GetDuration() / 2)
+            if ((activeInputs == 1) && (weightB < 1) 
+                                    && (playable.GetInput(clipIndexB).GetTime() > (playable.GetInput(clipIndexB).GetDuration() / 2)))
             {
                 incomingIsA = true;
             }
@@ -263,10 +263,10 @@ using System.Collections.Generic;
                 mBrainOverrideId, camA, camB, weightB, GetDeltaTime(info.deltaTime));
 
 #if UNITY_EDITOR && UNITY_2019_2_OR_NEWER
-            if (m_ScrubbingCacheHelper != null && TargetPositionCache.CacheMode != TargetPositionCache.Mode.Disabled)
+            if ((m_ScrubbingCacheHelper != null) && (TargetPositionCache.CacheMode != TargetPositionCache.Mode.Disabled))
             {
-                bool isNewB = (m_ScrubbingCacheHelper.ActivePlayableA != clipIndexB 
-                    && m_ScrubbingCacheHelper.ActivePlayableB != clipIndexB);
+                bool isNewB = ((m_ScrubbingCacheHelper.ActivePlayableA != clipIndexB) 
+                    && (m_ScrubbingCacheHelper.ActivePlayableB != clipIndexB));
 
                 m_ScrubbingCacheHelper.ActivePlayableA = clipIndexA;
                 m_ScrubbingCacheHelper.ActivePlayableB = clipIndexB;
@@ -276,7 +276,7 @@ using System.Collections.Generic;
                         (float)playable.GetInput(clipIndexA).GetTime(), mBrain.DefaultWorldUp);
                 if (clipIndexB >= 0)
                     m_ScrubbingCacheHelper.ScrubToHere(
-                        (float)GetMasterPlayableDirector().time, clipIndexB, isNewB && weightB > 0.99f, 
+                        (float)GetMasterPlayableDirector().time, clipIndexB, isNewB && (weightB > 0.99f), 
                         (float)playable.GetInput(clipIndexB).GetTime(), mBrain.DefaultWorldUp);
             }
 #endif
@@ -288,7 +288,7 @@ using System.Collections.Generic;
                 return deltaTime;
 
             // We're scrubbing or paused
-            if (TargetPositionCache.CacheMode == TargetPositionCache.Mode.Playback
+            if ((TargetPositionCache.CacheMode == TargetPositionCache.Mode.Playback)
                 && TargetPositionCache.HasCurrentTime)
             {
                 return 0;

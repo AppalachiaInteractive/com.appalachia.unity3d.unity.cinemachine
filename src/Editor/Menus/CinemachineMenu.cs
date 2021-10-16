@@ -287,7 +287,7 @@ namespace Cinemachine.Editor
             foreach (Type t in components)
                 Undo.AddComponent(componentOwner, t);
             vcam.InvalidateComponentPipeline();
-            if (brain != null && brain.OutputCamera != null)
+            if ((brain != null) && (brain.OutputCamera != null))
                 vcam.m_Lens = LensSettings.FromCamera(brain.OutputCamera);
             if (selectIt)
                 Selection.activeObject = go;
@@ -315,7 +315,7 @@ namespace Cinemachine.Editor
         {
             CinemachineBrain[] brains = UnityEngine.Object.FindObjectsOfType(
                     typeof(CinemachineBrain)) as CinemachineBrain[];
-            CinemachineBrain brain = (brains != null && brains.Length > 0) ? brains[0] : null;
+            CinemachineBrain brain = ((brains != null) && (brains.Length > 0)) ? brains[0] : null;
             if (brain == null)
             {
                 Camera cam = Camera.main;
@@ -323,7 +323,7 @@ namespace Cinemachine.Editor
                 {
                     Camera[] cams = UnityEngine.Object.FindObjectsOfType(
                             typeof(Camera)) as Camera[];
-                    if (cams != null && cams.Length > 0)
+                    if ((cams != null) && (cams.Length > 0))
                         cam = cams[0];
                 }
                 if (cam != null)
@@ -343,11 +343,11 @@ namespace Cinemachine.Editor
             UnityEngine.Object[] all = Resources.FindObjectsOfTypeAll(type);
             foreach (UnityEngine.Object o in all)
             {
-                if (o != null && o.name.StartsWith(prefix))
+                if ((o != null) && o.name.StartsWith(prefix))
                 {
                     string suffix = o.name.Substring(prefix.Length);
                     int i;
-                    if (Int32.TryParse(suffix, out i) && i > count)
+                    if (Int32.TryParse(suffix, out i) && (i > count))
                         count = i;
                 }
             }

@@ -25,7 +25,7 @@ namespace Cinemachine
     public class CinemachineImpulseManager
     {
         private CinemachineImpulseManager() {}
-        private static CinemachineImpulseManager sInstance = null;
+        private static CinemachineImpulseManager sInstance;
 
         /// <summary>Get the singleton instance</summary>
         public static CinemachineImpulseManager Instance
@@ -107,19 +107,19 @@ namespace Cinemachine
             {
                 if (offset >= 0)
                 {
-                    if (offset < m_AttackTime && m_AttackTime > Epsilon)
+                    if ((offset < m_AttackTime) && (m_AttackTime > Epsilon))
                     {
-                        if (m_AttackShape == null || m_AttackShape.length < 2)
+                        if ((m_AttackShape == null) || (m_AttackShape.length < 2))
                             return Damper.Damp(1, m_AttackTime, offset);
                         return m_AttackShape.Evaluate(offset / m_AttackTime);
                     }
                     offset -= m_AttackTime;
-                    if (m_HoldForever || offset < m_SustainTime)
+                    if (m_HoldForever || (offset < m_SustainTime))
                         return 1;
                     offset -= m_SustainTime;
-                    if (offset < m_DecayTime && m_DecayTime > Epsilon)
+                    if ((offset < m_DecayTime) && (m_DecayTime > Epsilon))
                     {
-                        if (m_DecayShape == null || m_DecayShape.length < 2)
+                        if ((m_DecayShape == null) || (m_DecayShape.length < 2))
                             return 1 - Damper.Damp(1, m_DecayTime, offset);
                         return m_DecayShape.Evaluate(offset / m_DecayTime);
                     }
@@ -169,7 +169,7 @@ namespace Cinemachine
         {
             const float kMin = -0.8f;
             const float kMax = 0.8f;
-            var b = kMin + (kMax - kMin) * (1f - spread);
+            var b = kMin + ((kMax - kMin) * (1f - spread));
             b = (1f - b) * 0.5f;
             var t = Mathf.Clamp01(normalizedDistance) / ((((1f/Mathf.Clamp01(b)) - 2f) * (1f - normalizedDistance)) + 1f);
             return 1 - SplineHelpers.Bezier1(t, 0, 0, 1, 1);
@@ -245,8 +245,8 @@ namespace Cinemachine
                 {
                     var d = m_Envelope.Duration;
                     var maxDistance = m_Radius + m_DissipationDistance;
-                    float time = Instance.CurrentTime - maxDistance / Mathf.Max(1, m_PropagationSpeed);
-                    return d > 0 && m_StartTime + d <= time;
+                    float time = Instance.CurrentTime - (maxDistance / Mathf.Max(1, m_PropagationSpeed));
+                    return (d > 0) && ((m_StartTime + d) <= time);
                 }
             }
 
@@ -299,21 +299,21 @@ namespace Cinemachine
                     float distance = use2D ? Vector2.Distance(listenerPosition, m_Position)
                         : Vector3.Distance(listenerPosition, m_Position);
                     float time = Instance.CurrentTime - m_StartTime 
-                        - distance / Mathf.Max(1, m_PropagationSpeed);
+                        - (distance / Mathf.Max(1, m_PropagationSpeed));
                     float scale = m_Envelope.GetValueAt(time) * DistanceDecay(distance);
                     if (scale != 0)
                     {
                         m_SignalSource.GetSignal(time, out pos, out rot);
                         pos *= scale;
                         rot = Quaternion.SlerpUnclamped(Quaternion.identity, rot, scale);
-                        if (m_DirectionMode == DirectionMode.RotateTowardSource && distance > Epsilon)
+                        if ((m_DirectionMode == DirectionMode.RotateTowardSource) && (distance > Epsilon))
                         {
                             Quaternion q = Quaternion.FromToRotation(Vector3.up, listenerPosition - m_Position);
                             if (m_Radius > Epsilon)
                             {
                                 float t = Mathf.Clamp01(distance / m_Radius);
                                 q = Quaternion.Slerp(
-                                    q, Quaternion.identity, Mathf.Cos(Mathf.PI * t / 2));
+                                    q, Quaternion.identity, Mathf.Cos((Mathf.PI * t) / 2));
                             }
                             pos = q * pos;
                         }
@@ -366,7 +366,7 @@ namespace Cinemachine
                 {
                     ImpulseEvent e = m_ActiveEvents[i];
                     // Prune invalid or expired events
-                    if (e == null || e.Expired)
+                    if ((e == null) || e.Expired)
                     {
                         m_ActiveEvents.RemoveAt(i);
                         if (e != null)
@@ -408,7 +408,7 @@ namespace Cinemachine
         public ImpulseEvent NewImpulseEvent()
         {
             ImpulseEvent e;
-            if (m_ExpiredEvents == null || m_ExpiredEvents.Count == 0)
+            if ((m_ExpiredEvents == null) || (m_ExpiredEvents.Count == 0))
                 return new ImpulseEvent() { m_CustomDissipation = -1 };
             e = m_ExpiredEvents[m_ExpiredEvents.Count-1];
             m_ExpiredEvents.RemoveAt(m_ExpiredEvents.Count-1);

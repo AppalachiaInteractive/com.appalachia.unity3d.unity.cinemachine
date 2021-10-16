@@ -100,8 +100,8 @@ namespace Cinemachine
         /// </summary>
         public bool Orthographic 
         { 
-            get { return ModeOverride == OverrideModes.Orthographic
-                || ModeOverride == OverrideModes.None && m_OrthoFromCamera; } 
+            get { return (ModeOverride == OverrideModes.Orthographic)
+                || ((ModeOverride == OverrideModes.None) && m_OrthoFromCamera); } 
 
             /// Obsolete: do not use
             set { m_OrthoFromCamera = value; ModeOverride = value 
@@ -130,8 +130,8 @@ namespace Cinemachine
         /// </summary>
         public bool IsPhysicalCamera 
         { 
-            get { return ModeOverride == OverrideModes.Physical 
-                || ModeOverride == OverrideModes.None && m_PhysicalFromCamera; } 
+            get { return (ModeOverride == OverrideModes.Physical) 
+                || ((ModeOverride == OverrideModes.None) && m_PhysicalFromCamera); } 
 
             /// Obsolete: do not use
             set { m_PhysicalFromCamera = value; ModeOverride = value 
@@ -217,7 +217,7 @@ namespace Cinemachine
         {
             m_OrthoFromCamera = false;
             m_PhysicalFromCamera = false;
-            if (camera != null && ModeOverride == OverrideModes.None)
+            if ((camera != null) && (ModeOverride == OverrideModes.None))
             {
                 m_OrthoFromCamera = camera.orthographic;
                 m_PhysicalFromCamera = camera.usePhysicalProperties;

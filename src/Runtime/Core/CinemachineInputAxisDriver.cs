@@ -106,12 +106,12 @@ namespace Cinemachine
 
                 // Decelerate to the end points of the range if not wrapping
                 float range = axis.m_MaxValue - axis.m_MinValue;
-                if (!axis.m_Wrap && decelTime > Epsilon && range > Epsilon)
+                if (!axis.m_Wrap && (decelTime > Epsilon) && (range > Epsilon))
                 {
                     float v0 = ClampValue(ref axis, axis.m_Value);
-                    float v = ClampValue(ref axis, v0 + speed * deltaTime);
+                    float v = ClampValue(ref axis, v0 + (speed * deltaTime));
                     float d = (speed > 0) ? axis.m_MaxValue - v : v - axis.m_MinValue;
-                    if (d < (0.1f * range) && Mathf.Abs(speed) > Epsilon)
+                    if ((d < (0.1f * range)) && (Mathf.Abs(speed) > Epsilon))
                         speed = Damper.Damp(v - v0, decelTime, deltaTime) / deltaTime;
                 }
                 input = speed * deltaTime;
@@ -143,7 +143,7 @@ namespace Cinemachine
         float ClampValue(ref AxisBase axis, float v)
         {
             float r = axis.m_MaxValue - axis.m_MinValue;
-            if (axis.m_Wrap && r > Epsilon)
+            if (axis.m_Wrap && (r > Epsilon))
             {
                 v = (v - axis.m_MinValue) % r;
                 v += axis.m_MinValue + ((v < 0) ? r : 0);

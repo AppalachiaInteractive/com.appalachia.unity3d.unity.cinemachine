@@ -42,8 +42,8 @@ namespace Cinemachine.Editor
 #if CINEMACHINE_PHYSICS_2D
                 if (Target.m_BoundingShape2D == null)
                     EditorGUILayout.HelpBox("A Bounding Shape is required.", MessageType.Warning);
-                else if (Target.m_BoundingShape2D.GetType() != typeof(PolygonCollider2D)
-                    && Target.m_BoundingShape2D.GetType() != typeof(CompositeCollider2D))
+                else if ((Target.m_BoundingShape2D.GetType() != typeof(PolygonCollider2D))
+                    && (Target.m_BoundingShape2D.GetType() != typeof(CompositeCollider2D)))
                 {
                     EditorGUILayout.HelpBox(
                         "Must be a PolygonCollider2D or CompositeCollider2D.",
@@ -68,9 +68,9 @@ namespace Cinemachine.Editor
 #if CINEMACHINE_PHYSICS
                 if (Target.m_BoundingVolume == null)
                     EditorGUILayout.HelpBox("A Bounding Volume is required.", MessageType.Warning);
-                else if (Target.m_BoundingVolume.GetType() != typeof(BoxCollider)
-                    && Target.m_BoundingVolume.GetType() != typeof(SphereCollider)
-                    && Target.m_BoundingVolume.GetType() != typeof(CapsuleCollider))
+                else if ((Target.m_BoundingVolume.GetType() != typeof(BoxCollider))
+                    && (Target.m_BoundingVolume.GetType() != typeof(SphereCollider))
+                    && (Target.m_BoundingVolume.GetType() != typeof(CapsuleCollider)))
                 {
                     EditorGUILayout.HelpBox(
                         "Must be a BoxCollider, SphereCollider, or CapsuleCollider.",
@@ -87,7 +87,7 @@ namespace Cinemachine.Editor
         private static void DrawColliderGizmos(CinemachineConfiner confiner, GizmoType type)
         {
             CinemachineVirtualCameraBase vcam = (confiner != null) ? confiner.VirtualCamera : null;
-            if (vcam != null && confiner.IsValid)
+            if ((vcam != null) && confiner.IsValid)
             {
                 Matrix4x4 oldMatrix = Gizmos.matrix;
                 Color oldColor = Gizmos.color;

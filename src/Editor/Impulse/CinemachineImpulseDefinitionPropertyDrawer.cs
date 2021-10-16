@@ -14,7 +14,7 @@ namespace Cinemachine.Editor
         CinemachineImpulseDefinition m_MyClass;
         #pragma warning restore 649
 
-        GUIContent m_TimeText = null;
+        GUIContent m_TimeText;
         float m_TimeTextWidth;
 
         SerializedProperty m_ShapeProperty;
@@ -137,7 +137,7 @@ namespace Cinemachine.Editor
                 EditorGUI.PropertyField(r, m_ShapeProperty, GUIContent.none);
                 if (EditorGUI.EndChangeCheck())
                     InvalidateImpulseGraphSample();
-                if (!isCustom && Event.current.type == EventType.Repaint && m_ShapeProperty.isExpanded)
+                if (!isCustom && (Event.current.type == EventType.Repaint) && m_ShapeProperty.isExpanded)
                     DrawImpulseGraph(graphRect, CinemachineImpulseDefinition.GetStandardCurve(
                         (CinemachineImpulseDefinition.ImpulseShapes)m_ShapeProperty.intValue));
             }
@@ -154,7 +154,7 @@ namespace Cinemachine.Editor
                     curveProp.serializedObject.ApplyModifiedProperties();
                     InvalidateImpulseGraphSample();
                 }
-                if (Event.current.type == EventType.Repaint && m_ShapeProperty.isExpanded)
+                if ((Event.current.type == EventType.Repaint) && m_ShapeProperty.isExpanded)
                     DrawImpulseGraph(graphRect, curveProp.animationCurveValue);
             }
 
@@ -199,7 +199,7 @@ namespace Cinemachine.Editor
 
                 // Apply scale
                 for (int i = 0; i <= kNumSamples; ++i)
-                    m_ImpulseGraphSnapshot[i].y = rect.height * (1f - (m_ImpulseGraphSnapshot[i].y - minY) / range);
+                    m_ImpulseGraphSnapshot[i].y = rect.height * (1f - ((m_ImpulseGraphSnapshot[i].y - minY) / range));
             }
             EditorGUI.DrawRect(rect, new Color(0.2f, 0.2f, 0.2f, 1));
             var oldMatrix = Handles.matrix;
@@ -228,7 +228,7 @@ namespace Cinemachine.Editor
                 EditorGUI.Slider(r, m_DissipationRateProperty, 0, 1, GUIContent.none);
             if (EditorGUI.EndChangeCheck())
                 InvalidateSpreadGraphSample();
-            if (Event.current.type == EventType.Repaint && m_DissipationRateProperty.isExpanded)
+            if ((Event.current.type == EventType.Repaint) && m_DissipationRateProperty.isExpanded)
                 DrawSpreadGraph(graphRect, m_DissipationRateProperty.floatValue);
             EditorGUI.indentLevel = indentLevel;
         }
@@ -243,10 +243,10 @@ namespace Cinemachine.Editor
             if (m_SpreadGraphSize != rect.size)
             {
                 m_SpreadGraphSize = rect.size;
-                for (int i = 0; i <= kNumSamples >> 1; ++i)
+                for (int i = 0; i <= (kNumSamples >> 1); ++i)
                 {
                     var x = (float)i / kNumSamples;
-                    var y = CinemachineImpulseManager.EvaluateDissipationScale(spread, Mathf.Abs(1 - x * 2));
+                    var y = CinemachineImpulseManager.EvaluateDissipationScale(spread, Mathf.Abs(1 - (x * 2)));
                     m_SpreadGraphSnapshot[i] = new Vector2(x * rect.width, rect.height * (1 - y));
                     m_SpreadGraphSnapshot[kNumSamples - i] = new Vector2((1 - x) * rect.width, rect.height * (1 - y));
                 }
@@ -275,7 +275,7 @@ namespace Cinemachine.Editor
         {
             var attrs = property.serializedObject.targetObject.GetType()
                 .GetCustomAttributes(typeof(HeaderAttribute), false);
-            if (attrs != null && attrs.Length > 0)
+            if ((attrs != null) && (attrs.Length > 0))
                 return ((HeaderAttribute)attrs[0]).header;
             return null;
         }
@@ -302,15 +302,15 @@ namespace Cinemachine.Editor
                 if (prop.name == SerializedPropertyHelper.PropertyName(() => m_MyClass.m_RawSignal))
                     asset = prop.objectReferenceValue as SignalSourceAsset;
                 if (prop.name == SerializedPropertyHelper.PropertyName(() => m_MyClass.m_RepeatMode))
-                    hide = asset == null || asset.SignalDuration <= 0;
+                    hide = (asset == null) || (asset.SignalDuration <= 0);
                 else if (prop.name == SerializedPropertyHelper.PropertyName(() => m_MyClass.m_Randomize))
-                    hide = asset == null || asset.SignalDuration > 0;
+                    hide = (asset == null) || (asset.SignalDuration > 0);
                 else
                 {
-                    hide = prop.name == SerializedPropertyHelper.PropertyName(() => m_MyClass.m_ImpulseShape)
-                        || prop.name == SerializedPropertyHelper.PropertyName(() => m_MyClass.m_CustomImpulseShape)
-                        || prop.name == SerializedPropertyHelper.PropertyName(() => m_MyClass.m_ImpulseDuration)
-                        || prop.name == SerializedPropertyHelper.PropertyName(() => m_MyClass.m_DissipationRate);
+                    hide = (prop.name == SerializedPropertyHelper.PropertyName(() => m_MyClass.m_ImpulseShape))
+                        || (prop.name == SerializedPropertyHelper.PropertyName(() => m_MyClass.m_CustomImpulseShape))
+                        || (prop.name == SerializedPropertyHelper.PropertyName(() => m_MyClass.m_ImpulseDuration))
+                        || (prop.name == SerializedPropertyHelper.PropertyName(() => m_MyClass.m_DissipationRate));
                 }
 
                 if (hide)

@@ -42,13 +42,13 @@ namespace Cinemachine.Editor
         }
 
         const float FastWaveformUpdateInterval = 0.1f;
-        float mLastSplitScreenEventTime = 0;
+        float mLastSplitScreenEventTime;
         static bool sAdvancedFoldout;
         
         public override void OnInspectorGUI()
         {
             float now = Time.realtimeSinceStartup;
-            if (now - mLastSplitScreenEventTime > FastWaveformUpdateInterval * 5)
+            if ((now - mLastSplitScreenEventTime) > (FastWaveformUpdateInterval * 5))
                 WaveformWindow.SetDefaultUpdateInterval();
 
             BeginInspector();
@@ -86,7 +86,7 @@ namespace Cinemachine.Editor
                 prop.boolValue = EditorGUI.ToggleLeft(rect, syncLabel, prop.boolValue);
                 EditorGUI.showMixedValue = false;
                 rect.x += rect.width;
-                if (prop.boolValue || targets.Length > 1 && syncHasDifferentValues)
+                if (prop.boolValue || ((targets.Length > 1) && syncHasDifferentValues))
                 {
                     prop = FindProperty(x => x.m_Scale);
                     float[] values = new float[1] { prop.vector2Value.x };

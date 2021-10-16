@@ -48,7 +48,7 @@ namespace Cinemachine
         /// <returns>Standardized position, between MinPos and MaxPos</returns>
         public virtual float StandardizePos(float pos)
         {
-            if (Looped && MaxPos > 0)
+            if (Looped && (MaxPos > 0))
             {
                 pos = pos % MaxPos;
                 if (pos < 0)
@@ -119,7 +119,7 @@ namespace Cinemachine
                     if (d < bestDistance)
                     {
                         bestDistance = d;
-                        bestPos = f - (1 - t) * stepSize;
+                        bestPos = f - ((1 - t) * stepSize);
                     }
                     v0 = v;
                 }
@@ -229,9 +229,9 @@ namespace Cinemachine
         public bool DistanceCacheIsValid()
         {
             return (MaxPos == MinPos)
-                || (m_DistanceToPos != null && m_PosToDistance != null
-                    && m_CachedSampleSteps == DistanceCacheSampleStepsPerSegment
-                    && m_CachedSampleSteps > 0);
+                || ((m_DistanceToPos != null) && (m_PosToDistance != null)
+                                              && (m_CachedSampleSteps == DistanceCacheSampleStepsPerSegment)
+                                              && (m_CachedSampleSteps > 0));
         }
 
         /// <summary>Get the length of the path in distance units.
@@ -280,14 +280,14 @@ namespace Cinemachine
         {
             if (units == PositionUnits.PathUnits)
                 return pos;
-            if (DistanceCacheSampleStepsPerSegment < 1 || PathLength < UnityVectorExtensions.Epsilon)
+            if ((DistanceCacheSampleStepsPerSegment < 1) || (PathLength < UnityVectorExtensions.Epsilon))
                 return MinPos;
             if (units == PositionUnits.Normalized)
                 pos *= PathLength;
             pos = StandardizePathDistance(pos);
             float d = pos / m_cachedDistanceStepSize;
             int i = Mathf.FloorToInt(d);
-            if (i >= m_DistanceToPos.Length-1)
+            if (i >= (m_DistanceToPos.Length-1))
                 return MaxPos;
             float t = d - (float)i;
             return MinPos + Mathf.Lerp(m_DistanceToPos[i], m_DistanceToPos[i+1], t);
@@ -304,12 +304,12 @@ namespace Cinemachine
             if (units == PositionUnits.PathUnits)
                 return pos;
             float length = PathLength;
-            if (DistanceCacheSampleStepsPerSegment < 1 || length < UnityVectorExtensions.Epsilon)
+            if ((DistanceCacheSampleStepsPerSegment < 1) || (length < UnityVectorExtensions.Epsilon))
                 return 0;
             pos = StandardizePos(pos);
             float d = pos / m_cachedPosStepSize;
             int i = Mathf.FloorToInt(d);
-            if (i >= m_PosToDistance.Length-1)
+            if (i >= (m_PosToDistance.Length-1))
                 pos = m_PathLength;
             else
             {
@@ -368,12 +368,12 @@ namespace Cinemachine
                 {
                     distance += stepSize;
                     float d = m_PosToDistance[posIndex];
-                    while (d < distance && posIndex < numKeys-1)
+                    while ((d < distance) && (posIndex < (numKeys-1)))
                          d = m_PosToDistance[++posIndex];
                     float d0 =  m_PosToDistance[posIndex-1];
                     float delta = d - d0;
                     float t = (distance - d0) / delta;
-                    m_DistanceToPos[i] = m_cachedPosStepSize * (t + posIndex - 1);
+                    m_DistanceToPos[i] = m_cachedPosStepSize * ((t + posIndex) - 1);
                 }
             }
         }

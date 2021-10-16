@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System;
 
 namespace Cinemachine
 {
@@ -34,8 +33,8 @@ namespace Cinemachine
             }
         }
 
-        public static bool IsRecording => UseCache && m_CacheMode == Mode.Record;
-        public static bool CurrentPlaybackTimeValid => UseCache && m_CacheMode == Mode.Playback && HasCurrentTime;
+        public static bool IsRecording => UseCache && (m_CacheMode == Mode.Record);
+        public static bool CurrentPlaybackTimeValid => UseCache && (m_CacheMode == Mode.Playback) && HasCurrentTime;
         public static bool IsEmpty => CacheTimeRange.IsEmpty;
 
         public static float CurrentTime { get; set; }
@@ -72,7 +71,7 @@ namespace Cinemachine
             {
                 StepSize = stepSize;
                 StartTime = startTime;
-                m_Cache = new List<Item>(Mathf.CeilToInt((StepSize * 0.5f + endTime - startTime) / StepSize));
+                m_Cache = new List<Item>(Mathf.CeilToInt((((StepSize * 0.5f) + endTime) - startTime) / StepSize));
             }
 
             public void Add(Item item) => m_Cache.Add(item);
@@ -105,9 +104,9 @@ namespace Cinemachine
                 var s = time - StartTime;
                 var index = Mathf.Clamp(Mathf.FloorToInt(s / StepSize), 0, numItems - 1);
                 var v = m_Cache[index];
-                if (index == numItems - 1)
+                if (index == (numItems - 1))
                     return v;
-                return Item.Lerp(v, m_Cache[index + 1], (s - index * StepSize) / StepSize);
+                return Item.Lerp(v, m_Cache[index + 1], (s - (index * StepSize)) / StepSize);
             }
         }
 
@@ -129,7 +128,7 @@ namespace Cinemachine
                 var endTime = time - CacheStepSize;
                 var maxItem = RawItems.Count - 1;
                 var lastToKeep = maxItem;
-                while (lastToKeep >= 0 && RawItems[lastToKeep].Time > endTime)
+                while ((lastToKeep >= 0) && (RawItems[lastToKeep].Time > endTime))
                     --lastToKeep;
                 if (lastToKeep == maxItem)
                 {
@@ -177,7 +176,7 @@ namespace Cinemachine
             public float End;
 
             public bool IsEmpty => End < Start;
-            public bool Contains(float time) => time >= Start && time <= End;
+            public bool Contains(float time) => (time >= Start) && (time <= End);
             public static TimeRange Empty 
                 { get => new TimeRange { Start = float.MaxValue, End = float.MinValue }; }
 
@@ -219,18 +218,18 @@ namespace Cinemachine
         /// <param name="position">Target's position at CurrentTime</param>
         public static Vector3 GetTargetPosition(Transform target)
         {
-            if (!UseCache || CacheMode == Mode.Disabled)
+            if (!UseCache || (CacheMode == Mode.Disabled))
                 return target.position;
 
             // Wrap around during record?
-            if (CacheMode == Mode.Record 
+            if ((CacheMode == Mode.Record) 
                 && !m_CacheTimeRange.IsEmpty 
-                && CurrentTime < m_CacheTimeRange.Start - kWraparoundSlush)
+                && (CurrentTime < (m_CacheTimeRange.Start - kWraparoundSlush)))
             {
                 ClearCache();
             }
 
-            if (CacheMode == Mode.Playback && !HasCurrentTime)
+            if ((CacheMode == Mode.Playback) && !HasCurrentTime)
                 return target.position;
 
             if (!m_Cache.TryGetValue(target, out var entry))
@@ -264,14 +263,14 @@ namespace Cinemachine
                 return target.rotation;
 
             // Wrap around during record?
-            if (CacheMode == Mode.Record 
+            if ((CacheMode == Mode.Record) 
                 && !m_CacheTimeRange.IsEmpty 
-                && CurrentTime < m_CacheTimeRange.Start - kWraparoundSlush)
+                && (CurrentTime < (m_CacheTimeRange.Start - kWraparoundSlush)))
             {
                 ClearCache();
             }
 
-            if (CacheMode == Mode.Playback && !HasCurrentTime)
+            if ((CacheMode == Mode.Playback) && !HasCurrentTime)
                 return target.rotation;
 
             if (!m_Cache.TryGetValue(target, out var entry))

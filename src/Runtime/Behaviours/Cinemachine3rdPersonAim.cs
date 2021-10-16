@@ -71,12 +71,12 @@ namespace Cinemachine
 
         void DrawReticle(CinemachineBrain brain)
         {
-            if (!brain.IsLive(VirtualCamera) || brain.OutputCamera == null)
+            if (!brain.IsLive(VirtualCamera) || (brain.OutputCamera == null))
                 CinemachineCore.CameraUpdatedEvent.RemoveListener(DrawReticle);
             else
             {
                 var player = VirtualCamera.Follow;
-                if (AimTargetReticle != null && player != null)
+                if ((AimTargetReticle != null) && (player != null))
                 {
                     // Adjust for actual player aim target (may be different due to offset)
                     var playerPos = player.position;
@@ -112,7 +112,7 @@ namespace Cinemachine
             bool hasHit = RuntimeUtility.RaycastIgnoreTag(
                 new Ray(camPos, fwd), 
                 out RaycastHit hitInfo, aimDistance, AimCollisionFilter, IgnoreTag);
-            return hasHit ? hitInfo.point : camPos + fwd * aimDistance;
+            return hasHit ? hitInfo.point : camPos + (fwd * aimDistance);
         }
         
         /// <summary>

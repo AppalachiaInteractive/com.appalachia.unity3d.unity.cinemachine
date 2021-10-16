@@ -67,7 +67,7 @@ namespace Cinemachine
             + "If this is null, then the vcam's Transform orientation will define the camera's orientation.")]
         [NoSaveDuringPlay]
         [VcamTargetProperty]
-        public Transform m_LookAt = null;
+        public Transform m_LookAt;
 
         /// <summary>The object that the camera wants to move with (the Body target).
         /// The Body component of the CinemachineComponent pipeline
@@ -78,7 +78,7 @@ namespace Cinemachine
             + "If this is null, then the vcam's Transform position will define the camera's position.")]
         [NoSaveDuringPlay]
         [VcamTargetProperty]
-        public Transform m_Follow = null;
+        public Transform m_Follow;
 
         /// <summary>Specifies the LensSettings of this Virtual Camera.
         /// These settings will be transferred to the Unity camera when the vcam is live.</summary>
@@ -107,12 +107,12 @@ namespace Cinemachine
 
         /// <summary>The CameraState object holds all of the information
         /// necessary to position the Unity camera.  It is the output of this class.</summary>
-        override public CameraState State { get { return m_State; } }
+        public override CameraState State { get { return m_State; } }
 
         /// <summary>Get the LookAt target for the Aim component in the Cinemachine pipeline.
         /// If this vcam is a part of a meta-camera collection, then the owner's target
         /// will be used if the local target is null.</summary>
-        override public Transform LookAt
+        public override Transform LookAt
         {
             get { return ResolveLookAt(m_LookAt); }
             set { m_LookAt = value; }
@@ -121,7 +121,7 @@ namespace Cinemachine
         /// <summary>Get the Follow target for the Body component in the Cinemachine pipeline.
         /// If this vcam is a part of a meta-camera collection, then the owner's target
         /// will be used if the local target is null.</summary>
-        override public Transform Follow
+        public override Transform Follow
         {
             get { return ResolveFollow(m_Follow); }
             set { m_Follow = value; }
@@ -147,7 +147,7 @@ namespace Cinemachine
         /// invoke its pipeline and generate a CameraState for this frame.</summary>
         /// <param name="worldUp">Effective world up</param>
         /// <param name="deltaTime">Effective deltaTime</param>
-        override public void InternalUpdateCameraState(Vector3 worldUp, float deltaTime)
+        public override void InternalUpdateCameraState(Vector3 worldUp, float deltaTime)
         {
             UpdateTargetCache();
 
@@ -168,7 +168,7 @@ namespace Cinemachine
         }
 
         /// <summary>Make sure that the pipeline cache is up-to-date.</summary>
-        override protected void OnEnable()
+        protected override void OnEnable()
         {
             base.OnEnable();
             m_State = PullStateFromVirtualCamera(Vector3.up, ref m_Lens);
@@ -177,9 +177,9 @@ namespace Cinemachine
             // Can't add components during OnValidate
             if (ValidatingStreamVersion < 20170927)
             {
-                if (Follow != null && GetCinemachineComponent(CinemachineCore.Stage.Body) == null)
+                if ((Follow != null) && (GetCinemachineComponent(CinemachineCore.Stage.Body) == null))
                     AddCinemachineComponent<CinemachineHardLockToTarget>();
-                if (LookAt != null && GetCinemachineComponent(CinemachineCore.Stage.Aim) == null)
+                if ((LookAt != null) && (GetCinemachineComponent(CinemachineCore.Stage.Aim) == null))
                     AddCinemachineComponent<CinemachineHardLookAt>();
             }
         }
@@ -357,7 +357,7 @@ namespace Cinemachine
             CinemachineComponentBase[] components = owner.GetComponents<CinemachineComponentBase>();
 
             T component = owner.gameObject.AddComponent<T>();
-            if (component != null && components != null)
+            if ((component != null) && (components != null))
             {
                 // Remove the existing components at that stage
                 CinemachineCore.Stage stage = component.Stage;
@@ -398,14 +398,14 @@ namespace Cinemachine
 
         CameraState m_State = CameraState.Default; // Current state this frame
 
-        CinemachineComponentBase[] m_ComponentPipeline = null;
-        [SerializeField][HideInInspector] private Transform m_ComponentOwner = null;   // serialized to handle copy/paste
+        CinemachineComponentBase[] m_ComponentPipeline;
+        [SerializeField][HideInInspector] private Transform m_ComponentOwner;   // serialized to handle copy/paste
         void UpdateComponentPipeline()
         {
             bool isPrefab = RuntimeUtility.IsPrefab(gameObject);
 #if UNITY_EDITOR
             // Did we just get copy/pasted?
-            if (m_ComponentOwner != null && m_ComponentOwner.parent != transform)
+            if ((m_ComponentOwner != null) && (m_ComponentOwner.parent != transform))
             {
                 if (!isPrefab) // can't paste to a prefab
                 {
@@ -419,7 +419,7 @@ namespace Cinemachine
                 SetFlagsForHiddenChild(m_ComponentOwner.gameObject);
 #endif
             // Early out if we're up-to-date
-            if (m_ComponentOwner != null && m_ComponentPipeline != null)
+            if ((m_ComponentOwner != null) && (m_ComponentPipeline != null))
                 return;
 
             m_ComponentOwner = null;
@@ -437,13 +437,13 @@ namespace Cinemachine
             }
 
             // Make sure we have a pipeline owner
-            if (m_ComponentOwner == null && !isPrefab)
+            if ((m_ComponentOwner == null) && !isPrefab)
                 m_ComponentOwner = CreatePipeline(null);
 
             // Make sure the pipeline stays hidden, even through prefab
             if (m_ComponentOwner != null)
                 SetFlagsForHiddenChild(m_ComponentOwner.gameObject);
-            if (m_ComponentOwner != null && m_ComponentOwner.gameObject != null)
+            if ((m_ComponentOwner != null) && (m_ComponentOwner.gameObject != null))
             {
                 // Sort the pipeline
                 list.Sort((c1, c2) => (int)c1.Stage - (int)c2.Stage);
@@ -451,7 +451,7 @@ namespace Cinemachine
             }
         }
 
-        static internal void SetFlagsForHiddenChild(GameObject child)
+        internal static void SetFlagsForHiddenChild(GameObject child)
         {
             if (child != null)
             {
@@ -512,10 +512,10 @@ namespace Cinemachine
                 {
                     var c = componentIndex < m_ComponentPipeline.Length 
                         ? m_ComponentPipeline[componentIndex] : null;
-                    if (c != null && stage == c.Stage)
+                    if ((c != null) && (stage == c.Stage))
                     {
                         ++componentIndex;
-                        if (stage == CinemachineCore.Stage.Body && c.BodyAppliesAfterAim)
+                        if ((stage == CinemachineCore.Stage.Body) && c.BodyAppliesAfterAim)
                         {
                             postAimBody = c;
                             continue; // do the body stage of the pipeline after Aim
@@ -596,7 +596,7 @@ namespace Cinemachine
             InvokeOnTransitionInExtensions(fromCam, worldUp, deltaTime);
             bool forceUpdate = false;
 
-            if (m_Transitions.m_InheritPosition && fromCam != null
+            if (m_Transitions.m_InheritPosition && (fromCam != null)
                  && !CinemachineCore.Instance.IsLiveInBlend(this))
                 ForceCameraPosition(fromCam.State.FinalPosition, fromCam.State.FinalOrientation);
 
@@ -626,7 +626,7 @@ namespace Cinemachine
         {
             if (base.RequiresUserInput())
                 return true;
-            return m_ComponentPipeline != null && m_ComponentPipeline.Any(c => c != null && c.RequiresUserInput);
+            return (m_ComponentPipeline != null) && m_ComponentPipeline.Any(c => (c != null) && c.RequiresUserInput);
         }
     }
 }

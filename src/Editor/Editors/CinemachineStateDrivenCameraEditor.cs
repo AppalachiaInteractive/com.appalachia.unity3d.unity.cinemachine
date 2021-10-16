@@ -171,7 +171,7 @@ namespace Cinemachine.Editor
                 mStateNames.Add("(default)");
                 mStates.Add(0);
 
-                if (ac != null && layerIndex >= 0 && layerIndex < ac.layers.Length)
+                if ((ac != null) && (layerIndex >= 0) && (layerIndex < ac.layers.Length))
                 {
                     AnimatorStateMachine fsm = ac.layers[layerIndex].stateMachine;
                     string name = fsm.name;
@@ -267,7 +267,7 @@ namespace Cinemachine.Editor
 
         private int GetCameraIndex(Object obj)
         {
-            if (obj == null || mCameraIndexLookup == null)
+            if ((obj == null) || (mCameraIndexLookup == null))
                 return 0;
             CinemachineVirtualCameraBase vcam = obj as CinemachineVirtualCameraBase;
             if (vcam == null)
@@ -289,11 +289,11 @@ namespace Cinemachine.Editor
             float vSpace = 2;
             float hSpace = 3;
             float floatFieldWidth = EditorGUIUtility.singleLineHeight * 2.5f;
-            float hBigSpace = EditorGUIUtility.singleLineHeight * 2 / 3;
+            float hBigSpace = (EditorGUIUtility.singleLineHeight * 2) / 3;
             mInstructionList.drawHeaderCallback = (Rect rect) =>
                 {
                     float sharedWidth = rect.width - EditorGUIUtility.singleLineHeight
-                        - 2 * (hBigSpace + floatFieldWidth) - hSpace;
+                        - (2 * (hBigSpace + floatFieldWidth)) - hSpace;
                     rect.x += EditorGUIUtility.singleLineHeight; rect.width = sharedWidth / 2;
                     EditorGUI.LabelField(rect, "State");
 
@@ -312,7 +312,7 @@ namespace Cinemachine.Editor
                 {
                     SerializedProperty instProp
                         = mInstructionList.serializedProperty.GetArrayElementAtIndex(index);
-                    float sharedWidth = rect.width - 2 * (hBigSpace + floatFieldWidth) - hSpace;
+                    float sharedWidth = rect.width - (2 * (hBigSpace + floatFieldWidth)) - hSpace;
                     rect.y += vSpace; rect.height = EditorGUIUtility.singleLineHeight;
 
                     rect.width = sharedWidth / 2;
@@ -395,7 +395,7 @@ namespace Cinemachine.Editor
             float vSpace = 2;
             float hSpace = 3;
             float floatFieldWidth = EditorGUIUtility.singleLineHeight * 2.5f;
-            float hBigSpace = EditorGUIUtility.singleLineHeight * 2 / 3;
+            float hBigSpace = (EditorGUIUtility.singleLineHeight * 2) / 3;
 
             mChildList = new UnityEditorInternal.ReorderableList(serializedObject,
                     serializedObject.FindProperty(() => Target.m_ChildCameras),
@@ -429,7 +429,7 @@ namespace Cinemachine.Editor
                 };
             mChildList.onChangedCallback = (UnityEditorInternal.ReorderableList l) =>
                 {
-                    if (l.index < 0 || l.index >= l.serializedProperty.arraySize)
+                    if ((l.index < 0) || (l.index >= l.serializedProperty.arraySize))
                         return;
                     Object o = l.serializedProperty.GetArrayElementAtIndex(
                             l.index).objectReferenceValue;

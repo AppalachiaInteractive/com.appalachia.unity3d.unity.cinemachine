@@ -109,27 +109,27 @@ namespace Cinemachine.Editor
                         EditorGUILayout.HelpBox("Target must be a CinemachineVirtualCameraBase in order to boost priority", MessageType.Warning);
                 }
 
-                bool isEnableDisable = (actionProp.intValue == (int)CinemachineTriggerAction.ActionSettings.Mode.Enable
-                    || actionProp.intValue == (int)CinemachineTriggerAction.ActionSettings.Mode.Disable);
+                bool isEnableDisable = ((actionProp.intValue == (int)CinemachineTriggerAction.ActionSettings.Mode.Enable)
+                    || (actionProp.intValue == (int)CinemachineTriggerAction.ActionSettings.Mode.Disable));
                 if (isEnableDisable)
                 {
                     var value = targetProp.objectReferenceValue;
-                    if (value != null && (value as Behaviour) == null)
+                    if ((value != null) && ((value as Behaviour) == null))
                         EditorGUILayout.HelpBox("Target must be a Behaviour in order to Enable/Disable", MessageType.Warning);
                 }
 
                 bool isPlayStop = isPlay
-                    || actionProp.intValue == (int)CinemachineTriggerAction.ActionSettings.Mode.Stop;
+                    || (actionProp.intValue == (int)CinemachineTriggerAction.ActionSettings.Mode.Stop);
                 if (isPlayStop)
                 {
-                    if (GetTargetComponent<Animator>(targetProp.objectReferenceValue) == null
-                        && GetTargetComponent<PlayableDirector>(targetProp.objectReferenceValue) == null)
+                    if ((GetTargetComponent<Animator>(targetProp.objectReferenceValue) == null)
+                        && (GetTargetComponent<PlayableDirector>(targetProp.objectReferenceValue) == null))
                     {
                         EditorGUILayout.HelpBox("Target must have a PlayableDirector or Animator in order to Play/Stop", MessageType.Warning);
                     }
                 }
 
-                if (!isCustom && targetProp.objectReferenceValue == null)
+                if (!isCustom && (targetProp.objectReferenceValue == null))
                     EditorGUILayout.HelpBox("No action will be taken because target is not valid", MessageType.Info);
 
                 EditorGUILayout.Space();

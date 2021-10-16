@@ -18,7 +18,7 @@ namespace Cinemachine.Utility
         /// <param name="client">The client caller.  Used as a handle.</param>
         public static void ReleaseScreenPos(Object client)
         {
-            if (mClients != null && mClients.Contains(client))
+            if ((mClients != null) && mClients.Contains(client))
                 mClients.Remove(client);
         }
         
@@ -70,7 +70,7 @@ namespace Cinemachine.Utility
         /// Client must call ReturnToPool when done</returns>
         public static StringBuilder SBFromPool()
         {
-            if (mAvailableStringBuilders == null || mAvailableStringBuilders.Count == 0)
+            if ((mAvailableStringBuilders == null) || (mAvailableStringBuilders.Count == 0))
                 return new StringBuilder();
             var sb = mAvailableStringBuilders[mAvailableStringBuilders.Count - 1];
             mAvailableStringBuilders.RemoveAt(mAvailableStringBuilders.Count - 1);

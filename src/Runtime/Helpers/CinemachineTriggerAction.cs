@@ -47,7 +47,7 @@ namespace Cinemachine
         /// <summary>Skip this many trigger entries before taking action</summary>
         [NoSaveDuringPlay]
         [Tooltip("Skip this many trigger entries before taking action")]
-        public int m_SkipFirst = 0;
+        public int m_SkipFirst;
 
         /// <summary>Repeat the action for all subsequent trigger entries</summary>
         [Tooltip("Repeat the action for all subsequent trigger entries")]
@@ -108,7 +108,7 @@ namespace Cinemachine
                 BeforeNow, 
                 /// <summary>Offset after the current timeline time</summary>
                 AfterNow 
-            };
+            }
 
             /// <summary>How to interpret the start time</summary>
             [Tooltip("How to interpret the start time")]
@@ -254,9 +254,9 @@ namespace Cinemachine
                 return false;
             if (((1 << other.layer) & m_LayerMask) == 0)
                 return false;
-            if (m_WithTag.Length != 0 && !other.CompareTag(m_WithTag))
+            if ((m_WithTag.Length != 0) && !other.CompareTag(m_WithTag))
                 return false;
-            if (m_WithoutTag.Length != 0 && other.CompareTag(m_WithoutTag))
+            if ((m_WithoutTag.Length != 0) && other.CompareTag(m_WithoutTag))
                 return false;
 
             return true;
@@ -269,7 +269,7 @@ namespace Cinemachine
             --m_SkipFirst;
             if (m_SkipFirst > -1)
                 return;
-            if (!m_Repeating && m_SkipFirst != -1)
+            if (!m_Repeating && (m_SkipFirst != -1))
                 return;
 
             m_ActiveTriggerObjects.Add(other);

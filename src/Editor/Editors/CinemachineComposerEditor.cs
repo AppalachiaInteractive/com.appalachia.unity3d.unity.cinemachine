@@ -41,7 +41,7 @@ namespace Cinemachine.Editor
         {
             BeginInspector();
             bool needWarning = false;
-            for (int i = 0; !needWarning && i < targets.Length; ++i)
+            for (int i = 0; !needWarning && (i < targets.Length); ++i)
                 needWarning = (targets[i] as CinemachineComposer).LookAtTarget == null;
             if (needWarning)
                 EditorGUILayout.HelpBox(
@@ -60,7 +60,7 @@ namespace Cinemachine.Editor
         protected virtual void OnGUI()
         {
             // Draw the camera guides
-            if (Target == null || !CinemachineSettings.CinemachineCoreSettings.ShowInGameGuides)
+            if ((Target == null) || !CinemachineSettings.CinemachineCoreSettings.ShowInGameGuides)
                 return;
 
             // If inspector is collapsed in the vcam editor, don't draw the guides
@@ -70,15 +70,15 @@ namespace Cinemachine.Editor
             // Don't draw the guides if rendering to texture
             var vcam = Target.VirtualCamera;
             CinemachineBrain brain = CinemachineCore.Instance.FindPotentialTargetBrain(vcam);
-            if (brain == null || (brain.OutputCamera.activeTexture != null && CinemachineCore.Instance.BrainCount > 1))
+            if ((brain == null) || ((brain.OutputCamera.activeTexture != null) && (CinemachineCore.Instance.BrainCount > 1)))
                 return;
 
             // Screen guides
-            bool isLive = targets.Length <= 1 && brain.IsLive(vcam, true);
+            bool isLive = (targets.Length <= 1) && brain.IsLive(vcam, true);
             m_ScreenGuideEditor.OnGUI_DrawGuides(isLive, brain.OutputCamera, Target.VcamState.Lens, true);
 
             // Draw an on-screen gizmo for the target
-            if (Target.LookAtTarget != null && isLive)
+            if ((Target.LookAtTarget != null) && isLive)
             {
                 Vector3 targetScreenPosition = brain.OutputCamera.WorldToScreenPoint(Target.TrackedPoint);
                 if (targetScreenPosition.z > 0)

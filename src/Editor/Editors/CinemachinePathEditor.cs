@@ -41,7 +41,7 @@ namespace Cinemachine.Editor
         // ReSharper disable once UnusedMember.Global - magic method called when doing Frame Selected
         public bool HasFrameBounds()
         {
-            return Target.m_Waypoints != null && Target.m_Waypoints.Length > 0;
+            return (Target.m_Waypoints != null) && (Target.m_Waypoints.Length > 0);
         }
 
         // ReSharper disable once UnusedMember.Global - magic method called when doing Frame Selected
@@ -49,7 +49,7 @@ namespace Cinemachine.Editor
         {
             Vector3[] wp;
             int selected = mWaypointList == null ? -1 : mWaypointList.index;
-            if (selected >= 0 && selected < Target.m_Waypoints.Length)
+            if ((selected >= 0) && (selected < Target.m_Waypoints.Length))
                 wp = new Vector3[1] { Target.m_Waypoints[selected].position };
             else
                 wp = Target.m_Waypoints.Select(p => p.position).ToArray();
@@ -72,7 +72,7 @@ namespace Cinemachine.Editor
 
             GUILayout.Label(new GUIContent("Selected Waypoint:"));
             EditorGUILayout.BeginVertical(GUI.skin.box);
-            Rect rect = EditorGUILayout.GetControlRect(true, EditorGUIUtility.singleLineHeight * 3 + 10);
+            Rect rect = EditorGUILayout.GetControlRect(true, (EditorGUIUtility.singleLineHeight * 3) + 10);
             if (mWaypointList.index >= 0)
             {
                 DrawWaypointEditor(rect, mWaypointList.index);
@@ -177,7 +177,7 @@ namespace Cinemachine.Editor
             buttonContent.tooltip = "Set to scene-view camera position";
             GUIStyle style = new GUIStyle(GUI.skin.label);
             style.alignment = TextAnchor.MiddleCenter;
-            if (GUI.Button(r, buttonContent, style) && SceneView.lastActiveSceneView != null)
+            if (GUI.Button(r, buttonContent, style) && (SceneView.lastActiveSceneView != null))
             {
                 Undo.RecordObject(Target, "Set waypoint");
                 CinemachinePath.Waypoint wp = Target.m_Waypoints[index];
@@ -220,7 +220,7 @@ namespace Cinemachine.Editor
             EditorGUI.MultiPropertyField(r, new GUIContent[] { new GUIContent(" ") },
                 element.FindPropertyRelative(() => def.roll));
 
-            r.x = rect.x + rect.width - addButtonDimension.x;
+            r.x = (rect.x + rect.width) - addButtonDimension.x;
             r.size = addButtonDimension;
             buttonContent = EditorGUIUtility.IconContent("ol plus@2x");
             buttonContent.tooltip = "Add a new waypoint after this one";
@@ -244,7 +244,7 @@ namespace Cinemachine.Editor
             if (indexA >= 0)
             {
                 int indexB = indexA + 1;
-                if (Target.m_Looped && indexB >= numWaypoints)
+                if (Target.m_Looped && (indexB >= numWaypoints))
                     indexB = 0;
                 if (indexB >= numWaypoints)
                 {
@@ -317,7 +317,7 @@ namespace Cinemachine.Editor
                 float size = HandleUtility.GetHandleSize(pos) * 0.2f;
                 Handles.color = Color.white;
                 if (Handles.Button(pos, Quaternion.identity, size, size, Handles.SphereHandleCap)
-                    && mWaypointList.index != i)
+                    && (mWaypointList.index != i))
                 {
                     mWaypointList.index = i;
                     InspectorUtility.RepaintGameView();
@@ -395,11 +395,11 @@ namespace Cinemachine.Editor
             Vector3 lastPos = path.EvaluatePosition(path.MinPos);
             Vector3 lastW = (path.EvaluateOrientation(path.MinPos)
                              * Vector3.right) * halfWidth;
-            float tEnd = path.MaxPos + step / 2;
+            float tEnd = path.MaxPos + (step / 2);
             for (float t = path.MinPos + step; t <= tEnd; t += step)
             {
                 Vector3 p = path.EvaluatePosition(t);
-                if (!isActive || halfWidth == 0)
+                if (!isActive || (halfWidth == 0))
                 {
                     Gizmos.DrawLine(p, lastPos);
                 }

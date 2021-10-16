@@ -133,9 +133,9 @@ namespace Cinemachine.Editor
             int preset = (presets == null) ? -1 : presets.GetMatchingPreset(FOVProperty.floatValue);
             rect.x -= ExtraSpaceHackWTF(); rect.width += ExtraSpaceHackWTF();
             int selection = EditorGUI.Popup(rect, GUIContent.none, preset, m_PresetOptions);
-            if (selection == m_PresetOptions.Length-1 && CinemachineLensPresets.Instance != null)
+            if ((selection == (m_PresetOptions.Length-1)) && (CinemachineLensPresets.Instance != null))
                 Selection.activeObject = presets = CinemachineLensPresets.Instance;
-            else if (selection >= 0 && selection < m_PresetOptions.Length-1)
+            else if ((selection >= 0) && (selection < (m_PresetOptions.Length-1)))
             {
                 FOVProperty.floatValue = presets.m_Presets[selection].m_FieldOfView;
                 property.serializedObject.ApplyModifiedProperties();
@@ -200,9 +200,9 @@ namespace Cinemachine.Editor
             int preset = (presets == null) ? -1 : presets.GetMatchingPhysicalPreset(VerticalFOVToFocalLength(FOVProperty.floatValue));
             rect.x -= ExtraSpaceHackWTF(); rect.width += ExtraSpaceHackWTF();
             int selection = EditorGUI.Popup(rect, GUIContent.none, preset, m_PhysicalPresetOptions);
-            if (selection == m_PhysicalPresetOptions.Length-1 && CinemachineLensPresets.Instance != null)
+            if ((selection == (m_PhysicalPresetOptions.Length-1)) && (CinemachineLensPresets.Instance != null))
                 Selection.activeObject = presets = CinemachineLensPresets.Instance;
-            else if (selection >= 0 && selection < m_PhysicalPresetOptions.Length-1)
+            else if ((selection >= 0) && (selection < (m_PhysicalPresetOptions.Length-1)))
             {
                 FOVProperty.floatValue = FocalLengthToVerticalFOV(
                     presets.m_PhysicalPresets[selection].m_FocalLength);
@@ -213,14 +213,14 @@ namespace Cinemachine.Editor
 
         float VerticalFOVToFocalLength(float fov)
         {
-            return SensorSize.y * 0.5f / Mathf.Tan(Mathf.Deg2Rad * fov * 0.5f);
+            return (SensorSize.y * 0.5f) / Mathf.Tan(Mathf.Deg2Rad * fov * 0.5f);
         }
 
         float FocalLengthToVerticalFOV(float focalLength)
         {
             if (focalLength < UnityVectorExtensions.Epsilon)
                 return 180f;
-            return Mathf.Rad2Deg * 2.0f * Mathf.Atan(SensorSize.y * 0.5f / focalLength);
+            return Mathf.Rad2Deg * 2.0f * Mathf.Atan((SensorSize.y * 0.5f) / focalLength);
         }
 
         bool IsOrtho { get; set; }

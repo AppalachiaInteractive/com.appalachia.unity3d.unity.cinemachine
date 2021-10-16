@@ -37,9 +37,9 @@ namespace Cinemachine
                 m_OriginalPolygon = originalPolygon;
                 m_Solution = solution;
 
-                float polygonSizeX = polygonBounds.width / aspectRatio * k_FloatToIntScaler;
+                float polygonSizeX = (polygonBounds.width / aspectRatio) * k_FloatToIntScaler;
                 float polygonSizeY = polygonBounds.height * k_FloatToIntScaler;
-                m_SqrPolygonDiagonal = polygonSizeX * polygonSizeX + polygonSizeY * polygonSizeY;
+                m_SqrPolygonDiagonal = (polygonSizeX * polygonSizeX) + (polygonSizeY * polygonSizeY);
             }
 
             public void Clear()
@@ -50,7 +50,7 @@ namespace Cinemachine
 
             public bool IsValid(float frustumHeight)
             {
-                return m_Solution != null && Mathf.Abs(frustumHeight - FrustumHeight) < k_MinStepSize;
+                return (m_Solution != null) && (Mathf.Abs(frustumHeight - FrustumHeight) < k_MinStepSize);
             }
 
             public Vector2 ConfinePoint(in Vector2 pointToConfine)
@@ -89,15 +89,15 @@ namespace Cinemachine
                         IntPoint c = IntPointLerp(l1, l2, ClosestPointOnSegment(p, l1, l2));
                         double diffX = Mathf.Abs(p.X - c.X);
                         double diffY = Mathf.Abs(p.Y - c.Y);
-                        double distance = diffX * diffX + diffY * diffY;
+                        double distance = (diffX * diffX) + (diffY * diffY);
 
                         // penalty for points from which the target is not visible, preferring visibility over proximity
-                        if (diffX > m_frustumSizeIntSpace || diffY > m_frustumSizeIntSpace)
+                        if ((diffX > m_frustumSizeIntSpace) || (diffY > m_frustumSizeIntSpace))
                         {
                             distance += m_SqrPolygonDiagonal; // penalty is the biggest distance between any two points
                         }
 
-                        if (distance < minDistance && (!checkIntersectOriginal || !DoesIntersectOriginal(p, c)))
+                        if ((distance < minDistance) && (!checkIntersectOriginal || !DoesIntersectOriginal(p, c)))
                         {
                             minDistance = distance;
                             closest = c;
@@ -156,13 +156,13 @@ namespace Cinemachine
             {
                 double sX = s1.X - s0.X;
                 double sY = s1.Y - s0.Y;
-                double len2 = sX * sX + sY * sY;
+                double len2 = (sX * sX) + (sY * sY);
                 if (len2 < k_ClipperEpsilon)
                     return 0; // degenerate segment
 
                 double s0pX = p.X - s0.X;
                 double s0pY = p.Y - s0.Y;
-                double dot = s0pX * sX + s0pY * sY;
+                double dot = (s0pX * sX) + (s0pY * sY);
                 return Mathf.Clamp01((float) (dot / len2));
             }
 
@@ -170,8 +170,8 @@ namespace Cinemachine
             {
                 return new IntPoint
                 {
-                    X = Mathf.RoundToInt(a.X + (b.X - a.X) * lerp),
-                    Y = Mathf.RoundToInt(a.Y + (b.Y - a.Y) * lerp),
+                    X = Mathf.RoundToInt(a.X + ((b.X - a.X) * lerp)),
+                    Y = Mathf.RoundToInt(a.Y + ((b.Y - a.Y) * lerp)),
                 };
             }
 
@@ -201,17 +201,17 @@ namespace Cinemachine
                 double dy34 = p4.Y - p3.Y;
 
                 // Solve for t1 and t2
-                double denominator = dy12 * dx34 - dx12 * dy34;
+                double denominator = (dy12 * dx34) - (dx12 * dy34);
                 double t1 =
-                    ((p1.X - p3.X) * dy34 + (p3.Y - p1.Y) * dx34)
+                    (((p1.X - p3.X) * dy34) + ((p3.Y - p1.Y) * dx34))
                     / denominator;
                 if (double.IsInfinity(t1) || double.IsNaN(t1))
                 {
                     // The lines are parallel (or close enough to it).
-                    if (IntPointDiffSqrMagnitude(p1, p3) < k_ClipperEpsilon ||
-                        IntPointDiffSqrMagnitude(p1, p4) < k_ClipperEpsilon ||
-                        IntPointDiffSqrMagnitude(p2, p3) < k_ClipperEpsilon ||
-                        IntPointDiffSqrMagnitude(p2, p4) < k_ClipperEpsilon)
+                    if ((IntPointDiffSqrMagnitude(p1, p3) < k_ClipperEpsilon) ||
+                        (IntPointDiffSqrMagnitude(p1, p4) < k_ClipperEpsilon) ||
+                        (IntPointDiffSqrMagnitude(p2, p3) < k_ClipperEpsilon) ||
+                        (IntPointDiffSqrMagnitude(p2, p4) < k_ClipperEpsilon))
                     {
                         return 2; // they are the same line, or very close parallels
                     }
@@ -219,15 +219,15 @@ namespace Cinemachine
                     return 0; // no intersection
                 }
 
-                double t2 = ((p3.X - p1.X) * dy12 + (p1.Y - p3.Y) * dx12) / -denominator;
-                return (t1 >= 0 && t1 <= 1 && t2 >= 0 && t2 < 1) ? 2 : 1; // 2 = segments intersect, 1 = lines intersect
+                double t2 = (((p3.X - p1.X) * dy12) + ((p1.Y - p3.Y) * dx12)) / -denominator;
+                return ((t1 >= 0) && (t1 <= 1) && (t2 >= 0) && (t2 < 1)) ? 2 : 1; // 2 = segments intersect, 1 = lines intersect
             }
 
             private static double IntPointDiffSqrMagnitude(IntPoint p1, IntPoint p2)
             {
                 double X = p1.X - p2.X;
                 double Y = p1.Y - p2.Y;
-                return X * X + Y * Y;
+                return (X * X) + (Y * Y);
             }
         }
 
@@ -246,12 +246,12 @@ namespace Cinemachine
 
             public Vector2 Stretch(Vector2 p)
             {
-                return new Vector2((p.x - m_CenterX) * m_InverseAspect + m_CenterX, p.y);
+                return new Vector2(((p.x - m_CenterX) * m_InverseAspect) + m_CenterX, p.y);
             }
 
             public Vector2 Unstretch(Vector2 p)
             {
-                return new Vector2((p.x - m_CenterX) * Aspect + m_CenterX, p.y);
+                return new Vector2(((p.x - m_CenterX) * Aspect) + m_CenterX, p.y);
             }
         }
 
@@ -271,7 +271,7 @@ namespace Cinemachine
 
         public ConfinerOven(
             in List<List<Vector2>> inputPath, 
-            in float aspectRatio, float maxFrustumHeight) : base()
+            in float aspectRatio, float maxFrustumHeight)
         {
             Initialize(inputPath, aspectRatio, maxFrustumHeight);
         }
@@ -289,7 +289,7 @@ namespace Cinemachine
             
             // Add in the skeleton
             var bakedSolution = new List<List<IntPoint>>();
-            if (State == BakingState.BAKING || m_Skeleton.Count == 0)
+            if ((State == BakingState.BAKING) || (m_Skeleton.Count == 0))
             {
                 bakedSolution = solution;
             }
@@ -387,7 +387,7 @@ namespace Cinemachine
             float polygonHalfHeight = Mathf.Min(m_PolygonRect.width / aspectRatio, m_PolygonRect.height) / 2f;
             
             // exact comparison to 0 is intentional!
-            if (m_Cache.maxFrustumHeight  == 0 || m_Cache.maxFrustumHeight  > polygonHalfHeight) 
+            if ((m_Cache.maxFrustumHeight  == 0) || (m_Cache.maxFrustumHeight  > polygonHalfHeight)) 
             {
                 m_Cache.maxFrustumHeight = polygonHalfHeight; 
             }
@@ -489,7 +489,7 @@ namespace Cinemachine
                 
                 // if we have a right candidate, and left and right are sufficiently close, 
                 // then we have located a state change point
-                if (!m_Cache.rightCandidate.IsEmpty && m_Cache.stepSize <= k_MinStepSize)
+                if (!m_Cache.rightCandidate.IsEmpty && (m_Cache.stepSize <= k_MinStepSize))
                 {
                     // Add both states: one before the state change and one after
                     m_Cache.solutions.Add(m_Cache.leftCandidate);
@@ -502,7 +502,7 @@ namespace Cinemachine
                     m_Cache.stepSize = m_Cache.maxFrustumHeight;
                 }
                 else if (m_Cache.rightCandidate.IsEmpty || 
-                         m_Cache.leftCandidate.m_FrustumHeight >= m_Cache.maxFrustumHeight)
+                         (m_Cache.leftCandidate.m_FrustumHeight >= m_Cache.maxFrustumHeight))
                 {
                     m_Cache.solutions.Add(m_Cache.leftCandidate);
                     break; // stop searching, because we are at the bound
@@ -552,7 +552,7 @@ namespace Cinemachine
             // At each state change point, collect geometry that gets lost over the transition
             var clipper = new Clipper();
             var offsetter = new ClipperOffset();
-            for (int i = 1; i < solutions.Count - 1; i += 2)
+            for (int i = 1; i < (solutions.Count - 1); i += 2)
             {
                 var prev = solutions[i];
                 var next = solutions[i+1];
@@ -580,7 +580,7 @@ namespace Cinemachine
                 clipper.Execute(ClipType.ctDifference, solution, PolyFillType.pftEvenOdd, PolyFillType.pftEvenOdd);
 
                 // Add that lost geometry to the skeleton
-                if (solution.Count > 0 && solution[0].Count > 0)
+                if ((solution.Count > 0) && (solution[0].Count > 0))
                 {
                     m_Skeleton.AddRange(solution);
                     if (m_MinFrustumHeightWithBones == float.MaxValue)

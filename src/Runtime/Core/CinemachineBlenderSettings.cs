@@ -34,7 +34,7 @@ namespace Cinemachine
         }
         /// <summary>The array containing explicitly defined blends between two Virtual Cameras</summary>
         [Tooltip("The array containing explicitly defined blends between two Virtual Cameras")]
-        public CustomBlend[] m_CustomBlends = null;
+        public CustomBlend[] m_CustomBlends;
 
         /// <summary>Internal API for the inspector editopr: a label to represent any camera</summary>
         public const string kBlendFromAnyCameraLabel = "**ANY CAMERA**";
@@ -69,7 +69,7 @@ namespace Cinemachine
                     if (blendParams.m_From == kBlendFromAnyCameraLabel)
                     {
                         if (!string.IsNullOrEmpty(toCameraName)
-                            && blendParams.m_To == toCameraName)
+                            && (blendParams.m_To == toCameraName))
                         {
                             if (!gotAnyToMe)
                                 anyToMe = blendParams.m_Blend;
@@ -78,9 +78,9 @@ namespace Cinemachine
                         else if (blendParams.m_To == kBlendFromAnyCameraLabel)
                             defaultBlend = blendParams.m_Blend;
                     }
-                    else if (blendParams.m_To == kBlendFromAnyCameraLabel
+                    else if ((blendParams.m_To == kBlendFromAnyCameraLabel)
                              && !string.IsNullOrEmpty(fromCameraName)
-                             && blendParams.m_From == fromCameraName)
+                             && (blendParams.m_From == fromCameraName))
                     {
                         if (!gotMeToAny)
                             meToAny = blendParams.m_Blend;

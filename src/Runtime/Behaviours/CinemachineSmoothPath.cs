@@ -104,10 +104,10 @@ namespace Cinemachine
         void UpdateControlPoints()
         {
             int numPoints = (m_Waypoints == null) ? 0 : m_Waypoints.Length;
-            if (numPoints > 1 
-                && (Looped != m_IsLoopedCache
-                    || m_ControlPoints1 == null || m_ControlPoints1.Length != numPoints
-                    || m_ControlPoints2 == null || m_ControlPoints2.Length != numPoints))
+            if ((numPoints > 1) 
+                && ((Looped != m_IsLoopedCache)
+                    || (m_ControlPoints1 == null) || (m_ControlPoints1.Length != numPoints)
+                    || (m_ControlPoints2 == null) || (m_ControlPoints2.Length != numPoints)))
             {
                 Vector4[] p1 = new Vector4[numPoints];
                 Vector4[] p2 = new Vector4[numPoints];
@@ -194,7 +194,7 @@ namespace Cinemachine
                 UpdateControlPoints();
                 int indexA, indexB;
                 pos = GetBoundingIndices(pos, out indexA, out indexB);
-                if (!Looped && indexA == m_Waypoints.Length - 1)
+                if (!Looped && (indexA == (m_Waypoints.Length - 1)))
                     --indexA;
                 result = SplineHelpers.BezierTangent3(pos - indexA,
                     m_Waypoints[indexA].position, m_ControlPoints1[indexA].position,

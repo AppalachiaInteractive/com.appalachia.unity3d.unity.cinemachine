@@ -24,7 +24,7 @@ namespace Cinemachine.Editor
             GUIContent label,
             SerializedProperty[] props, GUIContent[] subLabels)
         {
-            if (props == null || props.Length == 0)
+            if ((props == null) || (props.Length == 0))
                 return;
 
             const int hSpace = 2;
@@ -37,7 +37,7 @@ namespace Cinemachine.Editor
             for (int i = 0; i < props.Length; ++i)
             {
                 GUIContent sublabel = new GUIContent(props[i].displayName, props[i].tooltip);
-                if (subLabels != null && subLabels.Length > i && subLabels[i] != null)
+                if ((subLabels != null) && (subLabels.Length > i) && (subLabels[i] != null))
                     sublabel = subLabels[i];
                 actualLabels.Add(sublabel);
                 totalSubLabelWidth += GUI.skin.label.CalcSize(sublabel).x;

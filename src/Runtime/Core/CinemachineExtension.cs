@@ -60,7 +60,7 @@ namespace Cinemachine
         /// <param name="connect">True if connecting, false if disconnecting</param>
         protected virtual void ConnectToVcam(bool connect)
         {
-            if (connect && VirtualCamera == null)
+            if (connect && (VirtualCamera == null))
                 Debug.LogError("CinemachineExtension requires a Cinemachine Virtual Camera component");
             if (VirtualCamera != null)
             {

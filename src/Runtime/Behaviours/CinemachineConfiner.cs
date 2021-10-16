@@ -32,7 +32,7 @@ namespace Cinemachine
             Confine2D,
             /// <summary>Use a 3D bounding shape, suitable for perspective cameras</summary>
             Confine3D
-        };
+        }
         /// <summary>The confiner can operate using a 2D bounding shape or a 3D bounding volume</summary>
         [Tooltip("The confiner can operate using a 2D bounding shape or a 3D bounding volume")]
         public Mode m_ConfineMode;
@@ -60,7 +60,7 @@ namespace Cinemachine
         [Tooltip("How gradually to return the camera to the bounding volume if it goes beyond the borders.  "
             + "Higher numbers are more gradual.")]
         [Range(0, 10)]
-        public float m_Damping = 0;
+        public float m_Damping;
         
         /// <summary>See whether the virtual camera has been moved by the confiner</summary>
         /// <param name="vcam">The virtual camera in question.  This might be different from the
@@ -98,7 +98,7 @@ namespace Cinemachine
         {
             public Vector3 m_previousDisplacement;
             public float confinerDisplacement;
-        };
+        }
 
         /// <summary>Check if the bounding volume is defined</summary>
         public bool IsValid
@@ -110,8 +110,8 @@ namespace Cinemachine
 #elif CINEMACHINE_PHYSICS_2D && !CINEMACHINE_PHYSICS
                 return m_BoundingShape2D != null && m_BoundingShape2D.enabled && m_BoundingShape2D.gameObject.activeInHierarchy;
 #else
-                return (m_ConfineMode == Mode.Confine3D && m_BoundingVolume != null && m_BoundingVolume.enabled && m_BoundingVolume.gameObject.activeInHierarchy)
-                       || (m_ConfineMode == Mode.Confine2D && m_BoundingShape2D != null && m_BoundingShape2D.enabled && m_BoundingShape2D.gameObject.activeInHierarchy);
+                return ((m_ConfineMode == Mode.Confine3D) && (m_BoundingVolume != null) && m_BoundingVolume.enabled && m_BoundingVolume.gameObject.activeInHierarchy)
+                       || ((m_ConfineMode == Mode.Confine2D) && (m_BoundingShape2D != null) && m_BoundingShape2D.enabled && m_BoundingShape2D.gameObject.activeInHierarchy);
 #endif
             }
         }
@@ -136,7 +136,7 @@ namespace Cinemachine
             CinemachineVirtualCameraBase vcam,
             CinemachineCore.Stage stage, ref CameraState state, float deltaTime)
         {
-            if (IsValid && stage == CinemachineCore.Stage.Body)
+            if (IsValid && (stage == CinemachineCore.Stage.Body))
             {
                 var extra = GetExtraState<VcamExtraState>(vcam);
                 Vector3 displacement;
@@ -145,7 +145,7 @@ namespace Cinemachine
                 else
                     displacement = ConfinePoint(state.CorrectedPosition);
 
-                if (m_Damping > 0 && deltaTime >= 0 && VirtualCamera.PreviousStateIsValid)
+                if ((m_Damping > 0) && (deltaTime >= 0) && VirtualCamera.PreviousStateIsValid)
                 {
                     Vector3 delta = displacement - extra.m_previousDisplacement;
                     delta = Damper.Damp(delta, m_Damping, deltaTime);
@@ -182,7 +182,7 @@ namespace Cinemachine
             if (colliderType == typeof(PolygonCollider2D))
             {
                 PolygonCollider2D poly = m_BoundingShape2D as PolygonCollider2D;
-                if (m_pathCache == null || m_pathCache.Count != poly.pathCount || m_pathTotalPointCount != poly.GetTotalPointCount())
+                if ((m_pathCache == null) || (m_pathCache.Count != poly.pathCount) || (m_pathTotalPointCount != poly.GetTotalPointCount()))
                 {
                     m_pathCache = new List<List<Vector2>>();
                     for (int i = 0; i < poly.pathCount; ++i)
@@ -200,7 +200,7 @@ namespace Cinemachine
             else if (colliderType == typeof(CompositeCollider2D))
             {
                 CompositeCollider2D poly = m_BoundingShape2D as CompositeCollider2D;
-                if (m_pathCache == null || m_pathCache.Count != poly.pathCount || m_pathTotalPointCount != poly.pointCount)
+                if ((m_pathCache == null) || (m_pathCache.Count != poly.pathCount) || (m_pathTotalPointCount != poly.pointCount))
                 {
                     m_pathCache = new List<List<Vector2>>();
                     Vector2[] path = new Vector2[poly.pointCount];

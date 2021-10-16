@@ -1,5 +1,4 @@
-﻿using Cinemachine.Utility;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Cinemachine
 {
@@ -16,11 +15,11 @@ namespace Cinemachine
         /// How much time it takes for the position to catch up to the target's position
         /// </summary>
         [Tooltip("How much time it takes for the position to catch up to the target's position")]
-        public float m_Damping = 0;
+        public float m_Damping;
         Vector3 m_PreviousTargetPosition;
 
         /// <summary>True if component is enabled and has a LookAt defined</summary>
-        public override bool IsValid { get { return enabled && FollowTarget != null; } }
+        public override bool IsValid { get { return enabled && (FollowTarget != null); } }
 
         /// <summary>Get the Cinemachine Pipeline stage that this component implements.
         /// Always returns the Aim stage</summary>

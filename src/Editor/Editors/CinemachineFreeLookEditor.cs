@@ -102,12 +102,12 @@ namespace Cinemachine
         static int s_SelectedRig = 1;
 
         UnityEditor.Editor m_rigEditor;
-        CinemachineVirtualCameraBase m_EditedRig = null;
+        CinemachineVirtualCameraBase m_EditedRig;
 
         void UpdateRigEditor()
         {
             CinemachineVirtualCamera rig = Target.GetRig(s_SelectedRig);
-            if (m_EditedRig != rig || m_rigEditor == null)
+            if ((m_EditedRig != rig) || (m_rigEditor == null))
             {
                 m_EditedRig = rig;
                 if (m_rigEditor != null)
@@ -118,7 +118,12 @@ namespace Cinemachine
                 if (rig != null)
                 {
                     Undo.RecordObject(Target, "selected rig");
-                    Target.m_YAxis.Value = s_SelectedRig == 0 ? 1 : (s_SelectedRig == 1 ? 0.5f : 0);
+                    Target.m_YAxis.Value = s_SelectedRig switch
+                    {
+                        0 => 1,
+                        1 => 0.5f,
+                        _ => 0
+                    };
                     CreateCachedEditor(rig, null, ref m_rigEditor);
                 }
             }
@@ -184,11 +189,11 @@ namespace Cinemachine
                     orient = Quaternion.AngleAxis(rotation, up) * orient;
 
                     CinemachineOrbitalTransposerEditor.DrawCircleAtPointWithRadius(
-                        pos + up * vcam.m_Orbits[0].m_Height, orient, vcam.m_Orbits[0].m_Radius);
+                        pos + (up * vcam.m_Orbits[0].m_Height), orient, vcam.m_Orbits[0].m_Radius);
                     CinemachineOrbitalTransposerEditor.DrawCircleAtPointWithRadius(
-                        pos + up * vcam.m_Orbits[1].m_Height, orient, vcam.m_Orbits[1].m_Radius);
+                        pos + (up * vcam.m_Orbits[1].m_Height), orient, vcam.m_Orbits[1].m_Radius);
                     CinemachineOrbitalTransposerEditor.DrawCircleAtPointWithRadius(
-                        pos + up * vcam.m_Orbits[2].m_Height, orient, vcam.m_Orbits[2].m_Radius);
+                        pos + (up * vcam.m_Orbits[2].m_Height), orient, vcam.m_Orbits[2].m_Radius);
 
                     DrawCameraPath(pos, orient, vcam);
                 }
@@ -204,7 +209,7 @@ namespace Cinemachine
 
             const int kNumSteps = 20;
             Vector3 currPos = vcam.GetLocalPositionForCameraFromInput(0f);
-            for (int i = 1; i < kNumSteps + 1; ++i)
+            for (int i = 1; i < (kNumSteps + 1); ++i)
             {
                 float t = (float)i / (float)kNumSteps;
                 Vector3 nextPos = vcam.GetLocalPositionForCameraFromInput(t);

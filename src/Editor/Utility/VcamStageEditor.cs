@@ -17,7 +17,7 @@ namespace Cinemachine.Editor
             public Type[] types;   // first entry is null
             public GUIContent[] PopupOptions;
         }
-        static StageData[] sStageData = null;
+        static StageData[] sStageData;
 
         [InitializeOnLoad]
         class EditorInitialize
@@ -87,7 +87,7 @@ namespace Cinemachine.Editor
             static HashSet<UnityEditor.Editor> s_ActiveEditorRegistry = new HashSet<UnityEditor.Editor>();
             public static void SetActiveEditor(UnityEditor.Editor e, bool active)
             {
-                if (e != null && active != s_ActiveEditorRegistry.Contains(e))
+                if ((e != null) && (active != s_ActiveEditorRegistry.Contains(e)))
                 {
                     if (active)
                         s_ActiveEditorRegistry.Add(e);
@@ -154,7 +154,7 @@ namespace Cinemachine.Editor
             // Have the edited components changed?
             int numComponents = m_ScratchComponentList.Count;
             bool dirty = numComponents != m_EditedComponents.Count;
-            for (int i = 0; !dirty && i < numComponents; ++i)
+            for (int i = 0; !dirty && (i < numComponents); ++i)
                 dirty = m_ScratchComponentList[i] != m_EditedComponents[i];
             if (dirty)
             {
@@ -168,17 +168,17 @@ namespace Cinemachine.Editor
                 m_EditedComponents.Clear();
                 m_EditedComponents.AddRange(m_ScratchComponentList);
                 m_IsMixedType = false;
-                for (int i = 1; !m_IsMixedType && i < numComponents; ++i)
+                for (int i = 1; !m_IsMixedType && (i < numComponents); ++i)
                     m_IsMixedType = m_EditedComponents[i].GetType() != m_EditedComponents[i-1].GetType();
             }
-            if (numNullComponents > 0 && numComponents > 0)
+            if ((numNullComponents > 0) && (numComponents > 0))
                 m_IsMixedType = true;
-            if (numComponents > 0 && m_ComponentEditor == null && !m_IsMixedType)
+            if ((numComponents > 0) && (m_ComponentEditor == null) && !m_IsMixedType)
                 UnityEditor.Editor.CreateCachedEditor(m_EditedComponents.ToArray(), null, ref m_ComponentEditor);
             m_StageSelection = GetPopupIndexForComponent(numComponents == 0 ? null : m_EditedComponents[0]);
 
             m_StageError = false;
-            for (int i = 0; !m_StageError && i < numComponents; ++i)
+            for (int i = 0; !m_StageError && (i < numComponents); ++i)
                 m_StageError = !m_EditedComponents[i].IsValid;
 
             DrawComponentInspector();
@@ -206,7 +206,7 @@ namespace Cinemachine.Editor
             GUIContent label = new GUIContent(InspectorUtility.NicifyClassName(m_Stage.ToString()));
             if (m_StageError)
                 label.image = EditorGUIUtility.IconContent("console.warnicon.sml").image;
-            float labelWidth = EditorGUIUtility.labelWidth - EditorGUI.indentLevel * indentSize;
+            float labelWidth = EditorGUIUtility.labelWidth - (EditorGUI.indentLevel * indentSize);
             Rect r = rect; r.width = labelWidth;
             EditorGUI.LabelField(r, label);
 
@@ -236,11 +236,11 @@ namespace Cinemachine.Editor
                 r = new Rect(rect.x, rect.y, labelWidth, rect.height);
                 var isExpanded = m_IsMixedType ? false : EditorGUI.Foldout(
                         r, sStageData[index].IsExpanded, GUIContent.none, true);
-                if (isExpanded || isExpanded != sStageData[index].IsExpanded)
+                if (isExpanded || (isExpanded != sStageData[index].IsExpanded))
                 {
                     // Make the editor for that stage
                     ActiveEditorRegistry.SetActiveEditor(m_ComponentEditor, isExpanded);
-                    if (isExpanded && m_ComponentEditor != null)
+                    if (isExpanded && (m_ComponentEditor != null))
                     {
                         ++EditorGUI.indentLevel;
                         m_ComponentEditor.OnInspectorGUI();
@@ -257,7 +257,7 @@ namespace Cinemachine.Editor
             {
                 MethodInfo mi = m_ComponentEditor.GetType().GetMethod("OnVcamPositionDragged"
                     , BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-                if (mi != null && m_ComponentEditor.target != null)
+                if ((mi != null) && (m_ComponentEditor.target != null))
                 {
                     mi.Invoke(m_ComponentEditor, new object[] { delta } );
                 }

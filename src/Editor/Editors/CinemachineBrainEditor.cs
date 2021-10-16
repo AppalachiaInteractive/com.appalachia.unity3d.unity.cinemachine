@@ -2,7 +2,6 @@
 using UnityEditor;
 using System.Collections.Generic;
 using Cinemachine.Utility;
-using System.IO;
 
 namespace Cinemachine.Editor
 {
@@ -14,7 +13,7 @@ namespace Cinemachine.Editor
     public sealed class CinemachineBrainEditor : BaseEditor<CinemachineBrain>
     {
         EmbeddeAssetEditor<CinemachineBlenderSettings> m_BlendsEditor;
-        bool mEventsExpanded = false;
+        bool mEventsExpanded;
 
         /// <summary>Obsolete, do not use.  Use the overload, which is more performant</summary>
         /// <returns>List of property names to exclude</returns>
@@ -51,7 +50,7 @@ namespace Cinemachine.Editor
             // Show the active camera and blend
             GUI.enabled = false;
             ICinemachineCamera vcam = Target.ActiveVirtualCamera;
-            Transform activeCam = (vcam != null && vcam.VirtualCameraGameObject != null)
+            Transform activeCam = ((vcam != null) && (vcam.VirtualCameraGameObject != null))
                 ? vcam.VirtualCameraGameObject.transform : null;
             EditorGUILayout.ObjectField("Live Camera", activeCam, typeof(Transform), true);
             EditorGUILayout.DelayedTextField(
@@ -83,7 +82,7 @@ namespace Cinemachine.Editor
         [DrawGizmo(GizmoType.Selected | GizmoType.NonSelected, typeof(CinemachineBrain))]
         private static void DrawBrainGizmos(CinemachineBrain brain, GizmoType drawType)
         {
-            if (brain.OutputCamera != null && brain.m_ShowCameraFrustum && brain.isActiveAndEnabled)
+            if ((brain.OutputCamera != null) && brain.m_ShowCameraFrustum && brain.isActiveAndEnabled)
             {
                 DrawCameraFrustumGizmo(
                     brain, LensSettings.FromCamera(brain.OutputCamera),
@@ -137,7 +136,7 @@ namespace Cinemachine.Editor
             if ((vcam.gameObject.hideFlags & (HideFlags.HideInHierarchy | HideFlags.HideInInspector)) != 0)
                 return;
 
-            if (vcam.ParentCamera != null && (selectionType & GizmoType.Active) == 0)
+            if ((vcam.ParentCamera != null) && ((selectionType & GizmoType.Active) == 0))
                 return;
 
             CameraState state = vcam.State;

@@ -1,4 +1,3 @@
-using System;
 using Cinemachine.Utility;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -57,14 +56,14 @@ namespace Cinemachine
             + "setting, or animate the target more smoothly.")]
         [Range(0f, 1f)]
         [Space]
-        public float m_LookaheadTime = 0;
+        public float m_LookaheadTime;
 
         /// <summary>Controls the smoothness of the lookahead algorithm.  Larger values smooth out
         /// jittery predictions and also increase prediction lag</summary>
         [Tooltip("Controls the smoothness of the lookahead algorithm.  Larger values smooth out "
             + "jittery predictions and also increase prediction lag")]
         [Range(0, 30)]
-        public float m_LookaheadSmoothing = 0;
+        public float m_LookaheadSmoothing;
 
         /// <summary>If checked, movement along the Y axis will be ignored for lookahead calculations</summary>
         [Tooltip("If checked, movement along the Y axis will be ignored for lookahead calculations")]
@@ -130,24 +129,24 @@ namespace Cinemachine
         [Space]
         [Range(0f, 2f)]
         [Tooltip("Camera will not move horizontally if the target is within this range of the position.")]
-        public float m_DeadZoneWidth = 0f;
+        public float m_DeadZoneWidth;
 
         /// <summary>Camera will not move vertically if the target is within this range of the position</summary>
         [Range(0f, 2f)]
         [Tooltip("Camera will not move vertically if the target is within this range of the position.")]
-        public float m_DeadZoneHeight = 0f;
+        public float m_DeadZoneHeight;
 
         /// <summary>The camera will not move along its z-axis if the Follow target is within
         /// this distance of the specified camera distance</summary>
         [Tooltip("The camera will not move along its z-axis if the Follow target is within "
             + "this distance of the specified camera distance")]
         [FormerlySerializedAs("m_DistanceDeadZoneSize")]
-        public float m_DeadZoneDepth = 0;
+        public float m_DeadZoneDepth;
 
         /// <summary>If checked, then then soft zone will be unlimited in size</summary>
         [Space]
         [Tooltip("If checked, then then soft zone will be unlimited in size.")]
-        public bool m_UnlimitedSoftZone = false;
+        public bool m_UnlimitedSoftZone;
 
         /// <summary>When target is within this region, camera will gradually move to re-align
         /// towards the desired position, depending onm the damping speed</summary>
@@ -166,12 +165,12 @@ namespace Cinemachine
         /// <summary>A non-zero bias will move the targt position away from the center of the soft zone</summary>
         [Range(-0.5f, 0.5f)]
         [Tooltip("A non-zero bias will move the target position horizontally away from the center of the soft zone.")]
-        public float m_BiasX = 0f;
+        public float m_BiasX;
 
         /// <summary>A non-zero bias will move the targt position away from the center of the soft zone</summary>
         [Range(-0.5f, 0.5f)]
         [Tooltip("A non-zero bias will move the target position vertically away from the center of the soft zone.")]
-        public float m_BiasY = 0f;
+        public float m_BiasY;
 
         /// <summary>Force target to center of screen when this camera activates.
         /// If false, will clamp target to the edges of the dead zone</summary>
@@ -191,7 +190,7 @@ namespace Cinemachine
             HorizontalAndVertical,
             /// <summary>Don't do any framing adjustment</summary>
             None
-        };
+        }
 
         /// <summary>What screen dimensions to consider when framing</summary>
         [Space]
@@ -209,7 +208,7 @@ namespace Cinemachine
             /// <summary>Move the camera as much as permitted by the ranges, then
             /// adjust the FOV if necessary to make the shot.</summary>
             DollyThenZoom
-        };
+        }
 
         /// <summary>How to adjust the camera to get the desired framing</summary>
         [Tooltip("How to adjust the camera to get the desired framing.  You can zoom, dolly in/out, or do both.")]
@@ -260,15 +259,15 @@ namespace Cinemachine
             get
             {
                 return new Rect(
-                    m_ScreenX - m_DeadZoneWidth / 2, m_ScreenY - m_DeadZoneHeight / 2,
+                    m_ScreenX - (m_DeadZoneWidth / 2), m_ScreenY - (m_DeadZoneHeight / 2),
                     m_DeadZoneWidth, m_DeadZoneHeight);
             }
             set
             {
-                m_DeadZoneWidth = Mathf.Clamp(value.width, 0, 2);
-                m_DeadZoneHeight = Mathf.Clamp(value.height, 0, 2);
-                m_ScreenX = Mathf.Clamp(value.x + m_DeadZoneWidth / 2, -0.5f,  1.5f);
-                m_ScreenY = Mathf.Clamp(value.y + m_DeadZoneHeight / 2, -0.5f,  1.5f);
+                m_DeadZoneWidth = Mathf.Clamp(value.width,                0,     2);
+                m_DeadZoneHeight = Mathf.Clamp(value.height,              0,     2);
+                m_ScreenX = Mathf.Clamp(value.x + (m_DeadZoneWidth / 2),  -0.5f, 1.5f);
+                m_ScreenY = Mathf.Clamp(value.y + (m_DeadZoneHeight / 2), -0.5f, 1.5f);
                 m_SoftZoneWidth = Mathf.Max(m_SoftZoneWidth, m_DeadZoneWidth);
                 m_SoftZoneHeight = Mathf.Max(m_SoftZoneHeight, m_DeadZoneHeight);
             }
@@ -280,7 +279,7 @@ namespace Cinemachine
             get
             {
                 Rect r = new Rect(
-                        m_ScreenX - m_SoftZoneWidth / 2, m_ScreenY - m_SoftZoneHeight / 2,
+                        m_ScreenX - (m_SoftZoneWidth / 2), m_ScreenY - (m_SoftZoneHeight / 2),
                         m_SoftZoneWidth, m_SoftZoneHeight);
                 r.position += new Vector2(
                         m_BiasX * (m_SoftZoneWidth - m_DeadZoneWidth),
@@ -320,7 +319,7 @@ namespace Cinemachine
         }
 
         /// <summary>True if component is enabled and has a valid Follow target</summary>
-        public override bool IsValid { get { return enabled && FollowTarget != null; } }
+        public override bool IsValid { get { return enabled && (FollowTarget != null); } }
 
         /// <summary>Get the Cinemachine Pipeline stage that this component implements.
         /// Always returns the Body stage</summary>
@@ -387,8 +386,8 @@ namespace Cinemachine
             ICinemachineCamera fromCam, Vector3 worldUp, float deltaTime,
             ref CinemachineVirtualCameraBase.TransitionParams transitionParams)
         {
-            if (fromCam != null && transitionParams.m_InheritPosition
-                 && !CinemachineCore.Instance.IsLiveInBlend(VirtualCamera))
+            if ((fromCam != null) && transitionParams.m_InheritPosition
+                                  && !CinemachineCore.Instance.IsLiveInBlend(VirtualCamera))
             {
                 m_PreviousCameraPosition = fromCam.State.RawPosition;
                 m_prevRotation = fromCam.State.RawOrientation;
@@ -442,7 +441,7 @@ namespace Cinemachine
         {
             LensSettings lens = curState.Lens;
             Vector3 followTargetPosition = FollowTargetPosition + (FollowTargetRotation * m_TrackedObjectOffset);
-            bool previousStateIsValid = deltaTime >= 0 && VirtualCamera.PreviousStateIsValid;
+            bool previousStateIsValid = (deltaTime >= 0) && VirtualCamera.PreviousStateIsValid;
             if (!previousStateIsValid || VirtualCamera.FollowTargetChanged)
                 m_Predictor.Reset();
             if (!previousStateIsValid)
@@ -453,7 +452,7 @@ namespace Cinemachine
                 if (!InheritingPosition && m_CenterOnActivate)
                 {
                     m_PreviousCameraPosition = FollowTargetPosition
-                        + (curState.RawOrientation * Vector3.back) * m_CameraDistance;
+                        + ((curState.RawOrientation * Vector3.back) * m_CameraDistance);
                 }
             }
             if (!IsValid)
@@ -466,7 +465,7 @@ namespace Cinemachine
 
             // Compute group bounds and adjust follow target for group framing
             ICinemachineTargetGroup group = AbstractFollowTargetGroup;
-            bool isGroupFraming = group != null && m_GroupFramingMode != FramingMode.None && !group.IsEmpty;
+            bool isGroupFraming = (@group != null) && (m_GroupFramingMode != FramingMode.None) && !group.IsEmpty;
             if (isGroupFraming)
                 followTargetPosition = ComputeGroupBounds(group, ref curState);
 
@@ -508,7 +507,7 @@ namespace Cinemachine
                 {
                     // What distance from near edge would be needed to get the adjusted
                     // target height, at the current FOV
-                    targetDistance = targetHeight / (2f * Mathf.Tan(verticalFOV * Mathf.Deg2Rad / 2f));
+                    targetDistance = targetHeight / (2f * Mathf.Tan((verticalFOV * Mathf.Deg2Rad) / 2f));
 
                     // Clamp to respect min/max distance settings to the near surface of the bounds
                     targetDistance = Mathf.Clamp(targetDistance, m_MinimumDistance, m_MaximumDistance);
@@ -525,7 +524,7 @@ namespace Cinemachine
             if (previousStateIsValid && m_TargetMovementOnly)
             {
                 var q = localToWorld * Quaternion.Inverse(m_prevRotation);
-                m_PreviousCameraPosition = TrackedPoint + q * (m_PreviousCameraPosition - TrackedPoint);
+                m_PreviousCameraPosition = TrackedPoint + (q * (m_PreviousCameraPosition - TrackedPoint));
             }
             m_prevRotation = localToWorld;
 
@@ -538,8 +537,8 @@ namespace Cinemachine
 
             // Move along camera z
             Vector3 cameraOffset = Vector3.zero;
-            float cameraMin = Mathf.Max(kMinimumCameraDistance, targetDistance - m_DeadZoneDepth/2);
-            float cameraMax = Mathf.Max(cameraMin, targetDistance + m_DeadZoneDepth/2);
+            float cameraMin = Mathf.Max(kMinimumCameraDistance, targetDistance - (m_DeadZoneDepth/2));
+            float cameraMax = Mathf.Max(cameraMin,              targetDistance + (m_DeadZoneDepth/2));
             float targetZ = Mathf.Min(targetPos.z, lookAtPos.z);
             if (targetZ < cameraMin)
                 cameraOffset.z = targetZ - cameraMin;
@@ -568,7 +567,7 @@ namespace Cinemachine
 
                 // Make sure the real target (not the lookahead one) is still in the frame
                 if (!m_UnlimitedSoftZone 
-                    && (deltaTime < 0 || VirtualCamera.FollowTargetAttachment > 1 - Epsilon))
+                    && ((deltaTime < 0) || (VirtualCamera.FollowTargetAttachment > (1 - Epsilon))))
                 {
                     Rect hardGuideOrtho = ScreenToOrtho(HardGuideRect, screenSize, lens.Aspect);
                     var realTargetPos = (worldToLocal * followTargetPosition) - cameraPos;
@@ -646,7 +645,7 @@ namespace Cinemachine
             {
                 // Parallax might change bounds - refine
                 float d = (Quaternion.Inverse(curState.RawOrientation) * (groupCenter - cameraPos)).z;
-                cameraPos = groupCenter - fwd * (Mathf.Max(d, boundsDepth) + boundsDepth);
+                cameraPos = groupCenter - (fwd * (Mathf.Max(d, boundsDepth) + boundsDepth));
 
                 // Will adjust cameraPos
                 b = GetScreenSpaceGroupBoundingBox(group, ref cameraPos, curState.RawOrientation);
@@ -654,7 +653,7 @@ namespace Cinemachine
                 groupCenter = LastBoundsMatrix.MultiplyPoint3x4(b.center);
             }
             LastBounds = b;
-            return groupCenter - fwd * boundsDepth;
+            return groupCenter - (fwd * boundsDepth);
         }
 
         static Bounds GetScreenSpaceGroupBoundingBox(

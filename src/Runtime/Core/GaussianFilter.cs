@@ -16,7 +16,7 @@ namespace Cinemachine.Utility
         {
             // Weight is close to 0 at a distance of sigma*3, so let's just cut it off a little early
             int kernelRadius = Math.Min(maxKernelRadius, Mathf.FloorToInt(Mathf.Abs(sigma) * 2.5f));
-            mKernel = new float[2 * kernelRadius + 1];
+            mKernel = new float[(2 * kernelRadius) + 1];
             if (kernelRadius == 0)
                 mKernel[0] = 1;
             else

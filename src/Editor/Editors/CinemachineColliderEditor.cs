@@ -39,7 +39,7 @@ namespace Cinemachine.Editor
         {
             BeginInspector();
 
-            if (Target.m_AvoidObstacles && Target.VirtualCamera != null
+            if (Target.m_AvoidObstacles && (Target.VirtualCamera != null)
                     && !Target.VirtualCamera.State.HasLookAt)
                 EditorGUILayout.HelpBox(
                     "Avoid Obstacles requires a LookAt target.",
@@ -52,7 +52,7 @@ namespace Cinemachine.Editor
         private static void DrawColliderGizmos(CinemachineCollider collider, GizmoType type)
         {
             CinemachineVirtualCameraBase vcam = (collider != null) ? collider.VirtualCamera : null;
-            if (vcam != null && collider.enabled)
+            if ((vcam != null) && collider.enabled)
             {
                 Color oldColor = Gizmos.color;
                 Vector3 pos = vcam.State.FinalPosition;
@@ -64,7 +64,7 @@ namespace Cinemachine.Editor
 
                     Vector3 forwardFeelerVector = (vcam.State.ReferenceLookAt - pos).normalized;
                     float distance = collider.m_DistanceLimit;
-                    Gizmos.DrawLine(pos, pos + forwardFeelerVector * distance);
+                    Gizmos.DrawLine(pos, pos + (forwardFeelerVector * distance));
 
                     // Show the avoidance path, for debugging
                     List<List<Vector3>> debugPaths = collider.DebugPaths;

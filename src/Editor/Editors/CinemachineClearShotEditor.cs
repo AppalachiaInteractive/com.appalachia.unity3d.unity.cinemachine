@@ -136,7 +136,7 @@ namespace Cinemachine.Editor
         {
             CinemachineVirtualCameraBase vcam = obj as CinemachineVirtualCameraBase;
             var collider = (vcam == null) ? null : vcam.GetComponent<CinemachineCollider>();
-            return (collider != null && collider.enabled);
+            return ((collider != null) && collider.enabled);
         }
 
         void SetupChildList()
@@ -164,12 +164,12 @@ namespace Cinemachine.Editor
                     rect.width -= floatFieldWidth + hSpace;
                     rect.height = EditorGUIUtility.singleLineHeight;
                     SerializedProperty element = mChildList.serializedProperty.GetArrayElementAtIndex(index);
-                    if (m_ColliderState == ColliderState.ColliderOnSomeChildren
-                        || m_ColliderState == ColliderState.ColliderOnChildrenAndParent)
+                    if ((m_ColliderState == ColliderState.ColliderOnSomeChildren)
+                        || (m_ColliderState == ColliderState.ColliderOnChildrenAndParent))
                     {
                         bool hasCollider = ObjectHasCollider(element.objectReferenceValue);
-                        if ((m_ColliderState == ColliderState.ColliderOnSomeChildren && !hasCollider)
-                            || (m_ColliderState == ColliderState.ColliderOnChildrenAndParent && hasCollider))
+                        if (((m_ColliderState == ColliderState.ColliderOnSomeChildren) && !hasCollider)
+                            || ((m_ColliderState == ColliderState.ColliderOnChildrenAndParent) && hasCollider))
                         {
                             float width = rect.width;
                             rect.width = rect.height;
@@ -192,7 +192,7 @@ namespace Cinemachine.Editor
                 };
             mChildList.onChangedCallback = (UnityEditorInternal.ReorderableList l) =>
                 {
-                    if (l.index < 0 || l.index >= l.serializedProperty.arraySize)
+                    if ((l.index < 0) || (l.index >= l.serializedProperty.arraySize))
                         return;
                     Object o = l.serializedProperty.GetArrayElementAtIndex(
                             l.index).objectReferenceValue;

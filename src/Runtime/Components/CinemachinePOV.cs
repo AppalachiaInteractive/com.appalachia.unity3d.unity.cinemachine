@@ -117,7 +117,7 @@ namespace Cinemachine
                 return;
 
             // Only read joystick when game is playing
-            if (deltaTime >= 0 && CinemachineCore.Instance.IsLive(VirtualCamera))
+            if ((deltaTime >= 0) && CinemachineCore.Instance.IsLive(VirtualCamera))
             {
                 if (m_HorizontalAxis.Update(deltaTime))
                     m_HorizontalRecentering.CancelRecentering();
@@ -190,8 +190,8 @@ namespace Cinemachine
             m_VerticalRecentering.DoRecentering(ref m_VerticalAxis, -1, 0);
             m_HorizontalRecentering.CancelRecentering();
             m_VerticalRecentering.CancelRecentering();
-            if (fromCam != null && transitionParams.m_InheritPosition  
-                && !CinemachineCore.Instance.IsLiveInBlend(VirtualCamera))
+            if ((fromCam != null) && transitionParams.m_InheritPosition  
+                                  && !CinemachineCore.Instance.IsLiveInBlend(VirtualCamera))
             {
                 SetAxesForRotation(fromCam.State.RawOrientation);
                 return true;

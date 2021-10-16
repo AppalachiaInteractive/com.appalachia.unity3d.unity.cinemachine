@@ -46,7 +46,7 @@ namespace Cinemachine.Utility
         {
             if (deltaTime < 0)
                 Reset();
-            if (m_HavePos && deltaTime > UnityVectorExtensions.Epsilon)
+            if (m_HavePos && (deltaTime > UnityVectorExtensions.Epsilon))
             {
                 var vel = (pos - m_Pos) / deltaTime;
                 bool slowing = vel.sqrMagnitude < m_Velocity.sqrMagnitude;
@@ -108,7 +108,7 @@ namespace Cinemachine.Utility
         /// a value between 0 and 1.</returns>
         public static float Damp(float initial, float dampTime, float deltaTime)
         {
-            if (dampTime < Epsilon || Mathf.Abs(initial) < Epsilon)
+            if ((dampTime < Epsilon) || (Mathf.Abs(initial) < Epsilon))
                 return initial;
             if (deltaTime < Epsilon)
                 return 0;
@@ -174,15 +174,15 @@ namespace Cinemachine.Utility
             public Vector3 velocity;
             public float weight;
             public float time;
-        };
+        }
         Item[] mHistory;
         int mTop;
         int mBottom;
         int mCount;
 
         Vector3 mHeadingSum;
-        float mWeightSum = 0;
-        float mWeightTime = 0;
+        float mWeightSum;
+        float mWeightTime;
 
         Vector3 mLastGoodHeading = Vector3.zero;
 
@@ -254,7 +254,7 @@ namespace Cinemachine.Utility
                 float decay = Decay(time - item.time);
                 mWeightSum -= item.weight * decay;
                 mHeadingSum -= item.velocity * decay;
-                if (mWeightSum <= UnityVectorExtensions.Epsilon || mCount == 0)
+                if ((mWeightSum <= UnityVectorExtensions.Epsilon) || (mCount == 0))
                     ClearHistory();
             }
         }
@@ -277,8 +277,8 @@ namespace Cinemachine.Utility
         public Vector3 GetReliableHeading()
         {
             // Update Last Good Heading
-            if (mWeightSum > UnityVectorExtensions.Epsilon
-                && (mCount == mHistory.Length || mLastGoodHeading.AlmostZero()))
+            if ((mWeightSum > UnityVectorExtensions.Epsilon)
+                && ((mCount == mHistory.Length) || mLastGoodHeading.AlmostZero()))
             {
                 Vector3  h = mHeadingSum / mWeightSum;
                 if (!h.AlmostZero())

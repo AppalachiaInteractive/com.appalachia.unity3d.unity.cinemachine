@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using UnityEngine.TestTools;
-using NUnit.Framework;
-using System.Collections;
+﻿using NUnit.Framework;
 
 [TestFixture]
 public class DampingTests
@@ -24,7 +21,7 @@ public class DampingTests
                 t += dampTime / iterations;
                 float fdt = fixedFactor[f] * t;
                 string msg = "i = " + i + ", t = " + t + ", fdt = " + fdt;
-                if (i != iterations-1)
+                if (i != (iterations-1))
                     Assert.Less(t, dampTime, msg);
                 else
                     t = dampTime;

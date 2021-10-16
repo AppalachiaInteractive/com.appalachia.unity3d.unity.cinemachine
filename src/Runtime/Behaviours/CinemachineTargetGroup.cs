@@ -118,7 +118,7 @@ namespace Cinemachine
             FixedUpdate,
             /// <summary>Updated in MonoBehaviour LateUpdate.</summary>
             LateUpdate
-        };
+        }
 
         /// <summary>When to update the group's transform based on the position of the group members</summary>
         [Tooltip("When to update the group's transform based on the position of the group members")]
@@ -157,7 +157,7 @@ namespace Cinemachine
             get
             {
                 for (int i = 0; i < m_Targets.Length; ++i)
-                    if (m_Targets[i].target != null && m_Targets[i].weight > UnityVectorExtensions.Epsilon)
+                    if ((m_Targets[i].target != null) && (m_Targets[i].weight > UnityVectorExtensions.Epsilon))
                         return false;
                 return true;
             }
@@ -195,7 +195,7 @@ namespace Cinemachine
                 m_Targets = new Target[m_Targets.Length - 1];
                 if (index > 0)
                     Array.Copy(oldTargets, m_Targets, index);
-                if (index < oldTargets.Length - 1)
+                if (index < (oldTargets.Length - 1))
                     Array.Copy(oldTargets, index + 1, m_Targets, index, oldTargets.Length - index - 1);
             }
         }
@@ -222,7 +222,7 @@ namespace Cinemachine
         /// <returns>The weighted bounding sphere</returns>
         public BoundingSphere GetWeightedBoundsForMember(int index)
         {
-            if (index < 0 || index >= m_Targets.Length)
+            if ((index < 0) || (index >= m_Targets.Length))
                 return Sphere;
             return WeightedMemberBounds(m_Targets[index], mAveragePos, mMaxWeight);
         }
@@ -252,7 +252,7 @@ namespace Cinemachine
             {
                 pos = TargetPositionCache.GetTargetPosition(t.target);
                 w = Mathf.Max(0, t.weight);
-                if (maxWeight > UnityVectorExtensions.Epsilon && w < maxWeight)
+                if ((maxWeight > UnityVectorExtensions.Epsilon) && (w < maxWeight))
                     w /= maxWeight;
                 else
                     w = 1;
@@ -370,7 +370,7 @@ namespace Cinemachine
 
         void Update()
         {
-            if (!Application.isPlaying || m_UpdateMethod == UpdateMethod.Update)
+            if (!Application.isPlaying || (m_UpdateMethod == UpdateMethod.Update))
                 DoUpdate();
         }
 

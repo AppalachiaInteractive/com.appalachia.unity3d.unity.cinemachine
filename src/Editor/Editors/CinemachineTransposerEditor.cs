@@ -63,7 +63,7 @@ namespace Cinemachine.Editor
         {
             BeginInspector();
             bool needWarning = false;
-            for (int i = 0; !needWarning && i < targets.Length; ++i)
+            for (int i = 0; !needWarning && (i < targets.Length); ++i)
                 needWarning = (targets[i] as CinemachineTransposer).FollowTarget == null;
             if (needWarning)
                 EditorGUILayout.HelpBox(

@@ -137,7 +137,7 @@ namespace Cinemachine
 #endif
         
         /// <summary>True if component is enabled and has a Follow target defined</summary>
-        public override bool IsValid => enabled && FollowTarget != null;
+        public override bool IsValid => enabled && (FollowTarget != null);
 
         /// <summary>Get the Cinemachine Pipeline stage that this component implements.
         /// Always returns the Aim stage</summary>
@@ -243,8 +243,8 @@ namespace Cinemachine
             var shoulderOffset = Vector3.Lerp(shoulderPivotReflected, ShoulderOffset, CameraSide);
             shoulderOffset.x += m_DampingCorrection.x;
             shoulderOffset.y += m_DampingCorrection.y;
-            shoulder = root + heading * shoulderOffset;
-            hand = shoulder + targetRot * new Vector3(0, VerticalArmLength, 0);   
+            shoulder = root + (heading * shoulderOffset);
+            hand = shoulder + (targetRot * new Vector3(0, VerticalArmLength, 0));   
         }
 
         Vector3 ResolveCollisions(
@@ -268,7 +268,7 @@ namespace Cinemachine
                 root, cameraRadius, dir, out RaycastHit hitInfo, 
                 len, CameraCollisionFilter, IgnoreTag))
             {
-                var desiredResult = hitInfo.point + hitInfo.normal * cameraRadius;
+                var desiredResult = hitInfo.point + (hitInfo.normal * cameraRadius);
                 desiredCorrection = (desiredResult - tip).magnitude;
             }
 

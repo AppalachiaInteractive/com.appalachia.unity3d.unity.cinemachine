@@ -14,7 +14,7 @@ namespace Cinemachine.Editor
         const float kIndentAmount = 15;
         const float kBoxMargin = 3;
         float HelpBoxHeight { get { return EditorGUIUtility.singleLineHeight * 2.5f; } }
-        bool mExpanded = false;
+        bool mExpanded;
 
         bool WarnIfNull
         {
@@ -38,7 +38,7 @@ namespace Cinemachine.Editor
         {
             var attrs = property.serializedObject.targetObject.GetType()
                 .GetCustomAttributes(typeof(HeaderAttribute), false);
-            if (attrs != null && attrs.Length > 0)
+            if ((attrs != null) && (attrs.Length > 0))
                 return ((HeaderAttribute)attrs[0]).header;
             return null;
         }
@@ -91,19 +91,19 @@ namespace Cinemachine.Editor
             rect.height = EditorGUIUtility.singleLineHeight;
             EditorGUIUtility.labelWidth -= kBoxMargin;
             AssetFieldWithCreateButton(
-                new Rect(rect.x + kBoxMargin, rect.y, rect.width - 2 * kBoxMargin, rect.height),
+                new Rect(rect.x + kBoxMargin, rect.y, rect.width - (2 * kBoxMargin), rect.height),
                 property, WarnIfNull,
                 property.serializedObject.targetObject.name + " " + label.text);
 
             ScriptableObject asset = property.objectReferenceValue as ScriptableObject;
-            if (asset != null && !hasCustomEditor)
+            if ((asset != null) && !hasCustomEditor)
             {
                 mExpanded = EditorGUI.Foldout(rect, mExpanded, GUIContent.none, true);
                 if (mExpanded)
                 {
                     rect.y += rect.height + kBoxMargin + vSpace;
                     rect.x += kIndentAmount + kBoxMargin;
-                    rect.width -= kIndentAmount + 2 * kBoxMargin;
+                    rect.width -= kIndentAmount + (2 * kBoxMargin);
                     EditorGUIUtility.labelWidth -= kIndentAmount;
 
                     EditorGUI.HelpBox(
@@ -155,13 +155,13 @@ namespace Cinemachine.Editor
             return type;
         }
 
-        Type[] mAssetTypes = null;
+        Type[] mAssetTypes;
         List<ScriptableObject> mAssetPresets;
         GUIContent[] mAssetPresetNames;
 
         void RebuildPresetList()
         {
-            if (mAssetPresets != null && mAssetPresetNames != null)
+            if ((mAssetPresets != null) && (mAssetPresetNames != null))
                 return;
 
             mAssetPresets = new List<ScriptableObject>();
@@ -190,7 +190,7 @@ namespace Cinemachine.Editor
             r.width -= iconSize;
 
             GUIContent label = new GUIContent(property.displayName, property.tooltip);
-            if (warnIfNull && property.objectReferenceValue == null)
+            if (warnIfNull && (property.objectReferenceValue == null))
                 label.image = EditorGUIUtility.IconContent("console.warnicon.sml").image;
             EditorGUI.PropertyField(r, property, label);
 

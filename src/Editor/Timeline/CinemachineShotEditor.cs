@@ -51,7 +51,7 @@ using Cinemachine;
         }
 #endif
 
-        static public CinemachineVirtualCameraBase CreateStaticVcamFromSceneView()
+        public static CinemachineVirtualCameraBase CreateStaticVcamFromSceneView()
         {
             CinemachineVirtualCameraBase vcam = CinemachineMenu.CreateStaticVirtualCamera();
             vcam.m_StandbyUpdate = CinemachineVirtualCameraBase.StandbyUpdateMode.Never;
@@ -179,7 +179,7 @@ using Cinemachine;
             {
                 foreach (UnityEditor.Editor e in m_editors)
                 {
-                    if (e == null || e.target == null || (e.target.hideFlags & HideFlags.HideInInspector) != 0)
+                    if ((e == null) || (e.target == null) || ((e.target.hideFlags & HideFlags.HideInInspector) != 0))
                         continue;
 
                     // Separator line - how do you make a thinner one?
@@ -198,7 +198,7 @@ using Cinemachine;
         }
 
         CinemachineVirtualCameraBase m_cachedReferenceObject;
-        UnityEditor.Editor[] m_editors = null;
+        UnityEditor.Editor[] m_editors;
         static Dictionary<System.Type, bool> s_EditorExpanded = new Dictionary<System.Type, bool>();
 
         void UpdateComponentEditors(CinemachineVirtualCameraBase obj)
@@ -208,7 +208,7 @@ using Cinemachine;
                 components = obj.gameObject.GetComponents<MonoBehaviour>();
             int numComponents = (components == null) ? 0 : components.Length;
             int numEditors = (m_editors == null) ? 0 : m_editors.Length;
-            if (m_cachedReferenceObject != obj || (numComponents + 1) != numEditors)
+            if ((m_cachedReferenceObject != obj) || ((numComponents + 1) != numEditors))
             {
                 DestroyComponentEditors();
                 m_cachedReferenceObject = obj;

@@ -178,7 +178,7 @@ namespace Cinemachine
             /// <param name="weight">The weight of the custom stuff.  Must be 0...1</param>
             public CustomBlendable(Object custom, float weight) 
                 { m_Custom = custom; m_Weight = weight; }
-        };
+        }
 
         // This is to avoid excessive GC allocs
         CustomBlendable mCustom0;
@@ -208,7 +208,7 @@ namespace Cinemachine
                 default: 
                 {
                     index -= 4;
-                    if (m_CustomOverflow != null && index < m_CustomOverflow.Count)
+                    if ((m_CustomOverflow != null) && (index < m_CustomOverflow.Count))
                         return m_CustomOverflow[index];
                     return new CustomBlendable(null, 0);
                 }
@@ -322,7 +322,7 @@ namespace Cinemachine
                 // Re-interpolate FOV to preserve target composition, if possible
                 float fovA = stateA.Lens.FieldOfView;
                 float fovB = stateB.Lens.FieldOfView;
-                if (((stateA.BlendHint | stateB.BlendHint) & BlendHintValue.NoLens) == 0
+                if ((((stateA.BlendHint | stateB.BlendHint) & BlendHintValue.NoLens) == 0)
                     && !state.Lens.Orthographic && !Mathf.Approximately(fovA, fovB))
                 {
                     LensSettings lens = state.Lens;
@@ -351,7 +351,7 @@ namespace Cinemachine
 
             // Interpolate the LookAt in Screen Space if requested
             if (state.HasLookAt 
-                && ((stateA.BlendHint | stateB.BlendHint) & BlendHintValue.RadialAimBlend) != 0)
+                && (((stateA.BlendHint | stateB.BlendHint) & BlendHintValue.RadialAimBlend) != 0))
             {
                 state.ReferenceLookAt = state.RawPosition + Vector3.Slerp(
                         stateA.ReferenceLookAt - state.RawPosition, 
@@ -371,7 +371,7 @@ namespace Cinemachine
                         dirTarget = state.ReferenceLookAt - state.CorrectedPosition;
                 }
                 if (dirTarget.AlmostZero() 
-                    || ((stateA.BlendHint | stateB.BlendHint) & BlendHintValue.IgnoreLookAtTarget) != 0)
+                    || (((stateA.BlendHint | stateB.BlendHint) & BlendHintValue.IgnoreLookAtTarget) != 0))
                 {
                     // Don't know what we're looking at - can only slerp
                     newOrient = UnityQuaternionExtensions.SlerpWithReferenceUp(
@@ -429,8 +429,8 @@ namespace Cinemachine
         static float InterpolateFOV(float fovA, float fovB, float dA, float dB, float t)
         {
             // We interpolate shot height
-            float hA = dA * 2f * Mathf.Tan(fovA * Mathf.Deg2Rad / 2f);
-            float hB = dB * 2f * Mathf.Tan(fovB * Mathf.Deg2Rad / 2f);
+            float hA = dA * 2f * Mathf.Tan((fovA * Mathf.Deg2Rad) / 2f);
+            float hB = dB * 2f * Mathf.Tan((fovB * Mathf.Deg2Rad) / 2f);
             float h = Mathf.Lerp(hA, hB, t);
             float fov = 179f;
             float d = Mathf.Lerp(dA, dB, t);
@@ -472,8 +472,8 @@ namespace Cinemachine
             Vector3 posB, Vector3 pivotB,
             float t)
         {
-            #pragma warning disable 1718 // comparison made to same variable
-            if (pivotA == pivotA && pivotB == pivotB) // check for NaN
+            #pragma warning disable 1718                  // comparison made to same variable
+            if ((pivotA == pivotA) && (pivotB == pivotB)) // check for NaN
             {
                 if ((BlendHint & BlendHintValue.CylindricalPositionBlend) != 0)
                 {

@@ -50,7 +50,7 @@ namespace Cinemachine
             Explosion,
             /// <summary></summary>
             Rumble
-        };
+        }
 
         /// <summary>The shape of the impact signal.</summary>
         [Tooltip("Shape of the impact signal")]
@@ -116,7 +116,7 @@ namespace Cinemachine
         [Header("Signal Shape")]
         [Tooltip("Legacy mode only: Defines the signal that will be generated.")]
         [CinemachineEmbeddedAssetProperty(true)]
-        public SignalSourceAsset m_RawSignal = null;
+        public SignalSourceAsset m_RawSignal;
 
         /// <summary>
         /// Legacy mode only: Gain to apply to the amplitudes defined in the signal source asset.
@@ -306,9 +306,9 @@ namespace Cinemachine
 
             const float kBigNumber = 9999999.0f;
 
-            if ((m_ImpulseShape == ImpulseShapes.Custom && m_CustomImpulseShape == null)
-                || Mathf.Abs(m_DissipationDistance) < UnityVectorExtensions.Epsilon
-                || Mathf.Abs(m_ImpulseDuration) < UnityVectorExtensions.Epsilon)
+            if (((m_ImpulseShape == ImpulseShapes.Custom) && (m_CustomImpulseShape == null))
+                || (Mathf.Abs(m_DissipationDistance) < UnityVectorExtensions.Epsilon)
+                || (Mathf.Abs(m_ImpulseDuration) < UnityVectorExtensions.Epsilon))
                 return null;
 
             CinemachineImpulseManager.ImpulseEvent e 
@@ -334,7 +334,7 @@ namespace Cinemachine
         CinemachineImpulseManager.ImpulseEvent LegacyCreateAndReturnEvent(
             Vector3 position, Vector3 velocity)
         {
-            if (m_RawSignal == null || Mathf.Abs(m_TimeEnvelope.Duration) < UnityVectorExtensions.Epsilon)
+            if ((m_RawSignal == null) || (Mathf.Abs(m_TimeEnvelope.Duration) < UnityVectorExtensions.Epsilon))
                 return null;
 
             CinemachineImpulseManager.ImpulseEvent e 
@@ -385,13 +385,13 @@ namespace Cinemachine
         {
             CinemachineImpulseDefinition m_Def;
             Vector3 m_Velocity;
-            float m_StartTimeOffset = 0;
+            float m_StartTimeOffset;
 
             public LegacySignalSource(CinemachineImpulseDefinition def, Vector3 velocity)
             {
                 m_Def = def;
                 m_Velocity = velocity;
-                if (m_Def.m_Randomize && m_Def.m_RawSignal.SignalDuration <= 0)
+                if (m_Def.m_Randomize && (m_Def.m_RawSignal.SignalDuration <= 0))
                     m_StartTimeOffset = UnityEngine.Random.Range(-1000f, 1000f);
             }
 
@@ -399,7 +399,7 @@ namespace Cinemachine
 
             public void GetSignal(float timeSinceSignalStart, out Vector3 pos, out Quaternion rot)
             {
-                float time = m_StartTimeOffset + timeSinceSignalStart * m_Def.m_FrequencyGain;
+                float time = m_StartTimeOffset + (timeSinceSignalStart * m_Def.m_FrequencyGain);
 
                 // Do we have to fit the signal into the envelope?
                 float signalDuration = SignalDuration;

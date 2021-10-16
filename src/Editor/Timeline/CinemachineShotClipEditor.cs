@@ -53,7 +53,7 @@ public class CinemachineShotClipEditor : ClipEditor
         var shotClip = (CinemachineShot)clip.asset;
         if (shotClip == null)
             return;
-        if (shotClip.DisplayName != null && shotClip.DisplayName.Length != 0)
+        if ((shotClip.DisplayName != null) && (shotClip.DisplayName.Length != 0))
             clip.displayName = shotClip.DisplayName;
         else
         {
@@ -75,7 +75,7 @@ public class CinemachineShotClipEditor : ClipEditor
             var asset = clip.asset as CinemachineShot;
             var vcam = CinemachineShotEditor.CreateStaticVcamFromSceneView();
             var d = TimelineEditor.inspectedDirector;
-            if (d != null && d.GetReferenceValue(asset.VirtualCamera.exposedName, out bool idValid) == null)
+            if ((d != null) && (d.GetReferenceValue(asset.VirtualCamera.exposedName, out bool idValid) == null))
             {
                 asset.VirtualCamera.exposedName = System.Guid.NewGuid().ToString();
                 d.SetReferenceValue(asset.VirtualCamera.exposedName, vcam);
@@ -90,8 +90,8 @@ public class CinemachineShotClipEditor : ClipEditor
         base.DrawBackground(clip, region);
 
         if (Application.isPlaying || !TargetPositionCache.UseCache 
-            || TargetPositionCache.CacheMode == TargetPositionCache.Mode.Disabled
-            || TimelineEditor.inspectedDirector == null)
+            || (TargetPositionCache.CacheMode == TargetPositionCache.Mode.Disabled)
+            || (TimelineEditor.inspectedDirector == null))
         {
             return;
         }
@@ -110,8 +110,8 @@ public class CinemachineShotClipEditor : ClipEditor
             cacheRange.End = Mathf.Min((float)clip.ToLocalTime(cacheRange.End), end);
                 
             var r = region.position;
-            var a = r.x + r.width * (cacheRange.Start - start) / (end - start);
-            var b = r.x + r.width * (cacheRange.End - start) / (end - start);
+            var a = r.x + ((r.width * (cacheRange.Start - start)) / (end - start));
+            var b = r.x + ((r.width * (cacheRange.End - start)) / (end - start));
             r.x = a; r.width = b-a;
             r.y += r.height; r.height *= 0.2f; r.y -= r.height;
             EditorGUI.DrawRect(r, new Color(0.1f, 0.2f, 0.8f, 0.6f));
@@ -122,11 +122,11 @@ public class CinemachineShotClipEditor : ClipEditor
         {
             var r = region.position;
             var t = clip.ToLocalTime(TimelineGlobalToLocalTime(TimelineEditor.masterDirector.time));
-            var pos = r.x + r.width 
-                * (float)((t - region.startTime) / (region.endTime - region.startTime));
+            var pos = r.x + (r.width 
+                           * (float)((t - region.startTime) / (region.endTime - region.startTime)));
     
             var s = EditorStyles.miniLabel.CalcSize(kUndamped);
-            r.width = s.x; r.x = pos - r.width / 2;
+            r.width = s.x; r.x = pos - (r.width / 2);
             var c = GUI.color;
             GUI.color = Color.yellow;
             EditorGUI.LabelField(r, kUndamped, EditorStyles.miniLabel);

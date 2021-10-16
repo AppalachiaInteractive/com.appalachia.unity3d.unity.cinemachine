@@ -17,7 +17,7 @@ namespace Cinemachine.Editor
         {
             BeginInspector();
             bool needWarning = false;
-            for (int i = 0; !needWarning && i < targets.Length; ++i)
+            for (int i = 0; !needWarning && (i < targets.Length); ++i)
                 needWarning = (targets[i] as CinemachineBasicMultiChannelPerlin).m_NoiseProfile == null;
             if (needWarning)
                 EditorGUILayout.HelpBox(

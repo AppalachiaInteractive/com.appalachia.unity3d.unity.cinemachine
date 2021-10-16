@@ -103,7 +103,7 @@ namespace Cinemachine
                 m_VelocityFilterStrength = filterStrength;
                 m_Bias = bias;
             }
-        };
+        }
 
         /// <summary>The definition of Forward.  Camera will follow behind.</summary>
         [Space]
@@ -132,9 +132,9 @@ namespace Cinemachine
         protected override void OnValidate()
         {
             // Upgrade after a legacy deserialize
-            if (m_LegacyRadius != float.MaxValue
-                && m_LegacyHeightOffset != float.MaxValue
-                && m_LegacyHeadingBias != float.MaxValue)
+            if ((m_LegacyRadius != float.MaxValue)
+                && (m_LegacyHeightOffset != float.MaxValue)
+                && (m_LegacyHeadingBias != float.MaxValue))
             {
                 m_FollowOffset = new Vector3(0, m_LegacyHeightOffset, -m_LegacyRadius);
                 m_LegacyHeightOffset = m_LegacyRadius = float.MaxValue;
@@ -159,7 +159,7 @@ namespace Cinemachine
         /// Automatic heading updating will be disabled.
         /// </summary>
         [HideInInspector, NoSaveDuringPlay]
-        public bool m_HeadingIsSlave = false;
+        public bool m_HeadingIsSlave;
 
         /// <summary>
         /// Delegate that allows the the m_XAxis object to be replaced with another one.
@@ -215,7 +215,7 @@ namespace Cinemachine
             }
 
             // Only read joystick when game is playing
-            if (deltaTime < 0 || !VirtualCamera.PreviousStateIsValid || !isLive)
+            if ((deltaTime < 0) || !VirtualCamera.PreviousStateIsValid || !isLive)
             {
                 axis.Reset();
                 recentering.CancelRecentering();
@@ -250,7 +250,7 @@ namespace Cinemachine
         public void UpdateInputAxisProvider()
         {
             m_XAxis.SetInputAxisProvider(0, null);
-            if (!m_HeadingIsSlave && VirtualCamera != null)
+            if (!m_HeadingIsSlave && (VirtualCamera != null))
             {
                 var provider = VirtualCamera.GetInputAxisProvider();
                 if (provider != null)
@@ -261,7 +261,7 @@ namespace Cinemachine
         private Vector3 mLastTargetPosition = Vector3.zero;
         private HeadingTracker mHeadingTracker;
 #if CINEMACHINE_PHYSICS
-        private Rigidbody mTargetRigidBody = null;
+        private Rigidbody mTargetRigidBody;
 #endif
         private Transform PreviousTarget { get; set; }
         private Vector3 mLastCameraPosition;
@@ -306,8 +306,8 @@ namespace Cinemachine
         {
             m_RecenterToTargetHeading.DoRecentering(ref m_XAxis, -1, 0);
             m_RecenterToTargetHeading.CancelRecentering();
-            if (fromCam != null //&& fromCam.Follow == FollowTarget
-                && m_BindingMode != CinemachineTransposer.BindingMode.SimpleFollowWithWorldUp
+            if ((fromCam != null) //&& fromCam.Follow == FollowTarget
+                && (m_BindingMode != CinemachineTransposer.BindingMode.SimpleFollowWithWorldUp)
                 && transitionParams.m_InheritPosition
                 && !CinemachineCore.Instance.IsLiveInBlend(VirtualCamera))
             {
@@ -327,7 +327,7 @@ namespace Cinemachine
         {
             Quaternion orient = GetReferenceOrientation(up);
             Vector3 fwd = (orient * Vector3.forward).ProjectOntoPlane(up);
-            if (!fwd.AlmostZero() && FollowTarget != null)
+            if (!fwd.AlmostZero() && (FollowTarget != null))
             {
                 // Get the base camera placement
                 float heading = 0;
@@ -335,7 +335,7 @@ namespace Cinemachine
                     heading += m_Heading.m_Bias;
                 orient = orient *  Quaternion.AngleAxis(heading, up);
                 Vector3 targetPos = FollowTargetPosition;
-                Vector3 pos = targetPos + orient * EffectiveOffset;
+                Vector3 pos = targetPos + (orient * EffectiveOffset);
 
                 Vector3 a = (pos - targetPos).ProjectOntoPlane(up);
                 Vector3 b = (cameraPos - targetPos).ProjectOntoPlane(up);
@@ -389,14 +389,14 @@ namespace Cinemachine
                     curState.ReferenceUp, targetPosition);
                 curState.RawPosition = pos + offset;
 
-                if (deltaTime >= 0 && VirtualCamera.PreviousStateIsValid)
+                if ((deltaTime >= 0) && VirtualCamera.PreviousStateIsValid)
                 {
                     var lookAt = targetPosition;
                     if (LookAtTarget != null)
                         lookAt = LookAtTargetPosition;
                     var dir0 = mLastCameraPosition - lookAt;
                     var dir1 = curState.RawPosition - lookAt;
-                    if (dir0.sqrMagnitude > 0.01f && dir1.sqrMagnitude > 0.01f)
+                    if ((dir0.sqrMagnitude > 0.01f) && (dir1.sqrMagnitude > 0.01f))
                         curState.PositionDampingBypass = UnityVectorExtensions.SafeFromToRotation(
                             dir0, dir1, curState.ReferenceUp).eulerAngles;
                 }
@@ -435,7 +435,7 @@ namespace Cinemachine
 
             var headingDef = m_Heading.m_Definition;
 #if CINEMACHINE_PHYSICS
-            if (headingDef == Heading.HeadingDefinition.Velocity && mTargetRigidBody == null)
+            if ((headingDef == Heading.HeadingDefinition.Velocity) && (mTargetRigidBody == null))
                 headingDef = Heading.HeadingDefinition.PositionDelta;
 #endif
 
@@ -464,7 +464,7 @@ namespace Cinemachine
             if (headingDef != Heading.HeadingDefinition.TargetForward)
             {
                 int filterSize = m_Heading.m_VelocityFilterStrength * 5;
-                if (mHeadingTracker == null || mHeadingTracker.FilterSize != filterSize)
+                if ((mHeadingTracker == null) || (mHeadingTracker.FilterSize != filterSize))
                     mHeadingTracker = new HeadingTracker(filterSize);
                 mHeadingTracker.DecayHistory();
                 if (!velocity.AlmostZero())

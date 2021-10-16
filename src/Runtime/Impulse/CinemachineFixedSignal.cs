@@ -38,7 +38,7 @@ namespace Cinemachine
         float AxisDuration(AnimationCurve axis)
         {
             float duration = 0;
-            if (axis != null && axis.length > 1)
+            if ((axis != null) && (axis.length > 1))
             {
                 float start = axis[0].time;
                 duration = axis[axis.length-1].time - start;
@@ -61,7 +61,7 @@ namespace Cinemachine
 
         float AxisValue(AnimationCurve axis, float time)
         {
-            if (axis == null || axis.length == 0)
+            if ((axis == null) || (axis.length == 0))
                 return 0;
             return axis.Evaluate(time);
         }

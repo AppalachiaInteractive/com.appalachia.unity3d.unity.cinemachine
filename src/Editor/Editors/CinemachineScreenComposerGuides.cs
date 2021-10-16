@@ -50,11 +50,11 @@ namespace Cinemachine.Editor
             void OnMouseUp(MouseUpEvent e) { mActive = false; }
             void OnMouseMove(MouseMoveEvent e)
             {
-                if (mActive && mRoot.panel != null)
+                if (mActive && (mRoot.panel != null))
                 {
                     if (!Application.isPlaying
                         && CinemachineSettings.CinemachineCoreSettings.ShowInGameGuides
-                        && CinemachineBrain.SoloCamera == null)
+                        && (CinemachineBrain.SoloCamera == null))
                     {
                         InspectorUtility.RepaintGameView();
                     }
@@ -64,7 +64,7 @@ namespace Cinemachine.Editor
             public Dragger(VisualElement root)
             {
                 mRoot = root;
-                if (mRoot == null || mRoot.panel == null || mRoot.panel.visualTree == null)
+                if ((mRoot == null) || (mRoot.panel == null) || (mRoot.panel.visualTree == null))
                     return;
                 mRoot.panel.visualTree.RegisterCallback<MouseDownEvent>(OnMouseDown, TrickleDown.TrickleDown);
                 mRoot.panel.visualTree.RegisterCallback<MouseUpEvent>(OnMouseUp, TrickleDown.TrickleDown);
@@ -73,7 +73,7 @@ namespace Cinemachine.Editor
 
             public void Unregister()
             {
-                if (mRoot == null || mRoot.panel == null || mRoot.panel.visualTree == null)
+                if ((mRoot == null) || (mRoot.panel == null) || (mRoot.panel.visualTree == null))
                     return;
                 mRoot.panel.visualTree.UnregisterCallback<MouseDownEvent>(OnMouseDown, TrickleDown.TrickleDown);
                 mRoot.panel.visualTree.UnregisterCallback<MouseUpEvent>(OnMouseUp, TrickleDown.TrickleDown);
@@ -100,7 +100,7 @@ namespace Cinemachine.Editor
 
         public void OnDisable()
         {
-            for (int i = 0; mDraggers != null && i < mDraggers.Length; ++i)
+            for (int i = 0; (mDraggers != null) && (i < mDraggers.Length); ++i)
             {
                 var dragger = mDraggers[i];
                 if (dragger != null)
@@ -260,10 +260,10 @@ namespace Cinemachine.Editor
             float hardEdgeRight = r.xMax * screenWidth;
             float hardEdgeBottom = r.yMax * screenHeight;
 
-            mDragBars[(int)DragBar.HardBarLineLeft] = new Rect(hardEdgeLeft - kGuideBarWidthPx / 2f, 0f, kGuideBarWidthPx, screenHeight);
-            mDragBars[(int)DragBar.HardBarLineTop] = new Rect(0f, hardEdgeTop - kGuideBarWidthPx / 2f, screenWidth, kGuideBarWidthPx);
-            mDragBars[(int)DragBar.HardBarLineRight] = new Rect(hardEdgeRight - kGuideBarWidthPx / 2f, 0f, kGuideBarWidthPx, screenHeight);
-            mDragBars[(int)DragBar.HardBarLineBottom] = new Rect(0f, hardEdgeBottom - kGuideBarWidthPx / 2f, screenWidth, kGuideBarWidthPx);
+            mDragBars[(int)DragBar.HardBarLineLeft] = new Rect(hardEdgeLeft - (kGuideBarWidthPx / 2f), 0f, kGuideBarWidthPx, screenHeight);
+            mDragBars[(int)DragBar.HardBarLineTop] = new Rect(0f, hardEdgeTop - (kGuideBarWidthPx / 2f), screenWidth, kGuideBarWidthPx);
+            mDragBars[(int)DragBar.HardBarLineRight] = new Rect(hardEdgeRight - (kGuideBarWidthPx / 2f), 0f, kGuideBarWidthPx, screenHeight);
+            mDragBars[(int)DragBar.HardBarLineBottom] = new Rect(0f, hardEdgeBottom - (kGuideBarWidthPx / 2f), screenWidth, kGuideBarWidthPx);
 
             r = GetSoftGuide();
             float softEdgeLeft = r.xMin * screenWidth;
@@ -271,10 +271,10 @@ namespace Cinemachine.Editor
             float softEdgeRight = r.xMax * screenWidth;
             float softEdgeBottom = r.yMax * screenHeight;
 
-            mDragBars[(int)DragBar.SoftBarLineLeft] = new Rect(softEdgeLeft - kGuideBarWidthPx / 2f, 0f, kGuideBarWidthPx, screenHeight);
-            mDragBars[(int)DragBar.SoftBarLineTop] = new Rect(0f, softEdgeTop - kGuideBarWidthPx / 2f, screenWidth, kGuideBarWidthPx);
-            mDragBars[(int)DragBar.SoftBarLineRight] = new Rect(softEdgeRight - kGuideBarWidthPx / 2f, 0f, kGuideBarWidthPx, screenHeight);
-            mDragBars[(int)DragBar.SoftBarLineBottom] = new Rect(0f, softEdgeBottom - kGuideBarWidthPx / 2f, screenWidth, kGuideBarWidthPx);
+            mDragBars[(int)DragBar.SoftBarLineLeft] = new Rect(softEdgeLeft - (kGuideBarWidthPx / 2f), 0f, kGuideBarWidthPx, screenHeight);
+            mDragBars[(int)DragBar.SoftBarLineTop] = new Rect(0f, softEdgeTop - (kGuideBarWidthPx / 2f), screenWidth, kGuideBarWidthPx);
+            mDragBars[(int)DragBar.SoftBarLineRight] = new Rect(softEdgeRight - (kGuideBarWidthPx / 2f), 0f, kGuideBarWidthPx, screenHeight);
+            mDragBars[(int)DragBar.SoftBarLineBottom] = new Rect(0f, softEdgeBottom - (kGuideBarWidthPx / 2f), screenWidth, kGuideBarWidthPx);
 
             mDragBars[(int)DragBar.Center] = new Rect(softEdgeLeft, softEdgeTop, softEdgeRight - softEdgeLeft, softEdgeBottom - softEdgeTop);
 
@@ -340,14 +340,14 @@ namespace Cinemachine.Editor
             if (Event.current.type == EventType.MouseDown)
             {
                 mDragging = DragBar.NONE;
-                for (DragBar i = DragBar.Center; i < DragBar.NONE && mDragging == DragBar.NONE; ++i)
+                for (DragBar i = DragBar.Center; (i < DragBar.NONE) && (mDragging == DragBar.NONE); ++i)
                 {
                     Vector2 slop = new Vector2(5f, 5f);
                     if (i == DragBar.Center)
                     {
-                        if (mDragBars[(int)i].width > 3f * slop.x)
+                        if (mDragBars[(int)i].width > (3f * slop.x))
                             slop.x = -slop.x;
-                        if (mDragBars[(int)i].height > 3f * slop.y)
+                        if (mDragBars[(int)i].height > (3f * slop.y))
                             slop.y = -slop.y;
                     }
                     Rect r = mDragBars[(int)i].Inflated(slop);
@@ -356,7 +356,7 @@ namespace Cinemachine.Editor
                 }
             }
 
-            if (mDragging != DragBar.NONE && Event.current.type == EventType.MouseDrag)
+            if ((mDragging != DragBar.NONE) && (Event.current.type == EventType.MouseDrag))
             {
                 Vector2 d = new Vector2(
                         Event.current.delta.x / screenWidth,

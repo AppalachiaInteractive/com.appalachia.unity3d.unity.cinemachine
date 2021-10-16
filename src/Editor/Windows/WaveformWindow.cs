@@ -65,12 +65,12 @@ namespace Cinemachine.Editor
                 GUI.DrawTexture(rect, tex);
         }
 
-        float mLastUpdateTime = 0;
+        float mLastUpdateTime;
         private void UpdateScreenshot()
         {
             // Don't do this too often
             float now = Time.time;
-            if (mScreenshot != null && now - mLastUpdateTime < UpdateInterval)
+            if ((mScreenshot != null) && ((now - mLastUpdateTime) < UpdateInterval))
                 return;
 
             mLastUpdateTime = now;
@@ -143,8 +143,8 @@ namespace Cinemachine.Editor
 
             void CreateBuffers(int width, int height)
             {
-                if (mOutput == null || !mOutput.IsCreated()
-                    || mOutput.width != width || mOutput.height != height)
+                if ((mOutput == null) || !mOutput.IsCreated()
+                                      || (mOutput.width != width) || (mOutput.height != height))
                 {
                     DestroyImmediate(mOutput);
                     mOutput = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32)

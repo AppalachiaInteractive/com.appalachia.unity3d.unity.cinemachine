@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+
 #if CINEMACHINE_POST_PROCESSING_V2
 using System.Collections.Generic;
 using UnityEngine.Rendering.PostProcessing;

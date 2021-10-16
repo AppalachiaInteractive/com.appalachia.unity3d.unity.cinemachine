@@ -28,7 +28,7 @@ namespace Cinemachine.Editor
         // ReSharper disable once UnusedMember.Global - magic method called when doing Frame Selected
         public bool HasFrameBounds()
         {
-            return Target.m_Waypoints != null && Target.m_Waypoints.Length > 0;
+            return (Target.m_Waypoints != null) && (Target.m_Waypoints.Length > 0);
         }
 
         // ReSharper disable once UnusedMember.Global - magic method called when doing Frame Selected
@@ -36,7 +36,7 @@ namespace Cinemachine.Editor
         {
             Vector3[] wp;
             int selected = mWaypointList == null ? -1 : mWaypointList.index;
-            if (selected >= 0 && selected < Target.m_Waypoints.Length)
+            if ((selected >= 0) && (selected < Target.m_Waypoints.Length))
                 wp = new Vector3[1] { Target.m_Waypoints[selected].position };
             else
                 wp = Target.m_Waypoints.Select(p => p.position).ToArray();
@@ -123,7 +123,7 @@ namespace Cinemachine.Editor
             r.x += r.width + hSpace; r.height += 1; r.width = r.height;
             GUIContent setButtonContent = EditorGUIUtility.IconContent("d_RectTransform Icon");
             setButtonContent.tooltip = "Set to scene-view camera position";
-            if (GUI.Button(r, setButtonContent, GUI.skin.label) && SceneView.lastActiveSceneView != null)
+            if (GUI.Button(r, setButtonContent, GUI.skin.label) && (SceneView.lastActiveSceneView != null))
             {
                 Undo.RecordObject(Target, "Set waypoint");
                 CinemachineSmoothPath.Waypoint wp = Target.m_Waypoints[index];
@@ -145,7 +145,7 @@ namespace Cinemachine.Editor
             if (indexA >= 0)
             {
                 int indexB = indexA + 1;
-                if (Target.m_Looped && indexB >= numWaypoints)
+                if (Target.m_Looped && (indexB >= numWaypoints))
                     indexB = 0;
                 if (indexB >= numWaypoints)
                 {
@@ -201,7 +201,7 @@ namespace Cinemachine.Editor
                 float size = HandleUtility.GetHandleSize(pos) * 0.2f;
                 Handles.color = Color.white;
                 if (Handles.Button(pos, Quaternion.identity, size, size, Handles.SphereHandleCap)
-                    && mWaypointList.index != i)
+                    && (mWaypointList.index != i))
                 {
                     mWaypointList.index = i;
                     InspectorUtility.RepaintGameView();

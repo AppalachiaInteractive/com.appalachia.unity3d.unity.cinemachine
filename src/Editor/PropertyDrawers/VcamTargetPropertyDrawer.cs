@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using System.Collections.Generic;
 
 namespace Cinemachine.Editor
 {
@@ -17,7 +16,7 @@ namespace Cinemachine.Editor
 
             var oldEnabled = GUI.enabled;
             var target = property.objectReferenceValue as Transform;
-            if (target == null || target.GetComponent<CinemachineTargetGroup>() != null)
+            if ((target == null) || (target.GetComponent<CinemachineTargetGroup>() != null))
                 GUI.enabled = false;
             if (GUI.Button(rect, EditorGUIUtility.IconContent("_Popup"), GUI.skin.label))
             {

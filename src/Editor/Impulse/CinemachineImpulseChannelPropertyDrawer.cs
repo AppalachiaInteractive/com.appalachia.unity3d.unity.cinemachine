@@ -8,22 +8,22 @@ namespace Cinemachine.Editor
     {
         const float hSpace = 2;
         GUIContent mAddLabel = new GUIContent("Edit...", "Add, remove, or rename channels");
-        string[] mLayerList = null;
+        string[] mLayerList;
 
         void UpdateLayerList()
         {
             CinemachineImpulseChannels settings = CinemachineImpulseChannels.InstanceIfExists;
             int numLayers = 0;
-            if (settings != null && settings.ImpulseChannels != null)
+            if ((settings != null) && (settings.ImpulseChannels != null))
                 numLayers = settings.ImpulseChannels.Length;
             numLayers = Mathf.Clamp(numLayers, 1, 31);
-            if (mLayerList == null || mLayerList.Length != numLayers)
+            if ((mLayerList == null) || (mLayerList.Length != numLayers))
                 mLayerList = new string[numLayers];
             for (int i = 0; i < numLayers; ++i)
             {
                 mLayerList[i] = string.Format(
                     "{0}: {1}", i, 
-                    (settings == null || settings.ImpulseChannels.Length <= i) 
+                    ((settings == null) || (settings.ImpulseChannels.Length <= i)) 
                         ? "default" : settings.ImpulseChannels[i]);
             }
         }

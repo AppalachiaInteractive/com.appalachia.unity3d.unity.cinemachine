@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System;
 using Cinemachine.Utility;
-using UnityEngine.Serialization;
 
 namespace Cinemachine
 {
@@ -39,14 +38,14 @@ namespace Cinemachine
             + "can amplify the noise, resulting in undesirable camera jitter.  If the camera jitters "
             + "unacceptably when the target is in motion, turn down this setting, or animate the target more smoothly.")]
         [Range(0f, 1f)]
-        public float m_LookaheadTime = 0;
+        public float m_LookaheadTime;
 
         /// <summary>Controls the smoothness of the lookahead algorithm.  Larger values smooth out
         /// jittery predictions and also increase prediction lag</summary>
         [Tooltip("Controls the smoothness of the lookahead algorithm.  Larger values smooth "
             + "out jittery predictions and also increase prediction lag")]
         [Range(0, 30)]
-        public float m_LookaheadSmoothing = 0;
+        public float m_LookaheadSmoothing;
 
         /// <summary>If checked, movement along the Y axis will be ignored for lookahead calculations</summary>
         [Tooltip("If checked, movement along the Y axis will be ignored for lookahead calculations")]
@@ -89,12 +88,12 @@ namespace Cinemachine
         /// <summary>Camera will not rotate horizontally if the target is within this range of the position</summary>
         [Range(0f, 2f)]
         [Tooltip("Camera will not rotate horizontally if the target is within this range of the position.")]
-        public float m_DeadZoneWidth = 0f;
+        public float m_DeadZoneWidth;
 
         /// <summary>Camera will not rotate vertically if the target is within this range of the position</summary>
         [Range(0f, 2f)]
         [Tooltip("Camera will not rotate vertically if the target is within this range of the position.")]
-        public float m_DeadZoneHeight = 0f;
+        public float m_DeadZoneHeight;
 
         /// <summary>When target is within this region, camera will gradually move to re-align
         /// towards the desired position, depending onm the damping speed</summary>
@@ -113,12 +112,12 @@ namespace Cinemachine
         /// <summary>A non-zero bias will move the targt position away from the center of the soft zone</summary>
         [Range(-0.5f, 0.5f)]
         [Tooltip("A non-zero bias will move the target position horizontally away from the center of the soft zone.")]
-        public float m_BiasX = 0f;
+        public float m_BiasX;
 
         /// <summary>A non-zero bias will move the targt position away from the center of the soft zone</summary>
         [Range(-0.5f, 0.5f)]
         [Tooltip("A non-zero bias will move the target position vertically away from the center of the soft zone.")]
-        public float m_BiasY = 0f;
+        public float m_BiasY;
 
         /// <summary>Force target to center of screen when this camera activates.  
         /// If false, will clamp target to the edges of the dead zone</summary>
@@ -127,7 +126,7 @@ namespace Cinemachine
         public bool m_CenterOnActivate = true;
 
         /// <summary>True if component is enabled and has a LookAt defined</summary>
-        public override bool IsValid { get { return enabled && LookAtTarget != null; } }
+        public override bool IsValid { get { return enabled && (LookAtTarget != null); } }
 
         /// <summary>Get the Cinemachine Pipeline stage that this component implements.
         /// Always returns the Aim stage</summary>
@@ -245,7 +244,7 @@ namespace Cinemachine
             float targetDistance = (TrackedPoint - curState.CorrectedPosition).magnitude;
             if (targetDistance < Epsilon)
             {
-                if (deltaTime >= 0 && VirtualCamera.PreviousStateIsValid)
+                if ((deltaTime >= 0) && VirtualCamera.PreviousStateIsValid)
                     curState.RawOrientation = m_CameraOrientationPrevFrame;
                 return;  // navel-gazing, get outa here
             }
@@ -254,7 +253,7 @@ namespace Cinemachine
             mCache.UpdateCache(curState.Lens, SoftGuideRect, HardGuideRect, targetDistance);
 
             Quaternion rigOrientation = curState.RawOrientation;
-            if (deltaTime < 0 || !VirtualCamera.PreviousStateIsValid)
+            if ((deltaTime < 0) || !VirtualCamera.PreviousStateIsValid)
             {
                 // No damping, just snap to central bounds, skipping the soft zone
                 rigOrientation = Quaternion.LookRotation(
@@ -287,7 +286,7 @@ namespace Cinemachine
                     ref rigOrientation, mCache.mFov, mCache.mFovH, deltaTime);
 
                 // Force the actual target (not the lookahead one) into the hard bounds, no damping
-                if (deltaTime < 0 || VirtualCamera.LookAtTargetAttachment > 1 - Epsilon)
+                if ((deltaTime < 0) || (VirtualCamera.LookAtTargetAttachment > (1 - Epsilon)))
                     RotateToScreenBounds(
                         ref curState, mCache.mFovHardGuideRect, curState.ReferenceLookAt,
                         ref rigOrientation, mCache.mFov, mCache.mFovH, -1);
@@ -308,15 +307,15 @@ namespace Cinemachine
             get
             {
                 return new Rect(
-                    m_ScreenX - m_DeadZoneWidth / 2, m_ScreenY - m_DeadZoneHeight / 2,
+                    m_ScreenX - (m_DeadZoneWidth / 2), m_ScreenY - (m_DeadZoneHeight / 2),
                     m_DeadZoneWidth, m_DeadZoneHeight);
             }
             set
             {
-                m_DeadZoneWidth = Mathf.Clamp(value.width, 0, 2);
-                m_DeadZoneHeight = Mathf.Clamp(value.height, 0, 2);
-                m_ScreenX = Mathf.Clamp(value.x + m_DeadZoneWidth / 2, -0.5f,  1.5f);
-                m_ScreenY = Mathf.Clamp(value.y + m_DeadZoneHeight / 2, -0.5f,  1.5f);
+                m_DeadZoneWidth = Mathf.Clamp(value.width,                0,     2);
+                m_DeadZoneHeight = Mathf.Clamp(value.height,              0,     2);
+                m_ScreenX = Mathf.Clamp(value.x + (m_DeadZoneWidth / 2),  -0.5f, 1.5f);
+                m_ScreenY = Mathf.Clamp(value.y + (m_DeadZoneHeight / 2), -0.5f, 1.5f);
                 m_SoftZoneWidth = Mathf.Max(m_SoftZoneWidth, m_DeadZoneWidth);
                 m_SoftZoneHeight = Mathf.Max(m_SoftZoneHeight, m_DeadZoneHeight);
             }
@@ -328,7 +327,7 @@ namespace Cinemachine
             get
             {
                 Rect r = new Rect(
-                        m_ScreenX - m_SoftZoneWidth / 2, m_ScreenY - m_SoftZoneHeight / 2,
+                        m_ScreenX - (m_SoftZoneWidth / 2), m_ScreenY - (m_SoftZoneHeight / 2),
                         m_SoftZoneWidth, m_SoftZoneHeight);
                 r.position += new Vector2(
                         m_BiasX * (m_SoftZoneWidth - m_DeadZoneWidth),
@@ -367,14 +366,14 @@ namespace Cinemachine
             public void UpdateCache(
                 LensSettings lens, Rect softGuide, Rect hardGuide, float targetDistance)
             {
-                bool recalculate = mAspect != lens.Aspect
-                    || softGuide != mSoftGuideRect || hardGuide != mHardGuideRect;
+                bool recalculate = (mAspect != lens.Aspect)
+                    || (softGuide != mSoftGuideRect) || (hardGuide != mHardGuideRect);
                 if (lens.Orthographic)
                 {
                     float orthoOverDistance = Mathf.Abs(lens.OrthographicSize / targetDistance);
-                    if (mOrthoSizeOverDistance == 0
-                        || Mathf.Abs(orthoOverDistance - mOrthoSizeOverDistance) / mOrthoSizeOverDistance
-                            > mOrthoSizeOverDistance * 0.01f)
+                    if ((mOrthoSizeOverDistance == 0)
+                        || ((Mathf.Abs(orthoOverDistance - mOrthoSizeOverDistance) / mOrthoSizeOverDistance)
+                          > (mOrthoSizeOverDistance * 0.01f)))
                         recalculate = true;
                     if (recalculate)
                     {
@@ -392,7 +391,7 @@ namespace Cinemachine
                     if (recalculate)
                     {
                         mFov = verticalFOV;
-                        double radHFOV = 2 * Math.Atan(Math.Tan(mFov * Mathf.Deg2Rad / 2) * lens.Aspect);
+                        double radHFOV = 2 * Math.Atan(Math.Tan((mFov * Mathf.Deg2Rad) / 2) * lens.Aspect);
                         mFovH = (float)(Mathf.Rad2Deg * radHFOV);
                         mOrthoSizeOverDistance = 0;
                     }
@@ -470,7 +469,7 @@ namespace Cinemachine
                 rotToRect.y = 0;
 
             // Apply damping
-            if (deltaTime >= 0 && VirtualCamera.PreviousStateIsValid)
+            if ((deltaTime >= 0) && VirtualCamera.PreviousStateIsValid)
             {
                 rotToRect.x = VirtualCamera.DetachedLookAtTargetDamp(
                     rotToRect.x, m_VerticalDamping, deltaTime);
@@ -495,7 +494,7 @@ namespace Cinemachine
             if (angle < halfFov)
             {
                 // looking up
-                float maxY = 1f - (halfFov - angle) / fov;
+                float maxY = 1f - ((halfFov - angle) / fov);
                 if (r.yMax > maxY)
                 {
                     r.yMin = Mathf.Min(r.yMin, maxY);

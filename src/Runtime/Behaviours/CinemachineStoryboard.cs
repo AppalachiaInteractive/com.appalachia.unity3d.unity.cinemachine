@@ -5,7 +5,6 @@ using UnityEngine;
 
 #if CINEMACHINE_UGUI
 using System.Collections.Generic;
-using Cinemachine.Utility;
 
 namespace Cinemachine
 {
@@ -48,7 +47,7 @@ namespace Cinemachine
             CropImageToFit,
             /// <summary>Image will be stretched to cover any aspect mismatch with the screen</summary>
             StretchToFit
-        };
+        }
         /// <summary>
         /// How to handle differences between image aspect and screen aspect
         /// </summary>
@@ -97,7 +96,7 @@ namespace Cinemachine
         /// </summary>
         [Range(-1, 1)]
         [Tooltip("Wipe the image on and off horizontally")]
-        public float m_SplitView = 0f;
+        public float m_SplitView;
 
         /// <summary>
         /// The render mode of the canvas on which the storyboard is drawn.
@@ -137,7 +136,7 @@ namespace Cinemachine
             CinemachineCore.Stage stage, ref CameraState state, float deltaTime)
         {
             // Apply to this vcam only, not the children
-            if (vcam != VirtualCamera || stage != CinemachineCore.Stage.Finalize)
+            if ((vcam != VirtualCamera) || (stage != CinemachineCore.Stage.Finalize))
                 return;
 
             UpdateRenderCanvas();
@@ -163,13 +162,13 @@ namespace Cinemachine
             /// storyboard at a specific distance from the vcam. Equivalent to Unity's RenderMode.ScreenSpaceCamera.
             /// </summary>
             ScreenSpaceCamera = RenderMode.ScreenSpaceCamera
-        };
+        }
         
         void UpdateRenderCanvas()
         {
             for (int i = 0; i < mCanvasInfo.Count; ++i)
             {
-                if (mCanvasInfo[i] == null || mCanvasInfo[i].mCanvasComponent == null)
+                if ((mCanvasInfo[i] == null) || (mCanvasInfo[i].mCanvasComponent == null))
                     mCanvasInfo.RemoveAt(i--);
                 else
                 {
@@ -199,20 +198,20 @@ namespace Cinemachine
         {
             bool showIt = enabled && m_ShowImage && CinemachineCore.Instance.IsLive(VirtualCamera);
             int layer = 1 << gameObject.layer;
-            if (brain.OutputCamera == null || (brain.OutputCamera.cullingMask & layer) == 0)
+            if ((brain.OutputCamera == null) || ((brain.OutputCamera.cullingMask & layer) == 0))
                 showIt = false;
             if (s_StoryboardGlobalMute)
                 showIt = false;
             CanvasInfo ci = LocateMyCanvas(brain, showIt);
-            if (ci != null && ci.mCanvas != null)
+            if ((ci != null) && (ci.mCanvas != null))
                 ci.mCanvas.SetActive(showIt);
         }
         
         CanvasInfo LocateMyCanvas(CinemachineBrain parent, bool createIfNotFound)
         {
             CanvasInfo ci = null;
-            for (int i = 0; ci == null && i < mCanvasInfo.Count; ++i)
-                if (mCanvasInfo[i] != null && mCanvasInfo[i].mCanvasParent == parent)
+            for (int i = 0; (ci == null) && (i < mCanvasInfo.Count); ++i)
+                if ((mCanvasInfo[i] != null) && (mCanvasInfo[i].mCanvasParent == parent))
                     ci = mCanvasInfo[i];
             if (createIfNotFound)
             {
@@ -220,10 +219,10 @@ namespace Cinemachine
                 {
                     ci = new CanvasInfo() { mCanvasParent = parent };
                     int numChildren = parent.transform.childCount;
-                    for (int i = 0; ci.mCanvas == null && i < numChildren; ++i)
+                    for (int i = 0; (ci.mCanvas == null) && (i < numChildren); ++i)
                     {
                         RectTransform child = parent.transform.GetChild(i) as RectTransform;
-                        if (child != null && child.name == CanvasName)
+                        if ((child != null) && (child.name == CanvasName))
                         {
                             ci.mCanvas = child.gameObject;
                             var kids = ci.mCanvas.GetComponentsInChildren<RectTransform>();
@@ -234,7 +233,7 @@ namespace Cinemachine
                     }
                     mCanvasInfo.Add(ci);
                 }
-                if (ci.mCanvas == null || ci.mViewport == null || ci.mRawImage == null || ci.mCanvasComponent == null)
+                if ((ci.mCanvas == null) || (ci.mViewport == null) || (ci.mRawImage == null) || (ci.mCanvasComponent == null))
                     CreateCanvas(ci);
             }
             return ci;
@@ -277,7 +276,7 @@ namespace Cinemachine
                 for (int j = numChildren - 1; j >= 0; --j)
                 {
                     RectTransform child = parent.transform.GetChild(j) as RectTransform;
-                    if (child != null && child.name == CanvasName)
+                    if ((child != null) && (child.name == CanvasName))
                     {
                         var canvas = child.gameObject;
                         RuntimeUtility.DestroyObject(canvas);
@@ -293,7 +292,7 @@ namespace Cinemachine
 
         void PlaceImage(CanvasInfo ci, float alpha)
         {
-            if (ci.mRawImage != null && ci.mViewport != null)
+            if ((ci.mRawImage != null) && (ci.mViewport != null))
             {
                 Rect screen = new Rect(0, 0, Screen.width, Screen.height);
                 if (ci.mCanvasParent.OutputCamera != null)
@@ -310,12 +309,12 @@ namespace Cinemachine
                 ci.mViewport.localRotation = Quaternion.identity;
                 ci.mViewport.localScale = Vector3.one;
                 ci.mViewport.ForceUpdateRectTransforms();
-                ci.mViewport.sizeDelta = new Vector2(screen.width + 1 - Mathf.Abs(wipeAmount), screen.height + 1);
+                ci.mViewport.sizeDelta = new Vector2((screen.width + 1) - Mathf.Abs(wipeAmount), screen.height + 1);
 
                 Vector2 scale = Vector2.one;
-                if (m_Image != null
-                    && m_Image.width > 0 && m_Image.width > 0
-                    && screen.width > 0 && screen.height > 0)
+                if ((m_Image != null)
+                    && (m_Image.width > 0) && (m_Image.width > 0)
+                    && (screen.width > 0) && (screen.height > 0))
                 {
                     float f = (screen.height * m_Image.width) / (screen.width * m_Image.height);
                     switch (m_Aspect)
@@ -366,7 +365,7 @@ namespace Cinemachine
                 {
                     bool showIt = true;
                     int layer = 1 << src.gameObject.layer;
-                    if (brain.OutputCamera == null || (brain.OutputCamera.cullingMask & layer) == 0)
+                    if ((brain.OutputCamera == null) || ((brain.OutputCamera.cullingMask & layer) == 0))
                         showIt = false;
                     if (s_StoryboardGlobalMute)
                         showIt = false;
@@ -427,7 +426,7 @@ namespace Cinemachine
             }
             public static void RemoveCanvas(UnityEngine.Object canvas)
             {
-                if (sCanvasesAndTheirOwners != null && sCanvasesAndTheirOwners.ContainsKey(canvas))
+                if ((sCanvasesAndTheirOwners != null) && sCanvasesAndTheirOwners.ContainsKey(canvas))
                     sCanvasesAndTheirOwners.Remove(canvas);
             }
             public static void AddCanvas(UnityEngine.Object canvas, UnityEngine.Object owner)

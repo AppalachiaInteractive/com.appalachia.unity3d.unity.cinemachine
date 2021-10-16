@@ -78,7 +78,7 @@ namespace Cinemachine
             API, 
             /// <summary>Type is documented in the highly-refined User Manual</summary>
             UserRef 
-        };
+        }
         /// <summary>Refinement level of the documentation.  The more refined, the more is excluded.</summary>
         public Level Category { get; private set; }
 

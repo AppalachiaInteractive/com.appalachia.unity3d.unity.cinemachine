@@ -37,7 +37,7 @@ namespace Cinemachine
             + "define targets of their own.")]
         [NoSaveDuringPlay]
         [VcamTargetProperty]
-        public Transform m_LookAt = null;
+        public Transform m_LookAt;
 
         /// <summary>Default object for the camera children wants to move with (the body target), 
         /// if not specified in a child rig.  May be empty</summary>
@@ -46,7 +46,7 @@ namespace Cinemachine
             + "define targets of their own.")]
         [NoSaveDuringPlay]
         [VcamTargetProperty]
-        public Transform m_Follow = null;
+        public Transform m_Follow;
 
         /// <summary>The state machine whose state changes will drive this camera's choice of active child</summary>
         [Space]
@@ -63,11 +63,11 @@ namespace Cinemachine
         /// the game window, for debugging</summary>
         [Tooltip("When enabled, the current child camera and blend will be indicated in "
             + "the game window, for debugging")]
-        public bool m_ShowDebugText = false;
+        public bool m_ShowDebugText;
 
         /// <summary>Internal API for the editor.  Do not use this field</summary>
         [SerializeField][HideInInspector][NoSaveDuringPlay]
-        internal CinemachineVirtualCameraBase[] m_ChildCameras = null;
+        internal CinemachineVirtualCameraBase[] m_ChildCameras;
 
         /// <summary>This represents a single instrunction to the StateDrivenCamera.  It associates
         /// an state from the state machine with a child Virtual Camera, and also holds
@@ -89,7 +89,7 @@ namespace Cinemachine
             /// <summary>The minimum length of time (in seconds) to keep a virtual camera active</summary>
             [Tooltip("The minimum length of time (in seconds) to keep a virtual camera active")]
             public float m_MinDuration;
-        };
+        }
 
         /// <summary>The set of instructions associating virtual cameras with states.
         /// These instructions are used to choose the live child at any given moment</summary>
@@ -109,7 +109,7 @@ namespace Cinemachine
         /// This is the asset which contains custom settings for specific child blends.
         /// </summary>
         [Tooltip("This is the asset which contains custom settings for specific child blends")]
-        public CinemachineBlenderSettings m_CustomBlends = null;
+        public CinemachineBlenderSettings m_CustomBlends;
 
         /// <summary>Internal API for the Inspector editor.  This implements nested states.</summary>
         [Serializable]
@@ -124,7 +124,7 @@ namespace Cinemachine
             public ParentHash(int h, int p) { m_Hash = h; m_ParentHash = p; }
         }
         /// <summary>Internal API for the Inspector editor</summary>
-        [HideInInspector][SerializeField] internal ParentHash[] m_ParentHash = null;
+        [HideInInspector][SerializeField] internal ParentHash[] m_ParentHash;
 
         /// <summary>Gets a brief debug description of this virtual camera, for use when displayiong debug info</summary>
         public override string Description
@@ -156,7 +156,7 @@ namespace Cinemachine
         /// <returns>True if the vcam is currently actively influencing the state of this vcam</returns>
         public override bool IsLiveChild(ICinemachineCamera vcam, bool dominantChildOnly = false)
         {
-            return vcam == LiveChild || (mActiveBlend != null && mActiveBlend.Uses(vcam));
+            return (vcam == LiveChild) || ((mActiveBlend != null) && mActiveBlend.Uses(vcam));
         }
 
         /// <summary>The State of the current live child</summary>
@@ -164,7 +164,7 @@ namespace Cinemachine
 
         /// <summary>Get the current LookAt target.  Returns parent's LookAt if parent
         /// is non-null and no specific LookAt defined for this camera</summary>
-        override public Transform LookAt
+        public override Transform LookAt
         {
             get { return ResolveLookAt(m_LookAt); }
             set { m_LookAt = value; }
@@ -172,7 +172,7 @@ namespace Cinemachine
 
         /// <summary>Get the current Follow target.  Returns parent's Follow if parent
         /// is non-null and no specific Follow defined for this camera</summary>
-        override public Transform Follow
+        public override Transform Follow
         {
             get { return ResolveFollow(m_Follow); }
             set { m_Follow = value; }
@@ -229,7 +229,7 @@ namespace Cinemachine
         {
             UpdateListOfChildren();
             CinemachineVirtualCameraBase best = ChooseCurrentCamera();
-            if (best != null && !best.gameObject.activeInHierarchy)
+            if ((best != null) && !best.gameObject.activeInHierarchy)
             {
                 best.gameObject.SetActive(true);
                 best.UpdateCameraState(worldUp, deltaTime);
@@ -239,7 +239,7 @@ namespace Cinemachine
             LiveChild = best;
 
             // Are we transitioning cameras?
-            if (previousCam != LiveChild && LiveChild != null)
+            if ((previousCam != LiveChild) && (LiveChild != null))
             {
                 // Notify incoming camera of transition
                 LiveChild.OnTransitionFromCamera(previousCam, worldUp, deltaTime);
@@ -255,7 +255,7 @@ namespace Cinemachine
                             LookupBlend(previousCam, LiveChild), mActiveBlend);
 
                     // If cutting, generate a camera cut event if live
-                    if (mActiveBlend == null || !mActiveBlend.Uses(previousCam))
+                    if ((mActiveBlend == null) || !mActiveBlend.Uses(previousCam))
                         CinemachineCore.Instance.GenerateCameraCutEvent(LiveChild);
                 }
             }
@@ -368,17 +368,17 @@ namespace Cinemachine
         }
 
 
-        float mActivationTime = 0;
+        float mActivationTime;
         Instruction mActiveInstruction;
-        float mPendingActivationTime = 0;
+        float mPendingActivationTime;
         Instruction mPendingInstruction;
-        private CinemachineBlend mActiveBlend = null;
+        private CinemachineBlend mActiveBlend;
 
         void InvalidateListOfChildren() { m_ChildCameras = null; LiveChild = null; }
 
         void UpdateListOfChildren()
         {
-            if (m_ChildCameras != null && mInstructionDictionary != null && mStateParentLookup != null)
+            if ((m_ChildCameras != null) && (mInstructionDictionary != null) && (mStateParentLookup != null))
                 return;
             List<CinemachineVirtualCameraBase> list = new List<CinemachineVirtualCameraBase>();
             CinemachineVirtualCameraBase[] kids = GetComponentsInChildren<CinemachineVirtualCameraBase>(true);
@@ -399,8 +399,8 @@ namespace Cinemachine
             mInstructionDictionary = new Dictionary<int, int>();
             for (int i = 0; i < m_Instructions.Length; ++i)
             {
-                if (m_Instructions[i].m_VirtualCamera != null
-                    && m_Instructions[i].m_VirtualCamera.transform.parent != transform)
+                if ((m_Instructions[i].m_VirtualCamera != null)
+                    && (m_Instructions[i].m_VirtualCamera.transform.parent != transform))
                 {
                     m_Instructions[i].m_VirtualCamera = null;
                 }
@@ -422,16 +422,16 @@ namespace Cinemachine
         List<AnimatorClipInfo>  m_clipInfoList = new List<AnimatorClipInfo>();
         private CinemachineVirtualCameraBase ChooseCurrentCamera()
         {
-            if (m_ChildCameras == null || m_ChildCameras.Length == 0)
+            if ((m_ChildCameras == null) || (m_ChildCameras.Length == 0))
             {
                 mActivationTime = 0;
                 return null;
             }
             CinemachineVirtualCameraBase defaultCam = m_ChildCameras[0];
-            if (m_AnimatedTarget == null || !m_AnimatedTarget.gameObject.activeSelf
-                || m_AnimatedTarget.runtimeAnimatorController == null
-                || m_LayerIndex < 0 || !m_AnimatedTarget.hasBoundPlayables
-                || m_LayerIndex >= m_AnimatedTarget.layerCount)
+            if ((m_AnimatedTarget == null) || !m_AnimatedTarget.gameObject.activeSelf
+                                           || (m_AnimatedTarget.runtimeAnimatorController == null)
+                                           || (m_LayerIndex < 0) || !m_AnimatedTarget.hasBoundPlayables
+                                           || (m_LayerIndex >= m_AnimatedTarget.layerCount))
             {
                 mActivationTime = 0;
                 return defaultCam;
@@ -454,7 +454,7 @@ namespace Cinemachine
             }
 
             // If we don't have an instruction for this state, find a suitable default
-            while (hash != 0 && !mInstructionDictionary.ContainsKey(hash))
+            while ((hash != 0) && !mInstructionDictionary.ContainsKey(hash))
                 hash = mStateParentLookup.ContainsKey(hash) ? mStateParentLookup[hash] : 0;
 
             float now = CinemachineCore.CurrentTime;
@@ -471,14 +471,14 @@ namespace Cinemachine
                 // Is it pending?
                 if (PreviousStateIsValid)
                 {
-                    if (mPendingActivationTime != 0 && mPendingInstruction.m_FullHash == hash)
+                    if ((mPendingActivationTime != 0) && (mPendingInstruction.m_FullHash == hash))
                     {
                         // Has it been pending long enough, and are we allowed to switch away
                         // from the active action?
-                        if ((now - mPendingActivationTime) > mPendingInstruction.m_ActivateAfter
-                            && ((now - mActivationTime) > mActiveInstruction.m_MinDuration
-                                || mPendingInstruction.m_VirtualCamera.Priority
-                                > mActiveInstruction.m_VirtualCamera.Priority))
+                        if (((now - mPendingActivationTime) > mPendingInstruction.m_ActivateAfter)
+                            && (((now - mActivationTime) > mActiveInstruction.m_MinDuration)
+                                || (mPendingInstruction.m_VirtualCamera.Priority
+                                  > mActiveInstruction.m_VirtualCamera.Priority)))
                         {
                             // Yes, activate it now
                             mActiveInstruction = mPendingInstruction;
@@ -504,12 +504,12 @@ namespace Cinemachine
             Instruction newInstr = m_Instructions[mInstructionDictionary[hash]];
             if (newInstr.m_VirtualCamera == null)
                 newInstr.m_VirtualCamera = defaultCam;
-            if (PreviousStateIsValid && mActivationTime > 0)
+            if (PreviousStateIsValid && (mActivationTime > 0))
             {
-                if (newInstr.m_ActivateAfter > 0
-                    || ((now - mActivationTime) < mActiveInstruction.m_MinDuration
-                        && newInstr.m_VirtualCamera.Priority
-                        <= mActiveInstruction.m_VirtualCamera.Priority))
+                if ((newInstr.m_ActivateAfter > 0)
+                    || (((now - mActivationTime) < mActiveInstruction.m_MinDuration)
+                        && (newInstr.m_VirtualCamera.Priority
+                         <= mActiveInstruction.m_VirtualCamera.Priority)))
                 {
                     // Too early - make it pending
                     mPendingInstruction = newInstr;
@@ -530,11 +530,11 @@ namespace Cinemachine
             // Find the strongest-weighted animation clip substate
             int bestClip = -1;
             for (int i = 0; i < clips.Count; ++i)
-                if (bestClip < 0 || clips[i].weight > clips[bestClip].weight)
+                if ((bestClip < 0) || (clips[i].weight > clips[bestClip].weight))
                     bestClip = i;
 
             // Use its hash
-            if (bestClip >= 0 && clips[bestClip].weight > 0)
+            if ((bestClip >= 0) && (clips[bestClip].weight > 0))
                 hash = LookupFakeHash(hash, clips[bestClip].clip);
 
             return hash;

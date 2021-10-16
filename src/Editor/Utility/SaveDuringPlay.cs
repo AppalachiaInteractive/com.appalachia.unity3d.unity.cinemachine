@@ -26,7 +26,7 @@ namespace SaveDuringPlay
         /// </summary>
         public static GameObject FindObjectFromFullName(string fullName, GameObject[] roots)
         {
-            if (string.IsNullOrEmpty(fullName) || roots == null)
+            if (string.IsNullOrEmpty(fullName) || (roots == null))
                 return null;
 
             string[] path = fullName.Split('/');
@@ -34,7 +34,7 @@ namespace SaveDuringPlay
                 return null;
 
             Transform root = null;
-            for (int i = 0; root == null && i < roots.Length; ++i)
+            for (int i = 0; (root == null) && (i < roots.Length); ++i)
                 if (roots[i].name == path[1])
                     root = roots[i].transform;
 
@@ -78,7 +78,7 @@ namespace SaveDuringPlay
                 if (b == null)
                     continue;   // object was deleted
                 GameObject go = b.gameObject;
-                if (go.hideFlags == HideFlags.NotEditable || go.hideFlags == HideFlags.HideAndDontSave)
+                if ((go.hideFlags == HideFlags.NotEditable) || (go.hideFlags == HideFlags.HideAndDontSave))
                     continue;
                 if (EditorUtility.IsPersistent(go.transform.root.gameObject))
                     continue;
@@ -133,7 +133,7 @@ namespace SaveDuringPlay
 
             // Check if it's a complex type
             bool isLeaf = true;
-            if (obj != null
+            if ((obj != null)
                 && !typeof(Component).IsAssignableFrom(type)
                 && !typeof(ScriptableObject).IsAssignableFrom(type)
                 && !typeof(GameObject).IsAssignableFrom(type))
@@ -144,7 +144,7 @@ namespace SaveDuringPlay
                     isLeaf = false;
                     var array = obj as Array;
                     object arrayLength = array.Length;
-                    if (OnLeafField != null && OnLeafField(
+                    if ((OnLeafField != null) && OnLeafField(
                             fullName + ".Length", arrayLength.GetType(), ref arrayLength))
                     {
                         Array newArray = Array.CreateInstance(
@@ -175,7 +175,7 @@ namespace SaveDuringPlay
                         for (int i = 0; i < fields.Length; ++i)
                         {
                             string name = fullName + "." + fields[i].Name;
-                            if (FilterField == null || FilterField(name, fields[i]))
+                            if ((FilterField == null) || FilterField(name, fields[i]))
                             {
                                 object fieldValue = fields[i].GetValue(obj);
                                 if (ScanFields(name, fields[i].FieldType, ref fieldValue))
@@ -190,7 +190,7 @@ namespace SaveDuringPlay
                 }
             }
             // If it's a leaf field then call the leaf handler
-            if (isLeaf && OnLeafField != null)
+            if (isLeaf && (OnLeafField != null))
                 if (OnLeafField(fullName, type, ref obj))
                     doneSomething = true;
 
@@ -208,14 +208,14 @@ namespace SaveDuringPlay
                 for (int i = 0; i < fields.Length; ++i)
                 {
                     string name = fullName + "." + fields[i].Name;
-                    if (FilterField == null || FilterField(name, fields[i]))
+                    if ((FilterField == null) || FilterField(name, fields[i]))
                     {
                         object fieldValue = fields[i].GetValue(b);
                         if (ScanFields(name, fields[i].FieldType, ref fieldValue))
                             doneSomething = true;
 
                         // If leaf action was taken, propagate it up to the parent node
-                        if (doneSomething && OnFieldValueChanged != null)
+                        if (doneSomething && (OnFieldValueChanged != null))
                             OnFieldValueChanged(fullName, fields[i], b, fieldValue);
                     }
                 }
@@ -239,7 +239,7 @@ namespace SaveDuringPlay
             for (int i = 0; i < components.Length; ++i)
             {
                 MonoBehaviour c = components[i];
-                if (c == null || (FilterComponent != null && !FilterComponent(c)))
+                if ((c == null) || ((FilterComponent != null) && !FilterComponent(c)))
                     continue;
                 if (ScanFields(prefix + c.GetType().FullName + i, c))
                     doneSomething = true;
@@ -304,7 +304,7 @@ namespace SaveDuringPlay
                 {
                     // Lookup the value in the dictionary
                     if (mValues.TryGetValue(fullName, out string savedValue)
-                        && StringFromLeafObject(value) != savedValue)
+                        && (StringFromLeafObject(value) != savedValue))
                     {
                         //Debug.Log("Put " + mObjectFullPath + "." + fullName + " = " + mValues[fullName]);
                         value = LeafObjectFromString(type, mValues[fullName].Trim(), roots);
@@ -527,7 +527,7 @@ namespace SaveDuringPlay
             return objects;
         }
 
-        static List<ObjectStateSaver> sSavedStates = null;
+        static List<ObjectStateSaver> sSavedStates;
 
         static void SaveAllInterestingStates()
         {

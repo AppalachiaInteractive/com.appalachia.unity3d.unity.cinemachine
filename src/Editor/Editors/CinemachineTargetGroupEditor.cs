@@ -42,7 +42,7 @@ namespace Cinemachine.Editor
             String indices = "";
             for (int i = 0; i < Target.m_Targets.Length; ++i)
             {
-                if (Target.m_Targets[i].target != null && Target.m_Targets[i].target.IsChildOf(Target.Transform))
+                if ((Target.m_Targets[i].target != null) && Target.m_Targets[i].target.IsChildOf(Target.Transform))
                 {
                     indices += i + ", ";
                 }
@@ -62,7 +62,7 @@ namespace Cinemachine.Editor
         {
             float vSpace = 2;
             float floatFieldWidth = EditorGUIUtility.singleLineHeight * 3.5f;
-            float hBigSpace = EditorGUIUtility.singleLineHeight * 2 / 3;
+            float hBigSpace = (EditorGUIUtility.singleLineHeight * 2) / 3;
 
             mTargetList = new UnityEditorInternal.ReorderableList(
                     serializedObject, FindProperty(x => x.m_Targets),
@@ -73,7 +73,7 @@ namespace Cinemachine.Editor
 
             mTargetList.drawHeaderCallback = (Rect rect) =>
                 {
-                    rect.width -= EditorGUIUtility.singleLineHeight + 2 * (floatFieldWidth + hBigSpace);
+                    rect.width -= EditorGUIUtility.singleLineHeight + (2 * (floatFieldWidth + hBigSpace));
                     Vector2 pos = rect.position; pos.x += EditorGUIUtility.singleLineHeight;
                     rect.position = pos;
                     EditorGUI.LabelField(rect, "Target");

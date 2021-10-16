@@ -24,7 +24,7 @@ namespace Cinemachine.Utility
                 | System.Reflection.BindingFlags.NonPublic 
                 | System.Reflection.BindingFlags.Instance)
         {
-            if (src != null && dst != null)
+            if ((src != null) && (dst != null))
             {
                 Type type = src.GetType();
                 FieldInfo[] fields = type.GetFields(bindingAttr);
@@ -54,7 +54,7 @@ namespace Cinemachine.Utility
                 // Can't load the types in this assembly
             }
             types = (from t in types
-                     where t != null && predicate(t)
+                     where (t != null) && predicate(t)
                      select t).ToArray();
             return types;
         }

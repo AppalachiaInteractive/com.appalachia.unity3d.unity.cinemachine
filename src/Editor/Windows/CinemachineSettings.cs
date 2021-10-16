@@ -221,21 +221,24 @@ namespace Cinemachine.Editor
             }
         }
 
-        private static Texture2D sCinemachineLogoTexture = null;
+        private static Texture2D sCinemachineLogoTexture;
         internal static Texture2D CinemachineLogoTexture
         {
             get
             {
                 if (sCinemachineLogoTexture == null)
                     sCinemachineLogoTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(
-                        AssetDatabase.FindAssets("cm_logo_sm.png").FirstOrDefault());
+                        AssetDatabase.FindAssets("t:Texture2D cm_logo_sm")
+                                     .Select(a => AssetDatabase.GUIDToAssetPath(a))
+                                     .FirstOrDefault()
+                    );
                 if (sCinemachineLogoTexture != null)
                     sCinemachineLogoTexture.hideFlags = HideFlags.DontSaveInEditor;
                 return sCinemachineLogoTexture;
             }
         }
 
-        private static Texture2D sCinemachineHeader = null;
+        private static Texture2D sCinemachineHeader;
         internal static Texture2D CinemachineHeader
         {
             get
@@ -254,7 +257,7 @@ namespace Cinemachine.Editor
         private static readonly string kCoreSettingsFoldKey     = "CNMCN_Core_Folded";
         private static readonly string kComposerSettingsFoldKey = "CNMCN_Composer_Folded";
 
-        internal static event Action AdditionalCategories = null;
+        internal static event Action AdditionalCategories;
 
         [InitializeOnLoadMethod]
         /// Ensures that CM Brain logo is added to the Main Camera
@@ -510,7 +513,7 @@ namespace Cinemachine.Editor
             {
                 byte[] bytes = Base64Decode(str);
 
-                if ((bytes != null) && bytes.Length == 16)
+                if ((bytes != null) && (bytes.Length == 16))
                 {
                     float r = BitConverter.ToSingle(bytes, 0);
                     float g = BitConverter.ToSingle(bytes, 4);

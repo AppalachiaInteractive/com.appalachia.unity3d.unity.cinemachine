@@ -73,13 +73,13 @@ namespace Cinemachine
         /// <returns>The cached action for the player specified in PlayerIndex</returns>
         protected InputAction ResolveForPlayer(int axis, InputActionReference actionRef)
         {
-            if (axis < 0 || axis >= NUM_AXES)
+            if ((axis < 0) || (axis >= NUM_AXES))
                 return null;
-            if (actionRef == null || actionRef.action == null)
+            if ((actionRef == null) || (actionRef.action == null))
                 return null;
-            if (m_cachedActions == null || m_cachedActions.Length != NUM_AXES)
+            if ((m_cachedActions == null) || (m_cachedActions.Length != NUM_AXES))
                 m_cachedActions = new InputAction[NUM_AXES];
-            if (m_cachedActions[axis] != null && actionRef.action.id != m_cachedActions[axis].id)
+            if ((m_cachedActions[axis] != null) && (actionRef.action.id != m_cachedActions[axis].id))
                 m_cachedActions[axis] = null;
             if (m_cachedActions[axis] == null)
             {
@@ -91,7 +91,7 @@ namespace Cinemachine
                 }
             }
             // Auto-enable it if disabled
-            if (m_cachedActions[axis] != null && !m_cachedActions[axis].enabled)
+            if ((m_cachedActions[axis] != null) && !m_cachedActions[axis].enabled)
                 m_cachedActions[axis].Enable();
 
             return m_cachedActions[axis];

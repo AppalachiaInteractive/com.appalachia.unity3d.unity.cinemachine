@@ -90,7 +90,7 @@ namespace Cinemachine.Editor
 
         private int GetCameraIndex(Object obj)
         {
-            if (obj == null || mCameraIndexLookup == null)
+            if ((obj == null) || (mCameraIndexLookup == null))
                 return 0;
             CinemachineVirtualCameraBase vcam = obj as CinemachineVirtualCameraBase;
             if (vcam == null)
@@ -112,7 +112,7 @@ namespace Cinemachine.Editor
             float vSpace = 2;
             float hSpace = 3;
             float floatFieldWidth = EditorGUIUtility.singleLineHeight * 2.5f;
-            float hBigSpace = EditorGUIUtility.singleLineHeight * 2 / 3;
+            float hBigSpace = (EditorGUIUtility.singleLineHeight * 2) / 3;
             mInstructionList.drawHeaderCallback = (Rect rect) =>
                 {
                     float sharedWidth = rect.width - EditorGUIUtility.singleLineHeight
@@ -143,11 +143,11 @@ namespace Cinemachine.Editor
                             ? null : Target.ChildCameras[vcamSelection - 1];
 
                     rect.x += rect.width + hSpace; rect.width = sharedWidth / 2;
-                    if (index > 0 || Target.m_Loop)
+                    if ((index > 0) || Target.m_Loop)
                         EditorGUI.PropertyField(rect, instProp.FindPropertyRelative(() => def.m_Blend),
                             GUIContent.none);
 
-                    if (index < mInstructionList.count - 1 || Target.m_Loop)
+                    if ((index < (mInstructionList.count - 1)) || Target.m_Loop)
                     {
                         float oldWidth = EditorGUIUtility.labelWidth;
                         EditorGUIUtility.labelWidth = hBigSpace;
@@ -185,7 +185,7 @@ namespace Cinemachine.Editor
                 };
             mChildList.onChangedCallback = (UnityEditorInternal.ReorderableList l) =>
                 {
-                    if (l.index < 0 || l.index >= l.serializedProperty.arraySize)
+                    if ((l.index < 0) || (l.index >= l.serializedProperty.arraySize))
                         return;
                     Object o = l.serializedProperty.GetArrayElementAtIndex(
                             l.index).objectReferenceValue;

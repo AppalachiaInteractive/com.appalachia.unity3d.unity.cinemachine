@@ -81,7 +81,7 @@ namespace Cinemachine
                 {
                     if (s_HitBuffer[i].collider.CompareTag(ignoreTag))
                         continue;
-                    if (closestHit < 0 || s_HitBuffer[i].distance < s_HitBuffer[closestHit].distance)
+                    if ((closestHit < 0) || (s_HitBuffer[i].distance < s_HitBuffer[closestHit].distance))
                         closestHit = i;
                 }
                 if (closestHit >= 0)
@@ -121,13 +121,13 @@ namespace Cinemachine
             for (int i = 0; i < numHits; ++i)
             {
                 var h = s_HitBuffer[i];
-                if (ignoreTag.Length > 0 && h.collider.CompareTag(ignoreTag))
+                if ((ignoreTag.Length > 0) && h.collider.CompareTag(ignoreTag))
                     continue;
 
                 // Collect overlapping items
-                if (h.distance == 0 && h.normal == -dir)
+                if ((h.distance == 0) && (h.normal == -dir))
                 {
-                    if (s_PenetrationIndexBuffer.Length > numPenetrations + 1)
+                    if (s_PenetrationIndexBuffer.Length > (numPenetrations + 1))
                         s_PenetrationIndexBuffer[numPenetrations++] = i;
 
                     // hitInfo for overlapping colliders will have special
@@ -141,7 +141,7 @@ namespace Cinemachine
                         c, c.transform.position, c.transform.rotation,
                         out var offsetDir, out var offsetDistance))
                     {
-                        h.point = rayStart + offsetDir * (offsetDistance - radius);
+                        h.point = rayStart + (offsetDir * (offsetDistance - radius));
                         h.distance = offsetDistance - radius; // will be -ve
                         h.normal = offsetDir;
                         s_HitBuffer[i] = h;
@@ -152,7 +152,7 @@ namespace Cinemachine
                         continue; // don't know what's going on, just forget about it
                     }
                 }
-                if (closestHit < 0 || h.distance < s_HitBuffer[closestHit].distance)
+                if ((closestHit < 0) || (h.distance < s_HitBuffer[closestHit].distance))
                 {
                     closestHit = i;
                 }
@@ -253,7 +253,7 @@ namespace Cinemachine
                 float valOffset = 0;
                 if (range < 1)
                 {
-                    if (minVal > 0 && minVal + range <= 1)
+                    if ((minVal > 0) && ((minVal + range) <= 1))
                         valOffset = minVal;
                     else
                         valOffset = 1 - range;
