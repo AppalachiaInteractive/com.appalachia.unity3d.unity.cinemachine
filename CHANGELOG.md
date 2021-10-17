@@ -12,6 +12,14 @@
 ## Releasing
 | Hash | Date | Author | Changes |
 |------|------|--------|---------|
+| 1467351c7712189b38a43d9ce30ff471b41a4e4a | 2021-10-16 | Chris Schubert | UI project cleanup and integration completed |
+| 72decd921e5c2274486933b66cb4909d2accee4b | 2021-10-16 | Chris Schubert | More project cleanup and refactoring |
+| f1240ef2bda70840f794c35b7de800bdf55f60c3 | 2021-10-12 | Chris Schubert | Code cleanup and project restructuring |
+
+
+ ## Tag: `v0.1.4`
+| Hash | Date | Author | Changes |
+|------|------|--------|---------|
 | 50f9cf888eb8c79539104fd8e8b8cf7b18fab81d | 2021-09-28 | Chris Schubert | Updating packaging and publishing npm strategy and package.json |
 
 
