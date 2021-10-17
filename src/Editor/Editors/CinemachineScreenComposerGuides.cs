@@ -329,7 +329,7 @@ namespace Cinemachine.Editor
             SoftBarLineLeft, SoftBarLineTop, SoftBarLineRight, SoftBarLineBottom,
             HardBarLineLeft, HardBarLineTop, HardBarLineRight, HardBarLineBottom,
             NONE
-        };
+        }
         private DragBar mDragging = DragBar.NONE;
         private Rect[] mDragBars = new Rect[9];
 

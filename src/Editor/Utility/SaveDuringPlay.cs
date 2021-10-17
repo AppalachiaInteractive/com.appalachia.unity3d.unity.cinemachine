@@ -246,7 +246,7 @@ namespace SaveDuringPlay
             }
             return doneSomething;
         }
-    };
+    }
     
 
 
@@ -406,7 +406,7 @@ namespace SaveDuringPlay
             }
             return obj.ToString();
         }
-    };
+    }
 
 
     /// <summary>

@@ -290,7 +290,7 @@ namespace Cinemachine.Editor
                 mChannel = channel;
                 mTitle = title;
             }
-        };
+        }
         
         private GUIContent steadyLabel;
         private GUIContent freqLabel;
