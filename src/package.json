@@ -30,9 +30,16 @@
   ],
   "category": "cinematography",
   "repository": {
-    "url": "https://github.com/Unity-Technologies/com.unity.cinemachine.git",
     "type": "git",
-    "revision": "fbdf1d35b79a9d961d51cad4fe0a43e09320688e"
+    "url": "https://github.com/Unity-Technologies/com.unity.cinemachine.git"
+  },
+  "dependencies": {
+    "com.unity.timeline": "1.6.2",
+    "com.unity.postprocessing": "3.1.1",
+    "com.unity.inputsystem": "1.1.1"
+  },
+  "upmCi": {
+    "footprint": "1be3e6f856cd015093ea34e0f47562665e2bd71c"
   },
   "samples": [
     {
@@ -41,7 +48,5 @@
       "path": "Samples~/Cinemachine Example Scenes"
     }
   ],
-  "upmCi": {
-    "footprint": "1be3e6f856cd015093ea34e0f47562665e2bd71c"
-  }
+  "exports": null
 }
